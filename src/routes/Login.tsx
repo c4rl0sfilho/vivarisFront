@@ -3,10 +3,8 @@ import whiteSquare from '../assets/whiteSquare.svg'
 import twoBoys from '../assets/twoBoys.svg'
 import ContainerLogin from '../components/ContainerLogin'
 
-import { useNavigate } from 'react-router-dom';
-
 import vivarisLogo from '../assets/vivarisLogo.svg'
-import ContainerRegister from '../components/ContainerRegister';
+
 
 
 function login() {
@@ -22,8 +20,8 @@ function login() {
         <img src={twoBoys} alt="" className='mt-[5rem] ml-[400px] ' />
       </div>
       <div className='flex flex-col p-8 ml-12 justify-center '>
-        {/* <ContainerLogin /> */}
-        <ContainerRegister/>
+        <ContainerLogin />
+        {/* <ContainerRegister/> */}
       </div>
     </div>
   )

@@ -9,6 +9,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 //pages
 import Login from './routes/Login.tsx'
 import Register from './routes/Register.tsx'
+import Preferences from './routes/Preferences.tsx'
 
 const router = createBrowserRouter([
   {
@@ -20,8 +21,12 @@ const router = createBrowserRouter([
         element:<Login/>,
       },
       {
-        path:"/",
+        path:"/Register",
         element:<Register/>
+      },
+      {
+        path:"/Preferences",
+        element:<Preferences/>
       }
     ]
   }

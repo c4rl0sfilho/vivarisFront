@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import FormInput from './FormInput.tsx';
-import GoogleIcon from '../assets/googleIcon.svg';
 import { useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 
 const ContainerRegister = () => {
-    const [selectedButton, setSelectedButton] = useState<'Cliente' | 'Psicológo'>('Cliente');
+    const [selectedButton, setSelectedButton] = useState<'Cliente' | 'Psicologo'>('Cliente');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [sexo, setSexo] = useState('');
@@ -15,7 +15,8 @@ const ContainerRegister = () => {
     const [name, setName] = useState('');
     const navigate = useNavigate();
 
-    function handleButtonClick(buttonName: 'Cliente' | 'Psicológo') {
+
+    function handleButtonClick(buttonName: 'Cliente' | 'Psicologo') {
         setSelectedButton(buttonName);
     }
 
@@ -45,17 +46,18 @@ const ContainerRegister = () => {
         setPhone(event.target.value)
     }
 
-    let user = {
+    
+    let userDate = {
         name,
         email,
-        sexo,
-        birthdayDate,
         phone,
         cpf,
-        password,
-        confirmPassword
+        birthdayDate,
+        sexo,
+        password
     }
 
+    
 
   return (
     <div>
@@ -74,10 +76,10 @@ const ContainerRegister = () => {
                 </div>
                 <div>
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicológo' ? 'bg-[#296856] text-[#ffffff] ' : 'text-[#296856]'}`}
-                        data-button-name="Psicológo"
-                        onClick={() => handleButtonClick('Psicológo')}>
-                        Psicológo
+                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicologo' ? 'bg-[#296856] text-[#ffffff] ' : 'text-[#296856]'}`}
+                        data-button-name="Psicologo"
+                        onClick={() => handleButtonClick('Psicologo')}>
+                        Psicologo
                     </button>
                 </div>
             </div>
@@ -154,14 +156,17 @@ const ContainerRegister = () => {
                     placeholder='Confirmar Senha'
                     required
                 />
-                
+
             </div>
             <div className="buttonLogin flex justify-center py-4">
-                <button className='w-[8rem] h-[2rem] rounded bg-[#296856] text-white font-semibold border-solid'>Cadastrar</button>
+                <button 
+                id='cadastrar'
+                onClick={() => console.log(userDate)}
+                className='w-[8rem] h-[2rem] rounded bg-[#296856] text-white font-semibold border-solid'>Cadastrar</button>
             </div>
             <div className="textConta flex justify-around">
                 <p>Já tem conta?</p>
-                <p onClick={() => alert(user)} className='cursor-pointer text-[#296856] '>Login</p>
+                <p onClick={() => navigate('/Preferences')} className='cursor-pointer text-[#296856] '>Login</p>
             </div>
            
         </div>
