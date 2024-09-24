@@ -1,38 +1,43 @@
 import React, { useState } from 'react';
 import FormInput from './FormInput.tsx';
 import { useNavigate } from 'react-router-dom';
-
-type UserType = 'Cliente' | 'Psicologo';
+import { registerUser } from '../Ts/cliente_psicologo.ts';
 
 interface FormData {
     email: string;
     phone: string;
-    sexo: string;
+    gender: string;
     confirmPassword: string;
     password: string;
-    birthdayDate: string;
+    birthdate: string;
     cpf: string;
     name: string;
+    cip?: string; // Propriedade opcional
+    photo?: string; // Propriedade opcional
+    instagram?: string; // Propriedade opcional
 }
 
 const ContainerRegister: React.FC = () => {
-    const [selectedButton, setSelectedButton] = useState<UserType>('Cliente');
+    const [selectedButton, setSelectedButton] = useState<'Cliente' | 'Psicólogo'>('Cliente');
     const [formData, setFormData] = useState<FormData>({
+        name: '',
         email: '',
         phone: '',
-        sexo: '',
-        confirmPassword: '',
-        password: '',
-        birthdayDate: '',
         cpf: '',
-        name: '',
+        birthdate: '',
+        gender: '',
+        password: '',
+        confirmPassword: '',
+        cip: undefined, // Inicialize como undefined se não for psicólogo
+        photo: undefined, // Inicialize como undefined
+        instagram: undefined, // Inicialize como undefined
     });
     const [errors, setErrors] = useState<Partial<FormData>>({});
     const navigate = useNavigate();
 
-    const handleButtonClick = (buttonName: UserType) => {
+    function handleButtonClick(buttonName: 'Cliente' | 'Psicólogo') {
         setSelectedButton(buttonName);
-    };
+    }
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = event.target;
@@ -43,14 +48,39 @@ const ContainerRegister: React.FC = () => {
         const newErrors: Partial<FormData> = {};
         if (!formData.email.includes('@')) newErrors.email = 'Email inválido';
         if (formData.password.length < 6) newErrors.password = 'A senha deve ter pelo menos 6 caracteres';
-        // Adicione mais validações conforme necessário
+        if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'As senhas não coincidem';
+        if (!formData.cpf || formData.cpf.length !== 11) newErrors.cpf = 'CPF inválido';
+        if (!formData.phone || formData.phone.length < 10) newErrors.phone = 'Telefone inválido';
+        if (!formData.gender) newErrors.gender = 'Selecione o sexo';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
-    const handleSubmit = () => {
-        if (validateForm()) {
-            console.log(formData); // Trate a submissão aqui (ex.: chamada à API)
+    const handleSubmit = async () => {
+        if (!validateForm()) return;
+
+        //const userType = selectedButton === 'Psicólogo' ? 'psychologist' : 'client';
+
+        const clientData = {
+            nome: formData.name,
+            email: formData.email,
+            senha: formData.password,
+            telefone: formData.phone,
+            cpf: formData.cpf,
+            data_nascimento: formData.birthdate,
+            id_sexo: Number(formData.gender),
+            foto_perfil: formData.photo || '', // String vazia ao invés de undefined
+            link_instagram: formData.instagram || '', // String vazia ao invés de undefined
+            cip: selectedButton === 'Psicólogo' ? formData.cip || '' : undefined, // String vazia se for psicólogo, undefined caso contrário
+          };
+          
+        try {
+            await registerUser(selectedButton, clientData);
+            alert('Usuário cadastrado com sucesso!');
+            navigate('/login');
+        } catch (error) {
+            console.error('Erro ao cadastrar o usuário:', error);
+            alert('Erro ao cadastrar o usuário. Por favor, tente novamente.');
         }
     };
 
@@ -68,10 +98,10 @@ const ContainerRegister: React.FC = () => {
                         Cliente
                     </button>
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicologo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'}`}
-                        onClick={() => handleButtonClick('Psicologo')}
+                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'}`}
+                        onClick={() => handleButtonClick('Psicólogo')}
                     >
-                        Psicologo
+                        Psicólogo
                     </button>
                 </div>
                 <div className="inputs">
@@ -93,7 +123,7 @@ const ContainerRegister: React.FC = () => {
                         placeholder='Email'
                         required
                     />
-                    {errors.email && <span className="error">{errors.email}</span>}
+                    {errors.email && <span className="error text-red-700">{errors.email}</span>}
                     <FormInput
                         type="number"
                         name="cpf"
@@ -103,10 +133,11 @@ const ContainerRegister: React.FC = () => {
                         placeholder='CPF'
                         required
                     />
+                    {errors.cpf && <span className="error text-red-700">{errors.cpf}</span>}
                     <FormInput
                         type="date"
-                        name="birthdayDate"
-                        value={formData.birthdayDate}
+                        name="birthdate"
+                        value={formData.birthdate}
                         onChange={handleChange}
                         label="Data de Nascimento"
                         required
@@ -117,31 +148,65 @@ const ContainerRegister: React.FC = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         label="Telefone"
+                        placeholder='Telefone'
                         required
                     />
-                    <select name="sexo" className='mt-1 p-2 block w-full border border-black rounded-md' onChange={handleChange}>
+                    {errors.phone && <span className="error text-red-700">{errors.phone}</span>}
+                    <select name="gender" className='mt-1 p-2 block w-full border border-black rounded-md' value={formData.gender} onChange={handleChange}>
                         <option value="">Sexo</option>
-                        <option value="male">Masculino</option>
-                        <option value="female">Feminino</option>
+                        <option value="1">Masculino</option>
+                        <option value="2">Feminino</option>
                     </select>
+                    {errors.gender && <span className="error text-red-700">{errors.gender}</span>}
                     <FormInput
                         type="password"
                         name="password"
                         value={formData.password}
                         onChange={handleChange}
                         label="Senha"
+                        placeholder='Senha'
                         required
                     />
-                    {errors.password && <span className="error">{errors.password}</span>}
+                    {errors.password && <span className="error text-red-700">{errors.password}</span>}
                     <FormInput
                         type="password"
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
                         label="Confirmar Senha"
+                        placeholder='Confirmar Senha'
                         required
                     />
+                    {errors.confirmPassword && <span className="error text-red-700">{errors.confirmPassword}</span>}
                 </div>
+                {selectedButton === 'Psicólogo' && (
+                    <div className="inputs">
+                        <FormInput
+                            type="text"
+                            name="cip"
+                            value={formData.cip || ''}
+                            onChange={handleChange}
+                            label="CIP"
+                            placeholder='CIP'
+                        />
+                        <FormInput
+                            type="text"
+                            name="photo"
+                            value={formData.photo || ''}
+                            onChange={handleChange}
+                            label="Link para Foto"
+                            placeholder='Link da Foto'
+                        />
+                        <FormInput
+                            type="text"
+                            name="instagram"
+                            value={formData.instagram || ''}
+                            onChange={handleChange}
+                            label="Instagram"
+                            placeholder='Link do Instagram'
+                        />
+                    </div>
+                )}
                 <div className="buttonLogin flex justify-center py-4">
                     <button
                         id='cadastrar'
@@ -158,6 +223,6 @@ const ContainerRegister: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
 export default ContainerRegister;
