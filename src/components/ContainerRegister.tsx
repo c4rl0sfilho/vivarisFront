@@ -100,13 +100,13 @@ const ContainerRegister: React.FC = () => {
                 </div>
                 <div className="ClienteOrPsicologo flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'}`}
+                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
                         onClick={() => handleButtonClick('Cliente')}
                     >
                         Cliente
                     </button>
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'}`}
+                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
                         onClick={() => handleButtonClick('Psicólogo')}
                     >
                         Psicólogo
@@ -197,22 +197,7 @@ const ContainerRegister: React.FC = () => {
                             label="CIP"
                             placeholder='CIP'
                         />
-                        <FormInput
-                            type="text"
-                            name="photo"
-                            value={formData.photo || ''}
-                            onChange={handleChange}
-                            label="Link para Foto"
-                            placeholder='Link da Foto'
-                        />
-                        <FormInput
-                            type="text"
-                            name="instagram"
-                            value={formData.instagram || ''}
-                            onChange={handleChange}
-                            label="Instagram"
-                            placeholder='Link do Instagram'
-                        />
+                        
                     </div>
                 )}
                 <div className="buttonLogin flex justify-center py-4">

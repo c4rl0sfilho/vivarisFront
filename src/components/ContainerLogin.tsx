@@ -40,12 +40,12 @@ const ContainerLogin = () => {
             const endpoint = selectedButton === 'Cliente'
                 ? 'http://localhost:8080/v1/vivaris/login/usuario'
                 : 'http://localhost:8080/v1/vivaris/profissional/login';
-                
-                console.log(email, password, selectedButton);
-                
+
+            console.log(email, password, selectedButton);
+
             const response = await axios.post(endpoint, {
-                email : email,
-                senha : password
+                email: email,
+                senha: password
             });
             // Verifica se há algum usuário retornado na resposta
             if (response.data) {
@@ -71,18 +71,21 @@ const ContainerLogin = () => {
             <div className="ClienteOrPsicologo flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
                 <div>
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'}`}
+                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
+        ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'bg-[#ffffff] text-[#296856]'}`}
                         onClick={() => handleButtonClick('Cliente')}>
                         Cliente
                     </button>
                 </div>
                 <div>
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'}`}
+                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
+        ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'bg-[#ffffff] text-[#296856]'}`}
                         onClick={() => handleButtonClick('Psicólogo')}>
                         Psicólogo
                     </button>
                 </div>
+
             </div>
             <div className="inputs">
                 <FormInput
