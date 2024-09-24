@@ -47,16 +47,17 @@ const ContainerRegister: React.FC = () => {
     const validateForm = () => {
         const newErrors: Partial<FormData> = {};
         if (!formData.email.includes('@')) newErrors.email = 'Email inválido';
-        if (formData.password.length < 6) newErrors.password = 'A senha deve ter pelo menos 6 caracteres';
+        if (formData.password.length < 8 || formData.password.length > 20) newErrors.password = 'A senha deve ter pelo menos 8 caracteres';
         if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'As senhas não coincidem';
         if (!formData.cpf || formData.cpf.length !== 11) newErrors.cpf = 'CPF inválido';
-        if (!formData.phone || formData.phone.length < 10) newErrors.phone = 'Telefone inválido';
+        if (!formData.phone || formData.phone.length !== 11) newErrors.phone = 'Telefone inválido';
         if (!formData.gender) newErrors.gender = 'Selecione o sexo';
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async () => {
+        try{
         if (!validateForm()) return;
 
         //const userType = selectedButton === 'Psicólogo' ? 'psychologist' : 'client';
@@ -71,13 +72,20 @@ const ContainerRegister: React.FC = () => {
             id_sexo: Number(formData.gender),
             foto_perfil: formData.photo || '', // String vazia ao invés de undefined
             link_instagram: formData.instagram || '', // String vazia ao invés de undefined
-            cip: selectedButton === 'Psicólogo' ? formData.cip || '' : undefined, // String vazia se for psicólogo, undefined caso contrário
+            cip: selectedButton === 'Psicólogo' ? formData.cip : undefined, // String vazia se for psicólogo, undefined caso contrário
           };
           
-        try {
-            await registerUser(selectedButton, clientData);
+          console.log(selectedButton, clientData);
+          
+            const user = await registerUser(selectedButton, clientData)
+            if(user){
+                console.log('certo');
+            }
+            else{
+
+            }
             alert('Usuário cadastrado com sucesso!');
-            navigate('/login');
+            navigate('/');
         } catch (error) {
             console.error('Erro ao cadastrar o usuário:', error);
             alert('Erro ao cadastrar o usuário. Por favor, tente novamente.');

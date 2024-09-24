@@ -24,6 +24,7 @@ const ContainerLogin = () => {
         setPassword(event.target.value);
     }
 
+
     const handleLogin = async () => {
         setLoading(true);
         setError('');
@@ -37,18 +38,17 @@ const ContainerLogin = () => {
 
         try {
             const endpoint = selectedButton === 'Cliente'
-                ? 'http://localhost:3000/users'
-                : 'http://localhost:3000/psicologo';
-
-            const response = await axios.get(endpoint, {
-                params: {
-                    email: email,
-                    password: password
-                }
+                ? 'http://localhost:8080/v1/vivaris/login/usuario'
+                : 'http://localhost:8080/v1/vivaris/profissional/login';
+                
+                console.log(email, password, selectedButton);
+                
+            const response = await axios.post(endpoint, {
+                email : email,
+                senha : password
             });
-
             // Verifica se há algum usuário retornado na resposta
-            if (response.data.length > 0) {
+            if (response.data) {
                 console.log('Login bem-sucedido:', response.data);
                 navigate('/home');
             } else {
