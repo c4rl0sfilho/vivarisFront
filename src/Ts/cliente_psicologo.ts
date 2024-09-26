@@ -14,6 +14,7 @@ interface ClientData {
     cip?: string;
 }
 
+let idResgatado
 
 export const registerUser = async (selectedButton: 'Cliente' | 'Psicólogo', clientData: ClientData) => {
     
@@ -26,7 +27,8 @@ export const registerUser = async (selectedButton: 'Cliente' | 'Psicólogo', cli
             'Content-Type': 'application/json',
         },
     });
-console.log(`bghjkjcj`);
 
-    return response.data;
+   return response
 };
+
+localStorage.setItem('IdDoCliente', String(idResgatado))

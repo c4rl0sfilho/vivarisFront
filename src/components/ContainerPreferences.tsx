@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import usePreferences from "../Ts/usePreferences";
 import axios from 'axios';
+let resgateId = localStorage.getItem('id_usuario')
+console.log(resgateId);
 
 const ContainerPreferences: React.FC = () => {
     const { preferences, loading, error } = usePreferences();
@@ -22,8 +24,8 @@ const ContainerPreferences: React.FC = () => {
     const postPreference = async (id_usuario: number, id_preferencia: number) => {
         try {
             const response = await axios.post('http://localhost:8080/v1/vivaris/cliente/preferencias', {
-                id_usuario: id_usuario,
-                id_preferencia: id_preferencia,
+                id_cliente: id_usuario,
+                preferencias: id_preferencia,
             });
             console.log('Resposta do servidor:', response.data);
             return response.data; 
@@ -38,10 +40,10 @@ const ContainerPreferences: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        const id_usuario = 1; // Substitua pelo ID real do usuário
+        const id_usuario = Number(resgateId)
         try {
             for (const prefId of selectedPrefIds) {
-                console.log(`Enviando: id_usuario: ${id_usuario}, id_preferencia: ${prefId}`); // Log para depuração
+                console.log(`Enviando: id_cliente: ${id_usuario}, preferencias: ${prefId}`); // Log para depuração
                 await postPreference(id_usuario, prefId);
             }
             alert('Preferências enviadas com sucesso!');

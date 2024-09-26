@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import FormInput from './FormInput.tsx';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../Ts/cliente_psicologo.ts';
+import Preferences from '../routes/Preferences.tsx';
 
 interface FormData {
     email: string;
@@ -78,14 +79,18 @@ const ContainerRegister: React.FC = () => {
           console.log(selectedButton, clientData);
           
             const user = await registerUser(selectedButton, clientData)
+
             if(user){
-                console.log('certo');
+                console.log(user)
+                localStorage.setItem('id_usuario', user.data.user.id)
             }
             else{
-
+                alert('Erro ao cadastrar usuário!')
+                throw new Error('Erro ao cadastrar usuário');
+                
             }
             alert('Usuário cadastrado com sucesso!');
-            navigate('/');
+            navigate('/Preferences');
         } catch (error) {
             console.error('Erro ao cadastrar o usuário:', error);
             alert('Erro ao cadastrar o usuário. Por favor, tente novamente.');
