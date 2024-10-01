@@ -10,6 +10,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Login from './routes/Login.tsx'
 import Register from './routes/Register.tsx'
 import Preferences from './routes/Preferences.tsx'
+import Home from './routes/Home.tsx'
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
       {
         path:"/Preferences",
         element:<Preferences/>
+      },
+      {
+        path:"/Home",
+        element:<Home/>
       }
     ]
   }
