@@ -24,7 +24,6 @@ const ContainerLogin = () => {
         setPassword(event.target.value);
     }
 
-
     const handleLogin = async () => {
         setLoading(true);
         setError('');
@@ -47,10 +46,11 @@ const ContainerLogin = () => {
                 email: email,
                 senha: password
             });
+
             // Verifica se há algum usuário retornado na resposta
             if (response.data) {
                 console.log('Login bem-sucedido:', response.data);
-                navigate('/home');
+                navigate('/Home');
             } else {
                 alert('Email ou senha inválidos');
             }
@@ -85,7 +85,6 @@ const ContainerLogin = () => {
                         Psicólogo
                     </button>
                 </div>
-
             </div>
             <div className="inputs">
                 <FormInput

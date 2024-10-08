@@ -1,4 +1,4 @@
-import axios from 'axios'; // Importa o Axios
+import axios from 'axios';
 import { add, format } from 'date-fns';
 import { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
@@ -13,32 +13,35 @@ interface dateType {
   dateTime: Date | null;
 }
 
-const newAvailability = async (date: Date, idProfessional: number) => {
-  if (!date) return false;
+const newAvailability = async (dates: Date[], idProfessional: number) => {
+  if (!dates.length) return false;
 
   const weekDays = [
     'Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'
   ];
 
-  const weekDayIndex = date.getDay();
-  const weekDay = weekDays[weekDayIndex];
+  const requests = dates.map(date => {
+    const weekDayIndex = date.getDay();
+    const weekDay = weekDays[weekDayIndex];
 
-  const data = {
-    dia_semana: weekDay,
-    horario_inicio: format(date, 'HH:mm:ss'), // Aqui usamos a data combinada
-    horario_fim: format(date, 'HH:mm:ss'),     // Se for o mesmo horário, pode ser assim
-  };
+    const data = {
+      dia_semana: weekDay,
+      horario_inicio: format(date, 'HH:mm:ss'),
+      horario_fim: format(date, 'HH:mm:ss'),
+    };
 
-  console.log('Dados enviados para o backend:', data);
-
-  try {
-    const response = await axios.post('http://localhost:8080/v1/vivaris/disponibilidade', data, {
+    console.log('Dados enviados para o backend:', data);
+    
+    return axios.post('http://localhost:8080/v1/vivaris/disponibilidade', data, {
       headers: {
         'Content-Type': 'application/json',
       },
     });
+  });
 
-    console.log('Disponibilidade cadastrada com sucesso:', response.data);
+  try {
+    const responses = await Promise.all(requests);
+    console.log('Disponibilidade cadastrada com sucesso:', responses);
   } catch (error) {
     console.error('Erro ao enviar a disponibilidade:', error);
     if (axios.isAxiosError(error)) {
@@ -47,15 +50,13 @@ const newAvailability = async (date: Date, idProfessional: number) => {
   }
 };
 
-
-
 const Availability = () => {
   const [date, setDate] = useState<dateType>({
     justDate: null,
     dateTime: null,
   });
 
-  const [selectedTime, setSelectedTime] = useState<Date | null>(null);
+  const [selectedTimes, setSelectedTimes] = useState<Date[]>([]);
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
@@ -81,33 +82,33 @@ const Availability = () => {
   const times = getTimes();
 
   const handleTimeClick = (time: Date) => {
-    setDate((prev) => ({
-      ...prev,
-      dateTime: time,
-    }));
-  
-    setSelectedTime(time);
-  
-    if (date.justDate) {
-   //   console.log(`Data selecionada: ${format(date.justDate, 'dd/MM/yyyy')} - Horário selecionado: ${format(time, 'HH:mm:ss')}`);
-    }
+    setSelectedTimes(prev => {
+      // Se o horário já estiver selecionado, removê-lo, caso contrário, adicioná-lo
+      if (prev.some(selectedTime => selectedTime.getTime() === time.getTime())) {
+        return prev.filter(selectedTime => selectedTime.getTime() !== time.getTime());
+      } else {
+        return [...prev, time];
+      }
+    });
   };
-  
+
   const handleSubmit = async () => {
-    if (!date.justDate || !selectedTime) {
+    if (!date.justDate || selectedTimes.length === 0) {
       throw new Error("Erro: data ou horário não selecionados");
     }
   
-    // Combina justDate com selectedTime
-    const combinedDateTime = new Date(date.justDate);
-    combinedDateTime.setHours(selectedTime.getHours());
-    combinedDateTime.setMinutes(selectedTime.getMinutes());
-    combinedDateTime.setSeconds(selectedTime.getSeconds());
+    // Combina justDate com selectedTimes
+    const combinedDates = selectedTimes.map(selectedTime => {
+      const combinedDateTime = new Date(date.justDate);
+      combinedDateTime.setHours(selectedTime.getHours());
+      combinedDateTime.setMinutes(selectedTime.getMinutes());
+      combinedDateTime.setSeconds(selectedTime.getSeconds());
+      return combinedDateTime;
+    });
   
-    await newAvailability(combinedDateTime, 1);
+    await newAvailability(combinedDates, 1);
   };
   
-
   return (
     <div>
       <div className="header w-full h-auto md:h-[10rem] bg-[#52B6A4] rounded-b-3xl p-4">
@@ -144,6 +145,7 @@ const Availability = () => {
               onClickDay={(date) => setDate((prev) => ({ ...prev, justDate: date }))}
               tileClassName={({ date }) => 'calendar-tile'}
             />
+            <p className='pl-5'>*Selecione o dia, e seus respectivos horário disponíveis</p>
           </div>
 
           <div className="times-container">
@@ -158,7 +160,7 @@ const Availability = () => {
                     <div
                       key={`time-${i}`}
                       className={`flex justify-center rounded-ss-xl rounded-br-xl w-[7rem] p-2 font-medium border-2 border-[#3E9C81] 
-                      ${selectedTime === time ? 'bg-[#296856] text-white' : 'text-[#296856]'} 
+                      ${selectedTimes.some(selectedTime => selectedTime.getTime() === time.getTime()) ? 'bg-[#296856] text-white' : 'text-[#296856]'} 
                       hover:bg-[#296856] hover:text-white cursor-pointer transition`}
                       onClick={() => handleTimeClick(time)}
                     >

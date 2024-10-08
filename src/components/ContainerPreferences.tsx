@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import usePreferences from "../Ts/usePreferences";
 import axios from 'axios';
-let resgateId = localStorage.getItem('id_usuario')
-console.log(resgateId);
+import { useNavigate } from 'react-router-dom';
 
 const ContainerPreferences: React.FC = () => {
     const { preferences, loading, error } = usePreferences();
     const [selectedPrefIds, setSelectedPrefIds] = useState<number[]>([]);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const navigate = useNavigate();
+    
+    let resgateId = localStorage.getItem('id_usuario');
+    const id_usuario = resgateId ? Number(resgateId) : null;
 
     const togglePreference = (id: number) => {
         setSelectedPrefIds((prevSelected) => {
@@ -40,15 +44,22 @@ const ContainerPreferences: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        const id_usuario = Number(resgateId)
+        if (!id_usuario) {
+            alert('ID de usuário não encontrado.');
+            return;
+        }
+
+        setIsSubmitting(true);
         try {
             for (const prefId of selectedPrefIds) {
-                console.log(`Enviando: id_cliente: ${id_usuario}, preferencias: ${prefId}`); // Log para depuração
+                console.log(`Enviando: id_cliente: ${id_usuario}, preferencias: ${prefId}`);
                 await postPreference(id_usuario, prefId);
             }
             alert('Preferências enviadas com sucesso!');
         } catch (error) {
             alert('Erro ao enviar as preferências.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -71,11 +82,14 @@ const ContainerPreferences: React.FC = () => {
             <div className="mt-4 w-full max-w-[800px] flex flex-col items-center">
                 <button 
                     onClick={handleSubmit}
-                    className='w-[80%] sm:w-[8rem] h-[2rem] rounded bg-[#52B6A4] text-white font-semibold border-solid'
+                    disabled={isSubmitting} // Desabilita o botão se estiver enviando
+                    className={`w-[80%] sm:w-[8rem] h-[2rem] rounded ${isSubmitting ? 'bg-gray-400' : 'bg-[#52B6A4]'} text-white font-semibold border-solid`}
                 >
-                    Iniciar
+                    {isSubmitting ? 'Enviando...' : 'Iniciar'}
                 </button>
-                <p className='underline text-[#296856] my-4 text-center'>Pular esta etapa!</p>
+                <p className='underline text-[#296856] my-4 text-center cursor-pointer' onClick={() => navigate('/Home')}>
+                    Pular esta etapa!
+                </p>
             </div>
         </div>
     );
