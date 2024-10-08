@@ -216,7 +216,7 @@ const ContainerRegister: React.FC = () => {
                 </div>
                 <div className="textConta flex justify-around">
                     <p>Já tem conta?</p>
-                    <p onClick={() => navigate('/Home')} className='cursor-pointer text-[#296856]'>Login</p>
+                    <p onClick={() => navigate('/Availability')} className='cursor-pointer text-[#296856]'>Login</p>
                 </div>
             </div>
         </div>
