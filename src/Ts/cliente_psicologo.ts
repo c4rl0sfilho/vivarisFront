@@ -14,8 +14,6 @@ interface ClientData {
     cip?: string;
 }
 
-let idResgatado
-
 export const registerUser = async (selectedButton: 'Cliente' | 'Psicólogo', clientData: ClientData) => {
     
     const endpoint = selectedButton === 'Cliente' 

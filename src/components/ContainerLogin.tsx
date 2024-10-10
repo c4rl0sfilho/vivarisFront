@@ -51,8 +51,10 @@ const ContainerLogin = () => {
             if (response.status == 200) {
                 console.log('Login bem-sucedido:', response);
 
-                // Recupera o valor do localStorage com a chave "IdDoCliente"
-                const idDoCliente = localStorage.getItem('IdDoCliente');
+                let idDoCliente = response.data.cliente.usuario.id;
+
+                // Armazena o ID do cliente no localStorage
+                localStorage.setItem('idDoCliente', idDoCliente);
 
                 // Verifica se o valor existe no localStorage e exibe no console
                 if (idDoCliente) {
@@ -61,7 +63,21 @@ const ContainerLogin = () => {
                     console.log('Nenhum ID de cliente encontrado no localStorage');
                 }
 
-                // navigate('/Home');
+               if (selectedButton === 'Cliente') {
+                console.log(idDoCliente);
+                
+                let url = `http://localhost:8080/v1/vivaris/usuario/preferencias/${idDoCliente}`;
+
+                const response = await axios.get(url);                
+                
+                if(response.data.data.preferencias.length < 1){
+                    navigate('/Preferences');
+                }
+                else{
+                    navigate('/Home');
+                }
+                
+               }
                 alert('Login bem-sucedido');
             } else {
                 alert('Email ou senha inválidos ou status não autorizado');
