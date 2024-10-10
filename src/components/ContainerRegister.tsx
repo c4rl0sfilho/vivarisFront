@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../Ts/cliente_psicologo.ts';
+import FormInput from './FormInput.tsx';
 
 interface FormData {
     email: string;
@@ -83,7 +84,7 @@ const ContainerRegister: React.FC = () => {
                     localStorage.setItem('userId', 'id_cliente'); // Define o tipo de usuário
                 }
                 alert('Usuário cadastrado com sucesso!');
-                navigate('/Preferences');
+                navigate('/');
             } else {
                 throw new Error('Erro ao cadastrar usuário');
             }
@@ -115,8 +116,93 @@ const ContainerRegister: React.FC = () => {
                     </button>
                 </div>
                 <div className="inputs">
-                    {/* ... seus inputs aqui ... */}
+                    <FormInput
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        label="Nome"
+                        placeholder='Nome'
+                        required
+                    />
+                    <FormInput
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        label="Email"
+                        placeholder='Email'
+                        required
+                    />
+                    {errors.email && <span className="error text-red-700">{errors.email}</span>}
+                    <FormInput
+                        type="number"
+                        name="cpf"
+                        value={formData.cpf}
+                        onChange={handleChange}
+                        label="CPF"
+                        placeholder='CPF'
+                        required
+                    />
+                    {errors.cpf && <span className="error text-red-700">{errors.cpf}</span>}
+                    <FormInput
+                        type="date"
+                        name="birthdate"
+                        value={formData.birthdate}
+                        onChange={handleChange}
+                        label="Data de Nascimento"
+                        required
+                    />
+                    <FormInput
+                        type="number"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleChange}
+                        label="Telefone"
+                        placeholder='Telefone'
+                        required
+                    />
+                    {errors.phone && <span className="error text-red-700">{errors.phone}</span>}
+                    <select name="gender" className='mt-1 p-2 block w-full border border-black rounded-md' value={formData.gender} onChange={handleChange}>
+                        <option value="">Sexo</option>
+                        <option value="1">Masculino</option>
+                        <option value="2">Feminino</option>
+                        <option value="3">Não Binário</option>
+                    </select>
+                    {errors.gender && <span className="error text-red-700">{errors.gender}</span>}
+                    <FormInput
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        label="Senha"
+                        placeholder='Senha'
+                        required
+                    />
+                    {errors.password && <span className="error text-red-700">{errors.password}</span>}
+                    <FormInput
+                        type="password"
+                        name="confirmPassword"
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        label="Confirmar Senha"
+                        placeholder='Confirmar Senha'
+                        required
+                    />
+                    {errors.confirmPassword && <span className="error text-red-700">{errors.confirmPassword}</span>}
                 </div>
+                {selectedButton === 'Psicólogo' && (
+                    <div className="inputs">
+                        <FormInput
+                            type="text"
+                            name="cip"
+                            value={formData.cip || ''}
+                            onChange={handleChange}
+                            label="CIP"
+                            placeholder='CIP'
+                        />
+                    </div>
+                )}
                 <div className="buttonLogin flex justify-center py-4">
                     <button
                         id='cadastrar'
@@ -128,7 +214,7 @@ const ContainerRegister: React.FC = () => {
                 </div>
                 <div className="textConta flex justify-around">
                     <p>Já tem conta?</p>
-                    <p onClick={() => navigate('/Home')} className='cursor-pointer text-[#296856]'>Login</p>
+                    <p onClick={() => navigate('/')} className='cursor-pointer text-[#296856]'>Login</p>
                 </div>
             </div>
         </div>

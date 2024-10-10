@@ -16,22 +16,26 @@ interface dateType {
 const newAvailability = async (dates: Date[], idProfessional: number) => {
   if (!dates.length) return false;
 
-  const weekDays = [
-    'Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'
-  ];
+  const weekDays = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];
 
   const requests = dates.map(date => {
     const weekDayIndex = date.getDay();
     const weekDay = weekDays[weekDayIndex];
 
+    // Define o horário de início
+    const horario_inicio = format(date, 'HH:mm:ss');
+
+    // Adiciona o intervalo (ex: 1 hora) para definir o horário de fim
+    const horario_fim = format(add(date, { hours: 1 }), 'HH:mm:ss');
+
     const data = {
       dia_semana: weekDay,
-      horario_inicio: format(date, 'HH:mm:ss'),
-      horario_fim: format(date, 'HH:mm:ss'),
+      horario_inicio: horario_inicio,
+      horario_fim: horario_fim,
     };
 
     console.log('Dados enviados para o backend:', data);
-    
+
     return axios.post('http://localhost:8080/v1/vivaris/disponibilidade', data, {
       headers: {
         'Content-Type': 'application/json',
@@ -96,7 +100,7 @@ const Availability = () => {
     if (!date.justDate || selectedTimes.length === 0) {
       throw new Error("Erro: data ou horário não selecionados");
     }
-  
+
     // Combina justDate com selectedTimes
     const combinedDates = selectedTimes.map(selectedTime => {
       const combinedDateTime = new Date(date.justDate);
@@ -105,10 +109,10 @@ const Availability = () => {
       combinedDateTime.setSeconds(selectedTime.getSeconds());
       return combinedDateTime;
     });
-  
+
     await newAvailability(combinedDates, 1);
   };
-  
+
   return (
     <div>
       <div className="header w-full h-auto md:h-[10rem] bg-[#52B6A4] rounded-b-3xl p-4">
@@ -144,7 +148,9 @@ const Availability = () => {
               view="month"
               onClickDay={(date) => setDate((prev) => ({ ...prev, justDate: date }))}
               tileClassName={({ date }) => 'calendar-tile'}
+              value={date.justDate} // Isso mantém a data selecionada no calendário
             />
+
             <p className='pl-5'>*Selecione o dia, e seus respectivos horário disponíveis</p>
           </div>
 

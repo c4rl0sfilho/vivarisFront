@@ -47,18 +47,33 @@ const ContainerLogin = () => {
                 senha: password
             });
 
-            // Verifica se há algum usuário retornado na resposta
-            if (response.data) {
-                console.log('Login bem-sucedido:', response.data);
-                navigate('/Home');
+            // Verifica se o status da resposta é true
+            if (response.status == 200) {
+                console.log('Login bem-sucedido:', response);
+
+                // Recupera o valor do localStorage com a chave "IdDoCliente"
+                const idDoCliente = localStorage.getItem('IdDoCliente');
+
+                // Verifica se o valor existe no localStorage e exibe no console
+                if (idDoCliente) {
+                    console.log('ID do Cliente armazenado no localStorage:', idDoCliente);
+                } else {
+                    console.log('Nenhum ID de cliente encontrado no localStorage');
+                }
+
+                // navigate('/Home');
+                alert('Login bem-sucedido');
             } else {
-                alert('Email ou senha inválidos');
+                alert('Email ou senha inválidos ou status não autorizado');
             }
+
 
         } catch (err: any) {
             setError(err.response?.data?.message || 'Erro ao fazer login');
             console.error('Erro no login:', err);
-        } finally {
+        }
+
+        finally {
             setLoading(false);
         }
     };

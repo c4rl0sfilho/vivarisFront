@@ -1,4 +1,5 @@
 import React from 'react';
+import HeaderHome from '../components/HeaderHome';
 
 const Home = () => {
     const getUserType = () => {
@@ -15,15 +16,16 @@ const Home = () => {
         <div>
             {userType === 'client' && (
                 <div>
+                    <HeaderHome/>
                     <h1>Bem-vindo, Cliente!</h1>
-                    <p>Aqui estão as suas opções como cliente.</p>
                     {/* Adicione o conteúdo para clientes aqui */}
                 </div>
             )}
             {userType === 'psychologist' && (
                 <div>
-                    <h1>Bem-vindo, Psicólogo!</h1>
-                    <p>Aqui estão as suas opções como psicólogo.</p>
+                    <HeaderHome/>
+                    <h1>Bem-vindo, Psicologo!</h1>
+                    <p>01</p>
                     {/* Adicione o conteúdo para psicólogos aqui */}
                 </div>
             )}

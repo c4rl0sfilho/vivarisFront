@@ -31,4 +31,3 @@ export const registerUser = async (selectedButton: 'Cliente' | 'Psicólogo', cli
    return response
 };
 
-localStorage.setItem('IdDoCliente', String(idResgatado))
