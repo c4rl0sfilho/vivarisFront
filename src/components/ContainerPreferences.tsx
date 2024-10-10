@@ -9,7 +9,7 @@ const ContainerPreferences: React.FC = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
     
-    let resgateId = localStorage.getItem('id_usuario');
+    let resgateId = localStorage.getItem('idDoCliente');
     const id_usuario = resgateId ? Number(resgateId) : null;
 
     const togglePreference = (id: number) => {
@@ -29,7 +29,7 @@ const ContainerPreferences: React.FC = () => {
         try {
             const response = await axios.post('http://localhost:8080/v1/vivaris/cliente/preferencias', {
                 id_cliente: id_usuario,
-                preferencias: id_preferencia,
+                preferencias: [id_preferencia],
             });
             console.log('Resposta do servidor:', response.data);
             return response.data; 
