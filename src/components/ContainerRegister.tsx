@@ -75,14 +75,6 @@ const ContainerRegister: React.FC = () => {
         try {
             const user = await registerUser(selectedButton, clientData);
             if (user) {
-                const userId = user.data.user.id; // Acesse o ID do usuário retornado
-                if (selectedButton === 'Psicólogo') {
-                    localStorage.setItem('id_psicologo', userId); // Armazena o ID do psicólogo
-                    localStorage.setItem('userId', 'id_psicologo'); // Define o tipo de usuário
-                } else {
-                    localStorage.setItem('id_cliente', userId); // Armazena o ID do cliente
-                    localStorage.setItem('userId', 'id_cliente'); // Define o tipo de usuário
-                }
                 alert('Usuário cadastrado com sucesso!');
                 navigate('/');
             } else {
