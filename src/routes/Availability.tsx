@@ -13,7 +13,9 @@ interface dateType {
   dateTime: Date | null;
 }
 
-const newAvailability = async (dates: Date[], idProfessional: number) => {
+let professionaId = localStorage.getItem('idDoCliente');
+
+const newAvailability = async (dates: Date[]) => {
   if (!dates.length) return false;
 
   const weekDays = ['Domingo', 'Segunda', 'Terca', 'Quarta', 'Quinta', 'Sexta', 'Sabado'];
@@ -21,11 +23,7 @@ const newAvailability = async (dates: Date[], idProfessional: number) => {
   const requests = dates.map(date => {
     const weekDayIndex = date.getDay();
     const weekDay = weekDays[weekDayIndex];
-
-    // Define o horário de início
     const horario_inicio = format(date, 'HH:mm:ss');
-
-    // Adiciona o intervalo (ex: 1 hora) para definir o horário de fim
     const horario_fim = format(add(date, { hours: 1 }), 'HH:mm:ss');
 
     const data = {
@@ -45,12 +43,12 @@ const newAvailability = async (dates: Date[], idProfessional: number) => {
 
   try {
     const responses = await Promise.all(requests);
-    console.log('Disponibilidade cadastrada com sucesso:', responses);
+    console.log('Respostas do backend:', responses);
+    const ids = responses.map(response => response.data.data.id); // Ajuste conforme a estrutura
+    return ids;
   } catch (error) {
     console.error('Erro ao enviar a disponibilidade:', error);
-    if (axios.isAxiosError(error)) {
-      console.error('Erro na resposta:', error.response?.data);
-    }
+    throw error;
   }
 };
 
@@ -87,7 +85,6 @@ const Availability = () => {
 
   const handleTimeClick = (time: Date) => {
     setSelectedTimes(prev => {
-      // Se o horário já estiver selecionado, removê-lo, caso contrário, adicioná-lo
       if (prev.some(selectedTime => selectedTime.getTime() === time.getTime())) {
         return prev.filter(selectedTime => selectedTime.getTime() !== time.getTime());
       } else {
@@ -101,7 +98,6 @@ const Availability = () => {
       throw new Error("Erro: data ou horário não selecionados");
     }
 
-    // Combina justDate com selectedTimes
     const combinedDates = selectedTimes.map(selectedTime => {
       const combinedDateTime = new Date(date.justDate);
       combinedDateTime.setHours(selectedTime.getHours());
@@ -110,7 +106,39 @@ const Availability = () => {
       return combinedDateTime;
     });
 
-    await newAvailability(combinedDates, 1);
+    try {
+      const ids = await newAvailability(combinedDates); // Obtém os IDs
+      await Promise.all(ids.map(id => responseProfessional(id))); // Chama a função para cada ID
+    } catch (error) {
+      console.error("Erro ao cadastrar disponibilidade:", error);
+    }
+  };
+
+  // Função responseProfessional
+  const responseProfessional = async (id: string) => {
+    const url = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${professionaId}`;
+    
+    const data = {
+      disponibilidade: id,
+      status: "Livre",
+    };
+
+    console.log(data);
+    
+
+    try {
+      const response = await axios.post(url, data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Profissional atualizado com sucesso:', response.data);
+    } catch (error) {
+      console.error('Erro ao atualizar profissional:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Erro na resposta:', error.response?.data);
+      }
+    }
   };
 
   return (
@@ -131,8 +159,7 @@ const Availability = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="profile-picture bg-red-600 w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full">
-            </div>
+            <div className="profile-picture bg-red-600 w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full"></div>
             <HiOutlineBellAlert size={30} className="text-white cursor-pointer" />
             <FaGear size={30} className="text-white cursor-pointer" />
           </div>
@@ -148,10 +175,9 @@ const Availability = () => {
               view="month"
               onClickDay={(date) => setDate((prev) => ({ ...prev, justDate: date }))}
               tileClassName={({ date }) => 'calendar-tile'}
-              value={date.justDate} // Isso mantém a data selecionada no calendário
+              value={date.justDate}
             />
-
-            <p className='pl-5'>*Selecione o dia, e seus respectivos horário disponíveis</p>
+            <p className='pl-5'>*Selecione o dia, e seus respectivos horários disponíveis</p>
           </div>
 
           <div className="times-container">

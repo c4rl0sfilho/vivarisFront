@@ -42,7 +42,6 @@ const ContainerPreferences: React.FC = () => {
             throw error; 
         }
     };
-
     const handleSubmit = async () => {
         if (!id_usuario) {
             alert('ID de usuário não encontrado.');
