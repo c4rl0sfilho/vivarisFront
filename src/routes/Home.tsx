@@ -4,9 +4,14 @@ import ContainerHomePsico from '../components/ContainerHomePsico';
 
 const Home = () => {
     const getUserType = () => {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-            return userId === "id_cliente" ? 'client' : 'psychologist';
+        const clientId = localStorage.getItem('idDoCliente');
+        const psychologistId = localStorage.getItem('idDoPsicologo');
+        
+        if (clientId) {
+            return 'client';
+        }
+        if (psychologistId) {
+            return 'psychologist';
         }
         return null;
     };
@@ -26,7 +31,7 @@ const Home = () => {
                 <div>
                     <HeaderHome/>
                     <div className='flex justify-center pt-12'>
-                    <ContainerHomePsico/>
+                        <ContainerHomePsico/>
                     </div>
                 </div>
             )}

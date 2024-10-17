@@ -55,6 +55,7 @@ const ContainerPreferences: React.FC = () => {
                 await postPreference(id_usuario, prefId);
             }
             alert('Preferências enviadas com sucesso!');
+            navigate('/Home');
         } catch (error) {
             alert('Erro ao enviar as preferências.');
         } finally {

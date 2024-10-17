@@ -40,57 +40,67 @@ const ContainerLogin = () => {
                 ? 'http://localhost:8080/v1/vivaris/login/usuario'
                 : 'http://localhost:8080/v1/vivaris/profissional/login';
 
-            console.log(email, password, selectedButton);
+            console.log('Enviando requisição para:', endpoint);
+            console.log('Com os dados:', { email, senha: password });
 
             const response = await axios.post(endpoint, {
                 email: email,
                 senha: password
             });
 
-            // Verifica se o status da resposta é true
-            if (response.status == 200) {
+            console.log('Resposta da API:', response.data); // Log para verificar a estrutura da resposta
+
+            // Verifica se o status da resposta é 200
+            if (response.status === 200) {
                 console.log('Login bem-sucedido:', response);
 
-                let idDoCliente = response.data.cliente.usuario.id;
+                if (selectedButton === 'Cliente') {
+                    // Verifica a estrutura da resposta para o cliente
+                    if (response.data && response.data.cliente && response.data.cliente.usuario) {
+                        let idDoCliente = response.data.cliente.usuario.id;
+                        localStorage.setItem('idDoCliente', idDoCliente);
 
-                // Armazena o ID do cliente no localStorage
-                localStorage.setItem('idDoCliente', idDoCliente);
+                        if (idDoCliente) {
+                            console.log('ID do Cliente armazenado no localStorage:', idDoCliente);
+                        } else {
+                            console.log('Nenhum ID de cliente encontrado no localStorage');
+                        }
 
-                // Verifica se o valor existe no localStorage e exibe no console
-                if (idDoCliente) {
-                    console.log('ID do Cliente armazenado no localStorage:', idDoCliente);
+                        let url = `http://localhost:8080/v1/vivaris/usuario/preferencias/${idDoCliente}`;
+
+                        const preferenciasResponse = await axios.get(url);
+
+                        if (preferenciasResponse.data.data.preferencias.length < 1) {
+                            navigate('/Preferences');
+                        } else {
+                            navigate('/Home');
+                        }
+                    } else {
+                        console.error('Estrutura de resposta inesperada para Cliente', response.data);
+                        setError('Erro inesperado ao processar a resposta do login para Cliente');
+                    }
+
                 } else {
-                    console.log('Nenhum ID de cliente encontrado no localStorage');
+                    // Verifica a estrutura da resposta para o psicólogo
+                    if (response.data.data.id) {
+                        let idDoPsicologo = response.data.data.id
+                        localStorage.setItem('idDoPsicologo', idDoPsicologo);
+                        console.log('ID do Psicólogo armazenado no localStorage:', idDoPsicologo);
+                        navigate('/Home');
+                    } else {
+                        setError('Erro inesperado ao processar a resposta do login para Psicólogo');
+                    } 
                 }
 
-               if (selectedButton === 'Cliente') {
-                console.log(idDoCliente);
-                
-                let url = `http://localhost:8080/v1/vivaris/usuario/preferencias/${idDoCliente}`;
-
-                const response = await axios.get(url);                
-                
-                if(response.data.data.preferencias.length < 1){
-                    navigate('/Preferences');
-                }
-                else{
-                    navigate('/Home');
-                }
-                
-               }
                 alert('Login bem-sucedido');
             } else {
                 alert('Email ou senha inválidos ou status não autorizado');
             }
 
-
         } catch (err: any) {
-            setError(err.response?.data?.message || 'Erro ao fazer login');
-            console.error('Erro no login:', err);
-        }
-
-        finally {
-            setLoading(false);
+            const errorMessage = err.response?.data?.message || 'Erro ao fazer login';
+            setError(errorMessage);
+            console.error('Erro no login:', err.response || err);
         }
     };
 
