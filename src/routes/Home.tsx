@@ -1,5 +1,6 @@
 import React from 'react';
 import HeaderHome from '../components/HeaderHome';
+import ContainerHomePsico from '../components/ContainerHomePsico';
 
 const Home = () => {
     const getUserType = () => {
@@ -24,9 +25,9 @@ const Home = () => {
             {userType === 'psychologist' && (
                 <div>
                     <HeaderHome/>
-                    <h1>Bem-vindo, Psicologo!</h1>
-                    <p>01</p>
-                    {/* Adicione o conteúdo para psicólogos aqui */}
+                    <div className='flex justify-center pt-12'>
+                    <ContainerHomePsico/>
+                    </div>
                 </div>
             )}
             {userType === null && (
