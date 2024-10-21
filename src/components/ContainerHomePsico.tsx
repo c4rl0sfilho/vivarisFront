@@ -3,6 +3,21 @@ import imgBook from '../assets/book.svg';
 import imgBatePapo from '../assets/batepapo.svg';
 import imgBlog from '../assets/blog.svg';
 import imgGroupConversation from '../assets/groupConversation.svg';
+import { FaPlus } from "react-icons/fa6";
+import imgBell from '../assets/bell.svg';
+import imgRadioWaves from '../assets/radioWaves.svg';
+import { Navigate, useNavigate } from 'react-router-dom';
+
+
+import { register } from 'swiper/element/bundle';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/scrollbar';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
+import 'swiper/css/effect-fade'; // Importação do CSS para efeito de fade
+import 'swiper/css/autoplay'; // Importação do CSS para autoplay
+register();
 
 function DayOfWeek() {
   const [dayOfWeek, setDayOfWeek] = useState<string>('');
@@ -27,8 +42,17 @@ function DayOfWeek() {
     setShowAll(!showAll);
   };
 
+  const data = [
+    { id: '1', image: imgBell, nome: 'Lembrete' },
+    { id: '2', image: imgBatePapo, nome: 'Teste' },
+    { id: '3', image: imgBook, nome: 'Lacceace' },
+    { id: '4', image: imgBlog, nome: 'AAAAAAAAAAAAAA' },
+  ];
+
+  const navigate = useNavigate();
+
   return (
-    <div className='w-full h-auto flex flex-col lg:flex-row gap-8 px-6 lg:px-32'>
+    <div className='w-full h-auto flex flex-col lg:flex-row gap-8 px-6'>
       {/* Botões no lado esquerdo */}
       <div className='w-full lg:w-60 flex flex-col justify-center items-center gap-8'>
         <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
@@ -52,8 +76,8 @@ function DayOfWeek() {
       </div>
 
       {/* Conteúdo do lado direito */}
-      <div className='w-full lg:w-[100%] h-auto flex flex-col justify-between'>
-        <div className='h-[50vh] lg:h-[75 %] w-full bg-gradient-to-r from-[#26D6A3] to-[#099C73] rounded-ss-3xl rounded-ee-3xl p-4'>
+      <div className='w-full lg:w-[80%] h-auto flex flex-col justify-between'>
+        <div className='h-[50vh] lg:h-[75%] w-full bg-gradient-to-r from-[#26D6A3] to-[#099C73] rounded-ss-3xl rounded-ee-3xl p-4'>
           <div className="header flex justify-between">
             <h1 className='text-[#296856] text-2xl sm:text-3xl font-bold'>{dayOfWeek}</h1>
             <h2 className='text-white text-xl sm:text-2xl font-bold'>Consultas Hoje</h2>
@@ -75,7 +99,44 @@ function DayOfWeek() {
             </button>
           </div>
         </div>
-        <div className='h-24 sm:h-[20%] w-full bg-slate-500'></div>
+        <div className='h-64 sm:h-[20%] w-full justify-center flex p-4 gap-4'>
+          <div
+            className='slider w-[40%] h-full bg-[#CBEBDA] rounded-lg' 
+          >
+            <Swiper
+              slidesPerView={1} 
+              pagination={false} 
+              className="mySwiper" 
+              effect="fade" 
+              fadeEffect={{ crossFade: true }} 
+              autoplay={{
+                delay: 3000, 
+                disableOnInteraction: false, 
+              }}
+            >
+              {data.map((item) => (
+                <SwiperSlide key={item.id}>
+                  <div className='w-full h-[60%] flex items-center ml-20 p-4'>
+                    <img src={item.image} alt={`Slide ${item.id}`} className="w-16 h-16 object-cover mr-16" />
+                    <h1 className='text-[#296856] text-2xl font-bold'>{item.nome}</h1>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+          <div className='buttonAddAvaliability w-[7%] h-full bg-white rounded-full p-4 flex justify-center items-center border-4 border-[#52B6A4] cursor-pointer' style={{ boxShadow: '0 4px 15px #52B6A4' }} onClick={() => navigate('/Availability')}>
+            <FaPlus size={40} color='#52B6A4' />
+          </div>
+          <div className='buttonAddLiveEvent w-[45%] h-full bg-[#CBEBDA] rounded-lg flex items-center justify-evenly cursor-pointer'>
+            <img src={imgRadioWaves} alt="Ondas de Rádio" />
+            <h1 className='text-[#296856] text-2xl font-bold'>Eventos em Live</h1>
+            <div className='h-16 w-16 flex rounded-full bg-gradient-to-r from-[#205AD0] to-[#30C2DB] p-[3px] justify-center items-center'>
+              <div className='h-full w-full flex justify-center items-center rounded-full bg-[#CBEBDA]'>
+                <FaPlus size={30} />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

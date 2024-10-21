@@ -27,7 +27,7 @@ const Home = () => {
                     {/* Adicione o conteúdo para clientes aqui */}
                 </div>
             )}
-            {userType === 'psychologist' && (
+            {userType === null && (
                 <div>
                     <HeaderHome/>
                     <div className='flex justify-center pt-12'>
@@ -35,7 +35,7 @@ const Home = () => {
                     </div>
                 </div>
             )}
-            {userType === null && (
+            {userType === 'psychologist' && (
                 <div>
                     <h1>Acesso Negado</h1>
                     <p>Por favor, faça login para acessar esta página.</p>
