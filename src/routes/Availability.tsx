@@ -7,6 +7,7 @@ import { HiOutlineBellAlert } from 'react-icons/hi2';
 import vivarisIcon from '../assets/vivarisIcon.svg';
 import { INTERVAL, STORE_CLOSING_TIME, STORE_OPENING_TIME } from '../constants/Config';
 import '../styles/Calendar.css';
+import { getPsico } from '../Ts/psicologo_data';
 localStorage.clear()
 
 interface dateType {
@@ -64,7 +65,17 @@ const Availability = () => {
   const [userName, setUserName] = useState('');
 
   useEffect(() => {
-    setUserName('Carlos');
+    const fetchData = async () => {
+     console.log(localStorage.getItem('idDoPsicologo'))
+     
+        const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
+        console.log(psicologo);
+        
+        setUserName(psicologo?.data.nome);
+
+  };
+
+  fetchData();
   }, []);
 
   const getTimes = () => {
@@ -110,7 +121,7 @@ const Availability = () => {
 
     try {
       const ids = await newAvailability(combinedDates); // Obtém os IDs
-      
+
       await Promise.all(ids.map(id => responseProfessional(id))); // Chama a função para cada ID
     } catch (error) {
       console.error("Erro ao cadastrar disponibilidade:", error);
@@ -126,11 +137,6 @@ const Availability = () => {
       status: "Livre",
     };
 
-    console.log(professionaId);
-    
-
-    console.log(data);
-    
 
     try {
       const response = await axios.post(url, data, {
@@ -139,6 +145,7 @@ const Availability = () => {
         },
       });
       console.log('Profissional atualizado com sucesso:', response.data);
+      alert('Disponibilidade Cadastrada')
     } catch (error) {
       console.error('Erro ao atualizar profissional:', error);
       if (axios.isAxiosError(error)) {
@@ -155,7 +162,7 @@ const Availability = () => {
             <img src={vivarisIcon} alt="vivaris icon" className="w-[40px] md:w-auto mr-4" />
             <div className="flex flex-col">
               <h1 className="text-white text-xl md:text-2xl font-semibold">
-                Bom dia,<br /> {userName}
+                Olá,<br /> {userName}
               </h1>
             </div>
           </div>
