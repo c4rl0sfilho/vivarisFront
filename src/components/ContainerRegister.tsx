@@ -93,19 +93,19 @@ const ContainerRegister: React.FC = () => {
 
     return (
         <div>
-            <div className='flex flex-col'>
+            <div className='flex flex-col w-[30rem]'>
                 <div className="title flex justify-center pb-8">
-                    <h1 className='text-6xl font-semibold text-[#13916D]'>Cadastre-se</h1>
+                    <h1 className='text-7xl font-semibold text-[#13916D]'>Cadastre-se</h1>
                 </div>
                 <div className="ClienteOrPsicologo flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
+                        className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
                         onClick={() => handleButtonClick('Cliente')}
                     >
                         Cliente
                     </button>
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
+                        className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
                         onClick={() => handleButtonClick('Psicólogo')}
                     >
                         Psicólogo
@@ -203,7 +203,7 @@ const ContainerRegister: React.FC = () => {
                     <button
                         id='cadastrar'
                         onClick={handleSubmit}
-                        className='w-[8rem] h-[2rem] rounded bg-[#296856] text-white font-semibold border-solid'
+                        className='w-[10rem] h-[2rem] rounded bg-[#296856] text-white font-semibold border-solid hover:bg-[#13916D]'
                     >
                         Cadastrar
                     </button>

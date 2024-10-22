@@ -28,7 +28,7 @@ function login() {
               <img src={vivarisLogo} alt="" />
             </div>
             <h1 className='text-[#ffffff] text-8xl font-semibold pl-[90px] mt-[144px]'>Seja<br />Bem Vindo!</h1>
-            <img src={twoBoys} alt="" className='mt-[5rem] ml-[400px]' />
+            <img src={twoBoys} alt="" className=' ml-[12rem] mt-[5rem] w-full h-full' />
           </div>
           <div className='flex flex-col p-8 w-1/2 justify-center items-center'>
             <ContainerLogin />

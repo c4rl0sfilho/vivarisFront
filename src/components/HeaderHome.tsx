@@ -10,6 +10,8 @@ const HeaderHome = () => {
     const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
     const settingsMenuRef = useRef<HTMLDivElement | null>(null); // Referência para o menu de configurações
 
+    
+
     useEffect(() => {
         setUserName('Carlos');
 

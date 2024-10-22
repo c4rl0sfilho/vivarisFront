@@ -116,14 +116,14 @@ const ContainerLogin = () => {
     };
 
     return (
-        <div className='flex flex-col'>
+        <div className='flex flex-col w-[30rem]'>
             <div className="title flex justify-center pb-8">
-                <h1 className='text-6xl font-semibold text-[#13916D]'>Login</h1>
+                <h1 className='text-7xl font-semibold text-[#13916D]'>Login</h1>
             </div>
             <div className="ClienteOrPsicologo flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
                 <div>
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
+                        className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
         ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'bg-[#ffffff] text-[#296856]'}`}
                         onClick={() => handleButtonClick('Cliente')}>
                         Cliente
@@ -131,7 +131,7 @@ const ContainerLogin = () => {
                 </div>
                 <div>
                     <button
-                        className={`w-[10rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
+                        className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
         ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'bg-[#ffffff] text-[#296856]'}`}
                         onClick={() => handleButtonClick('Psicólogo')}>
                         Psicólogo
@@ -161,7 +161,7 @@ const ContainerLogin = () => {
             <div className="buttonLogin flex justify-center py-4">
                 <button
                     onClick={handleLogin}
-                    className='w-[8rem] h-[2rem] rounded bg-[#296856] text-white font-semibold border-solid'
+                    className='w-[10rem] h-[2rem] rounded bg-[#296856] text-white font-semibold border-solid hover:bg-[#13916D]'
                     disabled={loading}
                 >
                     {loading ? 'Entrando...' : 'Login'}

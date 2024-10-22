@@ -12,7 +12,7 @@ interface FormInputProps {
 
 const FormInput: React.FC<FormInputProps> = ({ type, name, value, onChange, placeholder, required = false }) => {
     return (
-        <div>
+        <div className='flex'>
             <input
                 type={type}
                 name={name}
@@ -22,6 +22,7 @@ const FormInput: React.FC<FormInputProps> = ({ type, name, value, onChange, plac
                 required={required}
                 placeholder={placeholder}
             />
+            
         </div>
     );
 };
