@@ -7,14 +7,14 @@ import { HiOutlineBellAlert } from 'react-icons/hi2';
 import vivarisIcon from '../assets/vivarisIcon.svg';
 import { INTERVAL, STORE_CLOSING_TIME, STORE_OPENING_TIME } from '../constants/Config';
 import '../styles/Calendar.css';
+localStorage.clear()
 
 interface dateType {
   justDate: Date | null;
   dateTime: Date | null;
 }
 
-let professionaId = localStorage.getItem('idDoCliente');
-
+ 
 const newAvailability = async (dates: Date[]) => {
   if (!dates.length) return false;
 
@@ -24,7 +24,7 @@ const newAvailability = async (dates: Date[]) => {
     const weekDayIndex = date.getDay();
     const weekDay = weekDays[weekDayIndex];
     const horario_inicio = format(date, 'HH:mm:ss');
-    const horario_fim = format(add(date, { hours: 1 }), 'HH:mm:ss');
+    const horario_fim = format(add(date, { minutes: 45}), 'HH:mm:ss');
 
     const data = {
       dia_semana: weekDay,
@@ -53,6 +53,8 @@ const newAvailability = async (dates: Date[]) => {
 };
 
 const Availability = () => {
+  let professionaId = localStorage.getItem('idDoPsicologo');
+
   const [date, setDate] = useState<dateType>({
     justDate: null,
     dateTime: null,
@@ -108,6 +110,7 @@ const Availability = () => {
 
     try {
       const ids = await newAvailability(combinedDates); // Obtém os IDs
+      
       await Promise.all(ids.map(id => responseProfessional(id))); // Chama a função para cada ID
     } catch (error) {
       console.error("Erro ao cadastrar disponibilidade:", error);
@@ -122,6 +125,9 @@ const Availability = () => {
       disponibilidade: id,
       status: "Livre",
     };
+
+    console.log(professionaId);
+    
 
     console.log(data);
     
