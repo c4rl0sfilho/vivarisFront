@@ -71,9 +71,13 @@ const ContainerRegister: React.FC = () => {
             link_instagram: formData.instagram || '',
             cip: selectedButton === 'Psicólogo' ? formData.cip : undefined,
         };
-    
+        console.log(selectedButton, clientData);
+        
         try {
             const user = await registerUser(selectedButton, clientData);
+
+            console.log(user);
+            
             if (user) {
                 alert('Usuário cadastrado com sucesso!');
                 navigate('/');

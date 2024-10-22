@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const ContainerLogin = () => {
+    localStorage.clear()
     const [selectedButton, setSelectedButton] = useState<'Cliente' | 'Psicólogo'>('Cliente');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,14 +40,19 @@ const ContainerLogin = () => {
             const endpoint = selectedButton === 'Cliente'
                 ? 'http://localhost:8080/v1/vivaris/login/usuario'
                 : 'http://localhost:8080/v1/vivaris/profissional/login';
+                
 
             console.log('Enviando requisição para:', endpoint);
             console.log('Com os dados:', { email, senha: password });
 
+
+            console.log(endpoint); 
             const response = await axios.post(endpoint, {
                 email: email,
-                senha: password
+                senha: password,
+                
             });
+            
 
             console.log('Resposta da API:', response.data); // Log para verificar a estrutura da resposta
 
@@ -56,6 +62,9 @@ const ContainerLogin = () => {
 
                 if (selectedButton === 'Cliente') {
                     // Verifica a estrutura da resposta para o cliente
+
+                    console.log(response);
+                    
                     if (response.data && response.data.cliente && response.data.cliente.usuario) {
                         let idDoCliente = response.data.cliente.usuario.id;
                         localStorage.setItem('idDoCliente', idDoCliente);
@@ -69,6 +78,8 @@ const ContainerLogin = () => {
                         let url = `http://localhost:8080/v1/vivaris/usuario/preferencias/${idDoCliente}`;
 
                         const preferenciasResponse = await axios.get(url);
+                        console.log(preferenciasResponse);
+                        
 
                         if (preferenciasResponse.data.data.preferencias.length < 1) {
                             navigate('/Preferences');
