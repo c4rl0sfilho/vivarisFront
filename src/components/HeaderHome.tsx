@@ -3,27 +3,38 @@ import vivarisIcon from '../assets/vivarisIcon.svg';
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineBellAlert } from "react-icons/hi2";
 import { FaGear } from "react-icons/fa6";
+import { getPsico } from '../Ts/psicologo_data';
 
-const HeaderHome = () => {
+const HeaderHome =  () => {
     const [userName, setUserName] = useState("");
     const [greetingMessage, setGreetingMessage] = useState("");
     const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
     const settingsMenuRef = useRef<HTMLDivElement | null>(null); // Referência para o menu de configurações
 
-    
 
     useEffect(() => {
-        setUserName('Carlos');
+        const fetchData = async () => {
+            if (localStorage.key(0) === 'idDoCliente') {
+                setUserName('Carlos');
+            } else {
+              const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
+                
+                setUserName(psicologo?.data.nome);
+            }
 
-        const currentHour = new Date().getHours();
-        if (currentHour < 12) {
-            setGreetingMessage('Bom dia,');
-        } else if (currentHour < 18) {
-            setGreetingMessage('Boa tarde,');
-        } else {
-            setGreetingMessage('Boa noite,');
-        }
+            const currentHour = new Date().getHours();
+            if (currentHour < 12) {
+                setGreetingMessage('Bom dia,');
+            } else if (currentHour < 18) {
+                setGreetingMessage('Boa tarde,');
+            } else {
+                setGreetingMessage('Boa noite,');
+            }
+        };
+
+        fetchData();
     }, []);
+
 
     const toggleSettingsMenu = () => {
         setIsSettingsMenuOpen(prev => !prev);

@@ -1,6 +1,7 @@
 import React from 'react';
 import HeaderHome from '../components/HeaderHome';
 import ContainerHomePsico from '../components/ContainerHomePsico';
+import { Await } from 'react-router-dom';
 
 const Home = () => {
     const getUserType = () => {
