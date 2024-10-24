@@ -1,15 +1,15 @@
 import React from 'react';
 import HeaderHome from '../components/HeaderHome';
 import ContainerHomePsico from '../components/ContainerHomePsico';
-import { Await } from 'react-router-dom';
+import ContainerHomeUser from '../components/ContainerHomeUser';
 
 const Home = () => {
     const getUserType = () => {
         const clientId = localStorage.getItem('idDoCliente');
         const psychologistId = localStorage.getItem('idDoPsicologo');
-        
+
         if (clientId) {
-            return 'client'; 
+            return 'client';
         }
         if (psychologistId) {
             return 'psychologist';
@@ -20,19 +20,20 @@ const Home = () => {
     const userType = getUserType();
 
     return (
-        <div>
+        <div className='bg-[#F1F1F1] h-screen w-screen'>
             {userType === 'client' && (
                 <div>
-                    <HeaderHome/>
-                    <h1>Bem-vindo, Cliente!</h1>
-                    {/* Adicione o conteúdo para clientes aqui */}
+                    <HeaderHome />
+                    <div>
+                        <ContainerHomeUser />
+                    </div>
                 </div>
             )}
             {userType === 'psychologist' && (
                 <div>
-                    <HeaderHome/>
+                    <HeaderHome />
                     <div className='flex justify-center pt-12'>
-                        <ContainerHomePsico/>
+                        <ContainerHomePsico />
                     </div>
                 </div>
             )}
