@@ -8,7 +8,10 @@ import vivarisIcon from '../assets/vivarisIcon.svg';
 import { INTERVAL, STORE_CLOSING_TIME, STORE_OPENING_TIME } from '../constants/Config';
 import '../styles/Calendar.css';
 import { getPsico } from '../Ts/psicologo_data';
-localStorage.clear()
+
+import MyAvailability from '../components/MyAvailability';
+
+
 
 interface dateType {
   justDate: Date | null;
@@ -227,6 +230,7 @@ const Availability = () => {
             Cadastrar Disponibilidade
           </button>
         </div>
+        <MyAvailability/>
       </div>
     </div>
   );
