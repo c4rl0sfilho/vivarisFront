@@ -25,6 +25,8 @@ export const getPsico = async (idPsico: number) => {
             },
         });
         
+        console.log(response);
+        
         return response.data;
     } catch (error) {
         console.error("Erro ao obter dados do psicólogo:", error);

@@ -1,4 +1,5 @@
 import React from 'react';
+import { GoTrash } from "react-icons/go";
 
 const MyAvailability = () => {
     const data = [

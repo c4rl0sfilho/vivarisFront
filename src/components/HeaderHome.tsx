@@ -19,7 +19,7 @@ const HeaderHome =  () => {
             } else {
               const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
                 
-                setUserName(psicologo?.data.nome);
+              setUserName(await psicologo?.data.data.profissional.nome || '');
             }
 
             const currentHour = new Date().getHours();
