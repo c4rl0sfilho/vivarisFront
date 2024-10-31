@@ -11,14 +11,11 @@ import { getPsico } from '../Ts/psicologo_data';
 
 import MyAvailability from '../components/MyAvailability';
 
-
-
 interface dateType {
   justDate: Date | null;
   dateTime: Date | null;
 }
 
- 
 const newAvailability = async (dates: Date[]) => {
   if (!dates.length) return false;
 
@@ -28,7 +25,7 @@ const newAvailability = async (dates: Date[]) => {
     const weekDayIndex = date.getDay();
     const weekDay = weekDays[weekDayIndex];
     const horario_inicio = format(date, 'HH:mm:ss');
-    const horario_fim = format(add(date, { minutes: 45}), 'HH:mm:ss');
+    const horario_fim = format(add(date, { hours: 1 }), 'HH:mm:ss');
 
     const data = {
       dia_semana: weekDay,
@@ -48,7 +45,7 @@ const newAvailability = async (dates: Date[]) => {
   try {
     const responses = await Promise.all(requests);
     console.log('Respostas do backend:', responses);
-    const ids = responses.map(response => response.data.data.id); // Ajuste conforme a estrutura
+    const ids = responses.map(response => response.data.data.id);
     return ids;
   } catch (error) {
     console.error('Erro ao enviar a disponibilidade:', error);
@@ -66,19 +63,19 @@ const Availability = () => {
 
   const [selectedTimes, setSelectedTimes] = useState<Date[]>([]);
   const [userName, setUserName] = useState('');
+  const [reloadAvailability, setReloadAvailability] = useState(false); // Novo estado para recarregar a disponibilidade
 
   useEffect(() => {
     const fetchData = async () => {
-     console.log(localStorage.getItem('idDoPsicologo'))
-     
-        const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
-        console.log(psicologo);
-        
-        setUserName(psicologo?.data.nome);
+      console.log(localStorage.getItem('idDoPsicologo'));
 
-  };
+      const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
+      console.log(psicologo);
 
-  fetchData();
+      setUserName(psicologo?.data.nome);
+    };
+
+    fetchData();
   }, []);
 
   const getTimes = () => {
@@ -126,20 +123,20 @@ const Availability = () => {
       const ids = await newAvailability(combinedDates); // Obtém os IDs
 
       await Promise.all(ids.map(id => responseProfessional(id))); // Chama a função para cada ID
+
+      setReloadAvailability(prev => !prev); // Alterna o estado para recarregar MyAvailability
     } catch (error) {
       console.error("Erro ao cadastrar disponibilidade:", error);
     }
   };
 
-  // Função responseProfessional
   const responseProfessional = async (id: string) => {
     const url = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${professionaId}`;
-    
+
     const data = {
       disponibilidade: id,
       status: "Livre",
     };
-
 
     try {
       const response = await axios.post(url, data, {
@@ -148,7 +145,6 @@ const Availability = () => {
         },
       });
       console.log('Profissional atualizado com sucesso:', response.data);
-      alert('Disponibilidade Cadastrada')
     } catch (error) {
       console.error('Erro ao atualizar profissional:', error);
       if (axios.isAxiosError(error)) {
@@ -230,7 +226,8 @@ const Availability = () => {
             Cadastrar Disponibilidade
           </button>
         </div>
-        <MyAvailability/>
+        {/* Passa a flag reloadAvailability como prop */}
+        <MyAvailability reloadAvailability={reloadAvailability} />
       </div>
     </div>
   );

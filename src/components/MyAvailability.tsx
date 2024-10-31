@@ -1,17 +1,69 @@
-import React from 'react';
-import { GoTrash } from "react-icons/go";
+import axios from 'axios';
+import React, { useState, useEffect } from 'react';
 
-const MyAvailability = () => {
-    const data = [
-        { id: '1', dia: 'Domingo', horarios: ['10:00', '13:00', '15:00', '18:00'] },
-        { id: '2', dia: 'Segunda-feira', horarios: ['08:00', '10:00', '16:00', '19:00'] },
-        { id: '3', dia: 'Terça-feira', horarios: ['09:00', '12:00', '15:00'] },
-        { id: '4', dia: 'Quarta-feira', horarios: ['12:00', '14:00', '17:00'] },
-        { id: '5', dia: 'Quinta-feira', horarios: ['10:00', '11:00', '12:00', '18:00'] },
-        { id: '6', dia: 'Sexta-feira', horarios: ['09:00', '20:00', '21:00'] },
-        { id: '7', dia: 'Sábado', horarios: ['08:00', '10:00', '14:00', '16:00'] },
-    ];
-    
+// Mapeamento dos dias da semana
+const diasDaSemana = [
+    { id: 1, dia: 'Segunda-feira' },
+    { id: 2, dia: 'Terça-feira' },
+    { id: 3, dia: 'Quarta-feira' },
+    { id: 4, dia: 'Quinta-feira' },
+    { id: 5, dia: 'Sexta-feira' },
+    { id: 6, dia: 'Sábado' },
+    { id: 7, dia: 'Domingo' },
+];
+
+const MyAvailability = ({ reloadAvailability }) => {
+    const [data, setData] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const idPsicologo = localStorage.getItem('idDoPsicologo');
+            const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
+            try {
+                const response = await axios.get(endPoint, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const disponibilidades = response.data.data.disponibilidades;
+
+                // Função para formatar horário para "HH:mm"
+                const formatHour = (dateString) => {
+                    const date = new Date(dateString);
+                    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                };
+
+                // Filtrar horários a partir das 09:00
+                const filteredDisponibilidades = disponibilidades.filter(({ horario_inicio }) => {
+                    const date = new Date(horario_inicio);
+                    return date.getHours() >= 9;
+                });
+
+                // Agrupar por dia, remover duplicados e ordenar horários
+                const groupedData = diasDaSemana.map(({ id, dia }) => {
+                    const horarios = filteredDisponibilidades
+                        .filter(item => item.dia_semana === dia)
+                        .map(item => formatHour(item.horario_inicio))
+                        .filter((value, index, self) => self.indexOf(value) === index); // Remover duplicados
+
+                    horarios.sort((a, b) => {
+                        const [hourA, minuteA] = a.split(':').map(Number);
+                        const [hourB, minuteB] = b.split(':').map(Number);
+                        return hourA - hourB || minuteA - minuteB;
+                    });
+
+                    return { id, dia, horarios };
+                });
+
+                setData(groupedData);
+            } catch (error) {
+                console.error("Erro ao obter dados do usuário:", error);
+            }
+        };
+
+        fetchData();
+    }, [reloadAvailability]);
 
     return (
         <div className='w-full h-auto flex justify-center items-center my-8'>
@@ -23,7 +75,7 @@ const MyAvailability = () => {
                             <div className="flex flex-col items-center">
                                 {horarios.length > 0 ? (
                                     horarios.map((horario, index) => (
-                                        <div key={index} className="flex justify-center w-24 p-2 font-medium border-2 rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-red-600 hover:text-white cursor-pointer transition my-1">
+                                        <div key={index} className="flex justify-center w-24 p-2 font-medium border-2 rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-red-600 hover:text-white hover:border-black cursor-pointer transition my-1">
                                             {horario}
                                         </div>
                                     ))
