@@ -4,8 +4,12 @@ import { FaSearch } from "react-icons/fa";
 import { HiOutlineBellAlert } from "react-icons/hi2";
 import { FaGear } from "react-icons/fa6";
 import { getPsico } from '../Ts/psicologo_data';
+import { getUser } from '../Ts/clienteData';
+import imgUser from '../assets/users.svg'
+import imgSlider from '../assets/Slider.svg'
+import imgLove from '../assets/Love.svg'
 
-const HeaderHome =  () => {
+const HeaderHome = () => {
     const [userName, setUserName] = useState("");
     const [greetingMessage, setGreetingMessage] = useState("");
     const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
@@ -15,11 +19,14 @@ const HeaderHome =  () => {
     useEffect(() => {
         const fetchData = async () => {
             if (localStorage.key(0) === 'idDoCliente') {
-                setUserName('Carlos');
-            } else {
-              const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
+                const user = await getUser(Number(localStorage.getItem('idDoCliente')));
                 
-              setUserName(await psicologo?.data.data.profissional.nome || '');
+                setUserName(await user?.data.nome || '');
+                
+            } else {
+                const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
+                
+                setUserName(await psicologo?.data.data.nome || 'Errorrrrr');
             }
 
             const currentHour = new Date().getHours();
@@ -30,7 +37,7 @@ const HeaderHome =  () => {
             } else {
                 setGreetingMessage('Boa noite,');
             }
-        };
+        };        
 
         fetchData();
     }, []);
@@ -59,24 +66,24 @@ const HeaderHome =  () => {
             <div className='w-full flex flex-col md:flex-row items-center justify-between p-4 md:px-24'>
                 {/* Logo */}
                 <div className='flex items-center mb-4 md:mb-0'>
-                    <img src={vivarisIcon} alt="vivaris icon" className='w-[40px] md:w-auto mr-4'/>
+                    <img src={vivarisIcon} alt="vivaris icon" className='w-[40px] md:w-auto mr-4' />
                     <div className='flex flex-col'>
                         <h1 className='text-white text-xl md:text-2xl font-semibold'>
                             {greetingMessage}<br /> {userName}
                         </h1>
                     </div>
                 </div>
-                
+
                 {/* Campo de busca com ícone */}
                 <div className='flex w-full md:w-[30rem] bg-[#96E3CD] rounded-full items-center mb-4 md:mb-0'>
-                    <input 
-                        type="text" 
-                        placeholder='Pesquisar' 
+                    <input
+                        type="text"
+                        placeholder='Pesquisar'
                         className='flex-grow px-4 py-2 bg-transparent text-[#296856] placeholder-[#296856] focus:outline-none focus:border-gray-300'
                     />
                     <FaSearch size={20} className="text-[#296856] mr-4" />
                 </div>
-                
+
                 {/* Imagem de perfil e ícones */}
                 <div className='flex items-center space-x-4'>
                     <div className="profile-picture bg-red-600 w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full">
@@ -86,10 +93,30 @@ const HeaderHome =  () => {
                     <div className="relative" ref={settingsMenuRef}> {/* Adicionando a referência aqui */}
                         <FaGear size={30} className="text-white cursor-pointer" onClick={toggleSettingsMenu} />
                         {isSettingsMenuOpen && (
-                            <div className="absolute right-0 bg-[#3FC19C] rounded-lg shadow-lg mt-2 w-48">
-                                <button className="w-full text-left px-4 py-2 hover:bg-gray-200">Configuração 1</button>
-                                <button className="w-full text-left px-4 py-2 hover:bg-gray-200">Configuração 2</button>
-                                <button className="w-full text-left px-4 py-2 hover:bg-gray-200">Configuração 3</button>
+                            <div className="absolute right-0 bg-[#3FC19C] rounded-lg shadow-lg mt-2 w-48 p-2">
+                                <div className="settings w-full h-[30rem] flex flex-col ">
+                                    <div className='gap-4 w-auto h-auto items-end flex flex-col'>
+                                        <div className="myGroups py-4 flex cursor-pointer">
+                                            <p className='text-white'>Meus Grupos</p>
+                                            <img src={imgUser} alt="" />
+                                        </div>
+                                        <div className="likedPosts py-4 flex cursor-pointer">
+                                            <p className='text-white'>Posts Curtidos</p>
+                                            <img src={imgLove} alt="" />
+                                        </div>
+                                        <div className='myPreferences py-4 flex border-b-2 border-white cursor-pointer'>
+                                            <p className='text-white'>Minhas Preferências</p>
+                                            <img src={imgSlider} alt="" />
+                                        </div>
+                                    </div>
+
+                                    <div className='flex flex-col w-full h-full justify-end items-end gap-8'>
+                                        <p className='text-white cursor-pointer'>Meu Perfil</p>
+                                        <p className='text-white cursor-pointer'>Configurações</p>
+                                        <p className='text-white cursor-pointer'>Denúncia</p>
+                                        <p className='text-white cursor-pointer'>FAQ</p>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>
