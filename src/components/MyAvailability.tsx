@@ -34,28 +34,30 @@ const MyAvailability = ({ reloadAvailability }) => {
                     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 };
 
-                // Filtrar horários a partir das 09:00
-                const filteredDisponibilidades = disponibilidades.filter(({ horario_inicio }) => {
-                    const date = new Date(horario_inicio);
-                    return date.getHours() >= 9;
-                });
+            
 
                 // Agrupar por dia, remover duplicados e ordenar horários
                 const groupedData = diasDaSemana.map(({ id, dia }) => {
-                    const horarios = filteredDisponibilidades
-                        .filter(item => item.dia_semana === dia)
-                        .map(item => formatHour(item.horario_inicio))
-                        .filter((value, index, self) => self.indexOf(value) === index); // Remover duplicados
-
+                    const horarios = disponibilidades
+                        .filter(item => item.dia_semana === dia) // Filtra as disponibilidades para o dia atual
+                        .map(item => formatHour(item.horario_inicio)) // Formata os horários de início
+                        .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicatas
+                
+                    // Ordena os horários em ordem crescente (horas e minutos)
                     horarios.sort((a, b) => {
-                        const [hourA, minuteA] = a.split(':').map(Number);
-                        const [hourB, minuteB] = b.split(':').map(Number);
-                        return hourA - hourB || minuteA - minuteB;
+                        const [hourA, minuteA] = a.split(':').map(Number); // Converte a hora e minuto de a
+                        const [hourB, minuteB] = b.split(':').map(Number); // Converte a hora e minuto de b
+                        return hourA - hourB || minuteA - minuteB; // Compara as horas, e depois os minutos
                     });
-
-                    return { id, dia, horarios };
+                
+                    return {
+                        id,
+                        dia,
+                        horarios,
+                    };
                 });
 
+                // Atualiza o estado com os dados agrupados
                 setData(groupedData);
             } catch (error) {
                 console.error("Erro ao obter dados do usuário:", error);
