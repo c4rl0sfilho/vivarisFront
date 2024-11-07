@@ -13,6 +13,7 @@ import Preferences from './routes/Preferences.tsx'
 import Home from './routes/Home.tsx'
 import Teste from './routes/Teste.tsx'
 import Availability from './routes/Availability.tsx'
+import Nave from './routes/Nave.jsx'
 
 const router = createBrowserRouter([
   {
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
       {
         path:"/Availability",
         element:<Availability/>
+      },
+      {
+        path: "/Nave",
+        element:<Nave/>
       }
     ]
   }
