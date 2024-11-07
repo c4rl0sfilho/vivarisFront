@@ -2,7 +2,23 @@ import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { format, addHours, parseISO } from 'date-fns';
 
-const diasDaSemana = [
+interface Disponibilidade {
+    id: number;
+    dia_semana: string;
+    horario_inicio: string;
+}
+
+interface Horario {
+    horario: string;
+    id: number;
+}
+
+interface DiaDaSemana {
+    id: number;
+    dia: string;
+}
+
+const diasDaSemana: DiaDaSemana[] = [
     { id: 1, dia: 'Segunda' },
     { id: 2, dia: 'Terca' },
     { id: 3, dia: 'Quarta' },
@@ -12,12 +28,17 @@ const diasDaSemana = [
     { id: 7, dia: 'Domingo' },
 ];
 
-const MyAvailability = ({ reloadAvailability }) => {
-    const [data, setData] = useState([]);
+interface MyAvailabilityProps {
+    reloadAvailability: (reload: boolean) => void; // A função para forçar a recarga no componente pai
+}
+
+const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) => {
+    const [data, setData] = useState<{ id: number; dia: string; horarios: Horario[] }[]>([]);
 
     const fetchData = async () => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
         const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
+
         try {
             const response = await axios.get(endPoint, {
                 headers: {
@@ -25,15 +46,15 @@ const MyAvailability = ({ reloadAvailability }) => {
                 },
             });
 
-            const disponibilidades = response.data.data.disponibilidades;
+            const disponibilidades: Disponibilidade[] = response.data.data.disponibilidades;
 
-            const formatHour = (dateString) => {
+            const formatHour = (dateString: string): string => {
                 const date = parseISO(dateString);
                 const localDate = addHours(date, 3);
                 return format(localDate, 'HH:mm');
             };
 
-            const groupedData = {};
+            const groupedData: Record<string, Horario[]> = {};
 
             disponibilidades.forEach(item => {
                 const dia = item.dia_semana;
@@ -64,17 +85,27 @@ const MyAvailability = ({ reloadAvailability }) => {
         }
     };
 
-    // Função para deletar um horário de disponibilidade
-    const deleteAvailability = async (id) => {
-        
-        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${id}`;
+    const deleteAvailability = async (dia: string) => {
+        const idPsicologo = localStorage.getItem('idDoPsicologo');
+        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
+
         try {
+            const body = {
+                dia_semana: dia,  // Passando o nome do dia da semana
+            };
+
             await axios.delete(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                data: body,
             });
-            fetchData(); // Recarrega as disponibilidades após a exclusão
+
+            console.log("cvfdvvfvvd");
+            
+            window.location.reload()
+
+            fetchData();
         } catch (error) {
             console.error("Erro ao deletar a disponibilidade:", error);
         }
@@ -82,10 +113,10 @@ const MyAvailability = ({ reloadAvailability }) => {
 
     useEffect(() => {
         fetchData();
-    }, [reloadAvailability]);
+    }, [reloadAvailability]); // A dependência de reloadAvailability vai garantir que os dados sejam recarregados ao ser alterado
 
     return (
-        <div className='w-full h-auto flex justify-center items-center my-8'>
+        <div className="w-full h-auto flex justify-center items-center my-8">
             <div className="w-[50vw] p-4 rounded-lg">
                 <div className="grid grid-cols-7 gap-4">
                     {data.map(({ id, dia, horarios }) => (
@@ -95,8 +126,8 @@ const MyAvailability = ({ reloadAvailability }) => {
                                 {horarios.length > 0 ? (
                                     horarios.map(({ horario, id: horarioId }) => (
                                         <div
-                                            key={horarioId}
-                                            onClick={() => deleteAvailability(horarioId)}
+                                            key={`${id}-${horarioId}`} // Garantir que a chave seja única
+                                            onClick={() => deleteAvailability(dia)} // Passando o nome do dia
                                             className="flex justify-center w-24 p-2 font-medium border-2 rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-red-600 hover:text-white hover:border-black cursor-pointer transition my-1"
                                         >
                                             {horario}

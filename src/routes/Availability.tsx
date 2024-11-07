@@ -63,7 +63,7 @@ const Availability = () => {
 
   const [selectedTimes, setSelectedTimes] = useState<Date[]>([]);
   const [userName, setUserName] = useState('');
-  const [reloadAvailability, setReloadAvailability] = useState(false); // Novo estado para recarregar a disponibilidade
+  const [reloadAvailability, setReloadAvailability] = useState(false); // Estado único para recarregar a disponibilidade
 
   useEffect(() => {
     const fetchData = async () => {
@@ -153,6 +153,11 @@ const Availability = () => {
     }
   };
 
+  // Função para forçar recarregar as disponibilidades
+  const handleReload = (shouldReload: boolean) => {
+    setReloadAvailability(shouldReload); // Alterna o estado
+  };
+
   return (
     <div>
       <div className="header w-full h-auto md:h-[10rem] bg-[#52B6A4] rounded-b-3xl p-4">
@@ -226,8 +231,10 @@ const Availability = () => {
             Cadastrar Disponibilidade
           </button>
         </div>
+
         {/* Passa a flag reloadAvailability como prop */}
-        <MyAvailability reloadAvailability={reloadAvailability} />
+        <MyAvailability reloadAvailability={handleReload} />
+
       </div>
     </div>
   );
