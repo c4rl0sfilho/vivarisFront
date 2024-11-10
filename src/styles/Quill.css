@@ -1,0 +1,116 @@
+/* Contêiner do Quill */
+.ql-container {
+  background: transparent;  /* Fundo suave */
+  border-radius: 0 0 1rem 1rem; /* Bordas arredondadas */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave para dar profundidade */
+  padding: 1rem;
+  transition: all 0.3s ease-in-out; /* Transição suave */
+  min-height: 28em;
+}
+
+/* Estilo do Editor no Tema Bubble */
+.ql-bubble .ql-editor {
+  background-color: #fff; /* Fundo branco */
+  border: 1px solid #d3d3d3; /* Borda mais leve */
+  border-radius: 0.75rem; /* Bordas arredondadas para o editor */
+  padding: 20px; /* Espaçamento interno maior */
+  font-family: 'Arial', sans-serif; /* Fonte limpa e moderna */
+  font-size: 1.1rem; /* Fonte maior e mais legível */
+  color: #333; /* Cor do texto */
+  line-height: 1.6; /* Maior espaçamento entre linhas para uma leitura confortável */
+  transition: all 0.3s ease; /* Transição suave ao focar */
+}
+
+
+
+.ql-editor:focus {
+  outline: none;
+}
+
+/* Foco no Contêiner */
+.ql-container:focus-within {
+  box-shadow: 0 4px 12px rgba(82, 182, 164, 0.3); /* Efeito de foco no contêiner */
+}
+
+/* Barra de Ferramentas */
+.ql-toolbar {
+  background-color: #52b6a473; /* Cor do fundo da barra de ferramentas */
+  border-radius: 1rem 1rem 0 0; /* Bordas arredondadas no topo */
+  padding: 10px; /* Espaçamento interno da barra */
+  border: none; /* Remover borda padrão */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave para a barra */
+}
+
+.ql-toolbar .ql-formats {
+  display: flex;
+  justify-content: center;
+}
+
+.ql-toolbar button {
+  color: white; /* Ícones da barra com cor branca */
+  background-color: transparent;
+  border: none;
+  font-size: 1.2rem; /* Aumentar o tamanho dos ícones */
+  transition: all 0.2s ease;
+  padding: 6px;
+}
+
+.ql-toolbar button:hover {
+  color: #52B6A4; /* Cor do ícone quando o mouse passa por cima */
+}
+
+.ql-toolbar button:active {
+  transform: scale(0.95); /* Efeito de clique */
+}
+
+/* Estilo para link */
+.ql-editor a {
+  color: #52B6A4;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.ql-editor a:hover {
+  color: #2c8e6b; /* Cor mais escura quando o mouse passa por cima */
+  text-decoration: none;
+}
+
+/* Placeholder */
+.ql-editor.ql-blank::before {
+  color: #aaa; /* Cor do placeholder */
+  padding-left: 1rem;
+}
+
+/* Adicionando borda arredondada ao botão de limpar */
+.ql-toolbar .ql-formats .ql-btn {
+  border-radius: 50%;
+  padding: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.ql-toolbar .ql-formats .ql-btn:hover {
+  background-color: rgba(82, 182, 164, 0.2); /* Efeito de hover no botão */
+}
+
+/* Estilo do Botão de Limpar */
+.ql-editor .ql-clear {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  font-size: 1.5rem;
+  color: #999;
+  cursor: pointer;
+}
+
+.ql-editor .ql-clear:hover {
+  color: #52B6A4;
+}
+
+/* Efeitos de transição ao passar o mouse */
+.ql-container:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.ql-bubble .ql-editor:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra mais intensa ao passar o mouse */
+}
