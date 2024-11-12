@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet } from 'react-router-dom';
 import '../styles/Quill.css';
 import { HiOutlineBellAlert } from "react-icons/hi2";
 
@@ -18,22 +18,31 @@ import HumorBalance from '../assets/humorBalanceIcon.svg';
 import Groups from '../assets/batepapo.svg';
 import Consultas from '../assets/consultasIcon.svg';
 import { FaGear } from "react-icons/fa6";
-
+import { useLocation } from 'react-router-dom';
 import imgUser from '../assets/users.svg';
 import imgSlider from '../assets/Slider.svg';
 import imgLove from '../assets/Love.svg';
 import decorate from '../assets/formDecorate.svg';
 
 const Nave = () => {
-  const [selectedTitle, setSelectedTitle] = useState('Configurações');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const nome = queryParams.get('nome');
+
+  console.log(nome);
+  
+  
+
+
+
+  const [selectedTitle, setSelectedTitle] = useState(nome);
   const [selectedComponent, setSelectedComponent] = useState(<SettingsComponent />);
   const navigate = useNavigate();
   const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
   const settingsMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const handleButtonClick = (title: any, component: any) => {
-    setSelectedTitle(title);
-    setSelectedComponent(component);
+  const handleButtonClick = (title: String) => {
+    setSelectedTitle(`${title}`);
   };
 
   const toggleSettingsMenu = () => {
@@ -69,43 +78,46 @@ const Nave = () => {
             <h1 className="text-white text-xl font-medium">Home</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Blog', <BlogComponent />)}
+            onClick={() => handleButtonClick('Blog')}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Blog' ? 'bg-[#286b5f]' : ''}`}>
             <img src={Blog} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Blog</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Gráfico de Humor', <BlogComponent />)}
+            onClick={() => handleButtonClick('Gráfico de Humor')}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Gráfico de Humor' ? 'bg-[#286b5f]' : ''}`}>
             <img src={HumorBalance} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Gráfico de Humor</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Meditação', <BlogComponent />)}
+            onClick={() => handleButtonClick('Meditação')}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Meditação' ? 'bg-[#286b5f]' : ''}`}>
             <img src={Meditate} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Meditação</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('ChatBot', <BlogComponent />)}
+            onClick={() => handleButtonClick('ChatBot')}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'ChatBot' ? 'bg-[#286b5f]' : ''}`}>
             <img src={ChatBot} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">ChatBot</h1>
           </div>
           <div
-            onClick={() => handleButtonClick("Meus Chat's", <BlogComponent />)}
+            onClick={() => handleButtonClick("Meus Chat's")}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === "Meus Chat's" ? 'bg-[#286b5f]' : ''}`}>
             <img src={Groups} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Meus Chat's</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Diário', <DiarioComponent />)}
+            onClick={() => {
+              navigate('/Nave/diario');
+              handleButtonClick("Diário");
+            }}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Diário' ? 'bg-[#286b5f]' : ''}`}>
             <img src={Book} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Diário</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Minhas Consultas', <BlogComponent />)}
+            onClick={() => handleButtonClick('Minhas Consultas')}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Minhas Consultas' ? 'bg-[#286b5f]' : ''}`}>
             <img src={Consultas} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Minhas Consultas</h1>
@@ -155,7 +167,7 @@ const Nave = () => {
         </div>
         <div className="content m-8 overflow-auto">
           <div className="ql-container">
-            {selectedComponent}
+            <Outlet />
           </div>
         </div>
       </div>

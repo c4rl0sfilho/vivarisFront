@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import imgBook from '../assets/book.svg';
 import imgBatePapo from '../assets/batepapo.svg';
 import imgBlog from '../assets/blog.svg';
@@ -11,8 +11,9 @@ import imgConsultas from '../assets/consultasIcon.svg'
 import imgMeditate from '../assets/meditate.svg'
 import imgRadioWaves from '../assets/radioWaves.svg';
 import { TiEdit } from "react-icons/ti";
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import emoji from '../assets/emoji.svg'
+
 
 
 import { register } from 'swiper/element/bundle';
@@ -27,13 +28,16 @@ register();
 
 
 const data = [
-    { id: '1', image: imgBell, nome: 'Lembrete' },
-    { id: '2', image: imgBatePapo, nome: 'Teste' },
-    { id: '3', image: imgBook, nome: 'Lacceace' },
-    { id: '4', image: imgBlog, nome: 'AAAAAAAAAAAAAA' },
+    { id: '1', image: imgBell, nome: 'Lembrete', route:'0' },
+    { id: '2', image: imgBatePapo, nome: "Meus Chat's", route:'nave/batepapo' },
+    { id: '3', image: imgBook, nome: 'Diário', route:'Nave/diario' },
+    { id: '4', image: imgBlog, nome: 'Blog', route:'Nave' },
 ];
 
 const ContainerHomeUser = () => {
+
+    const navigate = useNavigate()
+
     return (
         <div className='w-full h-[80vh] flex items-center justify-center'>
             <div className='w-[90vw] h-[70vh] flex flex-col'>
@@ -54,7 +58,7 @@ const ContainerHomeUser = () => {
                             </div>
                             <div className="emotions w-full h-1/3 flex justify-around">
                                 {[1, 2, 3, 4, 5].map((_, index) => (
-                                    <div key={index} className="flex flex-col items-center">
+                                    <div key={index} className="flex flex-col items-center" >
                                         <img src={emoji} alt={`emoji-${index}`} className="w-12 h-12" />
                                         <input
                                             type="checkbox"
@@ -92,7 +96,7 @@ const ContainerHomeUser = () => {
                             >
                                 {data.map((item) => (
                                     <SwiperSlide key={item.id}>
-                                        <div className='w-full h-[60%] flex items-center  py-6 px-4 cursor-pointer'>
+                                        <div className='w-full h-[60%] flex items-center  py-6 px-4 cursor-pointer' onClick={() => navigate(`/${item.route}?nome=${item.nome}`) }>
                                             <img src={item.image} alt={`Slide ${item.id}`} className="w-16 h-16 object-cover mr-16" />
                                             <h1 className='text-[#F1F1F1] text-2xl font-bold'>{item.nome}</h1>
                                         </div>

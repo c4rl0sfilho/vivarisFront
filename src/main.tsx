@@ -14,6 +14,9 @@ import Home from './routes/Home.tsx'
 import Availability from './routes/Availability.tsx'
 import Nave from './routes/Nave.jsx'
 import Teste from './routes/Teste.tsx'
+import DiarioComponent from './components/DiarioComponent.tsx'
+import BlogComponent from './components/BlogComponent.tsx'
+import ChatBotComponent from './components/ChatBotComponent.tsx'
 
 const router = createBrowserRouter([
   {
@@ -34,7 +37,12 @@ const router = createBrowserRouter([
       },
       {
         path:"/Home",
-        element:<Home/>
+        element:<Home/>,
+        children:[
+          {
+            
+          }
+        ]
       },
       {
         path:"/Availability",
@@ -42,7 +50,22 @@ const router = createBrowserRouter([
       },
       {
         path: "/Nave",
-        element:<Nave/>
+        element:<Nave/>,
+        children:[
+          {
+            path:'Diario',
+            element:<DiarioComponent/>
+          },
+          {
+            path:'ChatBot',
+            element:<ChatBotComponent/>
+          },
+          {
+            path:'Blog',
+            element:<BlogComponent/>
+          },
+
+        ]
       },
       {
         path:"/Teste",
