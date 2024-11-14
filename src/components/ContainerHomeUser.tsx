@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import imgBook from '../assets/book.svg';
 import imgBatePapo from '../assets/batepapo.svg';
 import imgBlog from '../assets/blog.svg';
@@ -28,10 +28,10 @@ register();
 
 
 const data = [
-    { id: '1', image: imgBell, nome: 'Lembrete', route:'0' },
-    { id: '2', image: imgBatePapo, nome: "Meus Chat's", route:'nave/batepapo' },
-    { id: '3', image: imgBook, nome: 'Diário', route:'Nave/diario' },
-    { id: '4', image: imgBlog, nome: 'Blog', route:'Nave' },
+    { id: '1', image: imgBell, nome: 'Lembrete', route: 'home' },
+    { id: '2', image: imgBatePapo, nome: "Meus Chat's", route: 'Nave/batePapo' },
+    { id: '3', image: imgBook, nome: 'Diário', route: 'Nave/diario' },
+    { id: '4', image: imgBlog, nome: 'Blog', route: 'Nave/blog' },
 ];
 
 const ContainerHomeUser = () => {
@@ -43,7 +43,7 @@ const ContainerHomeUser = () => {
             <div className='w-[90vw] h-[70vh] flex flex-col'>
                 <div className='w-[100%] h-1/6  flex items-center justify-center'>
                     <div className="bg-white w-2/3 h-2/4 flex items-center justify-center rounded-lg">
-                        <h1 className='text-xl md:text-3xl lg:text-4xl font-medium text-[#369277]'>
+                        <h1 className='text-xl md:text-3xl lg:text-4xl font-medium text-[#369277] cursor-default'>
                             Vamos Cuidar da Sua Saúde Mental?
                         </h1>
                     </div>
@@ -96,7 +96,7 @@ const ContainerHomeUser = () => {
                             >
                                 {data.map((item) => (
                                     <SwiperSlide key={item.id}>
-                                        <div className='w-full h-[60%] flex items-center  py-6 px-4 cursor-pointer' onClick={() => navigate(`/${item.route}?nome=${item.nome}`) }>
+                                        <div className='w-full h-[60%] flex items-center  py-6 px-4 cursor-pointer' onClick={() => navigate(`/${item.route}?nome=${item.nome}`)}>
                                             <img src={item.image} alt={`Slide ${item.id}`} className="w-16 h-16 object-cover mr-16" />
                                             <h1 className='text-[#F1F1F1] text-2xl font-bold'>{item.nome}</h1>
                                         </div>
@@ -108,36 +108,43 @@ const ContainerHomeUser = () => {
                     <div className=" w-1/2 h-[100%] flex flex-col items-start justify-center gap-12">
                         <div className="buttons h-[20rem] w-[32rem] rounded-2xl ml-24">
                             <div className="flex w-[100%] h-1/2  justify-center items-center gap-8">
-                                <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+                                <div onClick={() => navigate(`/Nave/Blog?nome=Blog`)}
+                                className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
                                     <img src={imgBlog} alt="Meus Chats" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Blog</p>
                                 </div>
-                                <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+                                <div onClick={() => navigate('/Nave/diario?nome=Diário')}
+                                    className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
                                     <img src={imgBook} alt="Meus Chats" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Diário</p>
                                 </div>
-                                <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+                                <div onClick={()=>navigate(`/Nave/MeusChats?nome=Meus Chat's`)} 
+                                className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
                                     <img src={imgBatePapo} alt="Meus Chats" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Meus Chat’s</p>
                                 </div>
                             </div>
                             <div className="flex w-[100%] h-1/2  justify-center items-center gap-8">
-                                <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+                                <div onClick={() => navigate(`/Nave/GraficoHumor?nome=Gráfico de Humor`)}
+                                className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
                                     <img src={imgHumorBalance} alt="Meus Chats" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Gráfico do Humor</p>
                                 </div>
-                                <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+                                <div onClick={() => navigate(`/Nave/ChatBot?nome=ChatBot`)} 
+                                className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
                                     <img src={imgChatBot} alt="Meus Chats" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>ChatBot</p>
                                 </div>
-                                <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+                                <div onClick={() => navigate(`/Nave/MyConsults?nome=Minhas Consultas`)}
+                                className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
                                     <img src={imgConsultas} alt="Meus Chats" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Minhas Consultas</p>
                                 </div>
                             </div>
 
                         </div>
-                        <div className="h-[7rem] w-[80%] bg-[#1C7D62] rounded-2xl border-4 border-[#1C7D62] flex justify-around items-center cursor-pointer">
+                        <div onClick={() => navigate(`/Meditacao`)} 
+                        className="h-[7rem] w-[80%] bg-[#1C7D62] rounded-2xl border-4 border-[#1C7D62] flex justify-around items-center cursor-pointer">
                             <img src={imgMeditate} alt="" />
                             <h1 className='text-xl md:text-3xl lg:text-4xl font-medium text-[#FFFFFF]'>
                                 Trilhas De Meditação

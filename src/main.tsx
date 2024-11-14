@@ -13,63 +13,87 @@ import Preferences from './routes/Preferences.tsx'
 import Home from './routes/Home.tsx'
 import Availability from './routes/Availability.tsx'
 import Nave from './routes/Nave.jsx'
+import ProList from './routes/ProList.tsx'
 import Teste from './routes/Teste.tsx'
+import Meditacao from './routes/Meditacao.tsx'
 import DiarioComponent from './components/DiarioComponent.tsx'
 import BlogComponent from './components/BlogComponent.tsx'
 import ChatBotComponent from './components/ChatBotComponent.tsx'
+import MyConsults from './components/MyConsults.tsx'
+import MeusChats from './components/MeusChats.tsx'
+import GraficoHumor from './components/GraficoHumor.tsx'
+import Settings from './components/Settings.tsx'
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <App/>,
-    children:[
+    element: <App />,
+    children: [
       {
-        path:"/",
-        element:<Login/>,
+        path: "/",
+        element: <Login />,
       },
       {
-        path:"/Register",
-        element:<Register/>
+        path: "/Register",
+        element: <Register />
       },
       {
-        path:"/Preferences",
-        element:<Preferences/>
+        path: "/Preferences",
+        element: <Preferences />
       },
       {
-        path:"/Home",
-        element:<Home/>,
-        children:[
-          {
-            
-          }
-        ]
+        path: "/Home",
+        element: <Home />,
       },
       {
-        path:"/Availability",
-        element:<Availability/>
+        path: "/Availability",
+        element: <Availability />
+      },
+      {
+        path: "/ProList",
+        element: <ProList />
       },
       {
         path: "/Nave",
-        element:<Nave/>,
-        children:[
+        element: <Nave />,
+        children: [
           {
-            path:'Diario',
-            element:<DiarioComponent/>
+            path: 'Diario',
+            element: <DiarioComponent />
           },
           {
-            path:'ChatBot',
-            element:<ChatBotComponent/>
+            path: 'ChatBot',
+            element: <ChatBotComponent />
           },
           {
-            path:'Blog',
-            element:<BlogComponent/>
+            path: 'Blog',
+            element: <BlogComponent />
           },
-
+          {
+            path: 'MeusChats',
+            element: <MeusChats />
+          },
+          {
+            path: 'GraficoHumor',
+            element: <GraficoHumor />
+          },
+          {
+            path: 'MyConsults',
+            element: <MyConsults />
+          },
+          {
+            path: 'Settings',
+            element: <Settings />
+          },
         ]
       },
       {
-        path:"/Teste",
-        element:<Teste/>
+        path: '/Meditacao',
+        element: <Meditacao />
+      },
+      {
+        path: "/Teste",
+        element: <Teste />
       }
     ]
   }
@@ -78,6 +102,6 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </StrictMode>,
 )

@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BsStar, BsStarFill } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
-import InstagramLogo from '../assets/InstagramLogo.svg';
+import { FaInstagram } from "react-icons/fa";
+
 
 const ProfessionalCards = () => {
   const preferences = ['Ansiedade', 'Autoestima', 'Depressão', 'Stress']; // Exemplo de preferências
-  
+  const [isFavorito, setIsFavorito] = useState(false); // Estado para controlar o favorito
+
+  // Função para alternar o favorito
+  const toggleFavorito = () => {
+    setIsFavorito(!isFavorito);
+  };
+
   return (
-    <div className="cards w-screen h-auto flex justify-center">
-      <div className="card w-full md:w-[25rem] lg:w-[28rem] h-auto bg-[#f4f1f1] rounded-xl flex flex-col p-4">
+    <div className="cards w-screen h-auto flex justify-center flex-wrap gap-8 p-8">
+      <div className="card w-full md:w-[25rem] lg:w-[28rem] h-auto  bg-[#f4f1f1] rounded-xl flex flex-col p-4">
         {/* Star Rating */}
         <div className="star w-full h-auto flex justify-end">
-          <BsStar color='#0A7A7A' className='cursor-pointer' size={35} />
+          <div onClick={toggleFavorito} className="cursor-pointer">
+            {isFavorito ? (
+              <BsStarFill color='#0A7A7A' size={35} />
+            ) : (
+              <BsStar color='#0A7A7A' size={35} />
+            )}
+          </div>
         </div>
-        
+
         {/* Professional Data */}
         <div className="professionalData flex flex-col sm:flex-row sm:h-auto w-full items-center gap-4">
           <div className="img h-24 w-24 rounded-full bg-green-600 mr-2"></div>
@@ -52,8 +65,10 @@ const ProfessionalCards = () => {
 
           {/* Social Icons */}
           <div className="logos flex gap-2">
-            <MdOutlineEmail className='bg-red-600 rounded-full w-[32px] h-[32px] p-1' fill='#ffffff' />
-            <img src={InstagramLogo} alt="Instagram logo" className="w-6 h-6" />
+            <MdOutlineEmail className='bg-red-600 rounded-full w-[32px] h-[32px] p-1 cursor-pointer' fill='#ffffff' />
+            <div className="w-8 h-8 rounded-full bg-instagram-gradient flex justify-center items-center cursor-pointer">
+              <FaInstagram fill='#ffffff' size={25} />
+            </div>
           </div>
         </div>
 

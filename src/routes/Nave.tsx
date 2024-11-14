@@ -29,12 +29,6 @@ const Nave = () => {
   const queryParams = new URLSearchParams(location.search);
   const nome = queryParams.get('nome');
 
-  console.log(nome);
-  
-  
-
-
-
   const [selectedTitle, setSelectedTitle] = useState(nome);
   const [selectedComponent, setSelectedComponent] = useState(<SettingsComponent />);
   const navigate = useNavigate();
@@ -78,31 +72,43 @@ const Nave = () => {
             <h1 className="text-white text-xl font-medium">Home</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Blog')}
+            onClick={() => {
+              navigate('/Nave/Blog');
+              handleButtonClick("Blog");
+            }}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Blog' ? 'bg-[#286b5f]' : ''}`}>
             <img src={Blog} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Blog</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Gráfico de Humor')}
+            onClick={() => {
+              navigate('/Nave/GraficoHumor');
+              handleButtonClick("Gráfico de Humor");
+            }}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Gráfico de Humor' ? 'bg-[#286b5f]' : ''}`}>
             <img src={HumorBalance} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Gráfico de Humor</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Meditação')}
+            onClick={() => navigate('/Meditacao')}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Meditação' ? 'bg-[#286b5f]' : ''}`}>
             <img src={Meditate} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Meditação</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('ChatBot')}
+            onClick={() => {
+              navigate('/Nave/ChatBot');
+              handleButtonClick("ChatBot");
+            }}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'ChatBot' ? 'bg-[#286b5f]' : ''}`}>
             <img src={ChatBot} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">ChatBot</h1>
           </div>
           <div
-            onClick={() => handleButtonClick("Meus Chat's")}
+            onClick={() => {
+              navigate('/Nave/MeusChats');
+              handleButtonClick("Meus Chat's");
+            }}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === "Meus Chat's" ? 'bg-[#286b5f]' : ''}`}>
             <img src={Groups} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Meus Chat's</h1>
@@ -117,7 +123,10 @@ const Nave = () => {
             <h1 className="text-white text-xl font-medium">Diário</h1>
           </div>
           <div
-            onClick={() => handleButtonClick('Minhas Consultas')}
+            onClick={() => {
+              navigate('/Nave/MyConsults');
+              handleButtonClick("Minhas Consultas");
+            }}
             className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Minhas Consultas' ? 'bg-[#286b5f]' : ''}`}>
             <img src={Consultas} alt="" className="pr-4 h-16 w-16" />
             <h1 className="text-white text-xl font-medium">Minhas Consultas</h1>
@@ -155,7 +164,7 @@ const Nave = () => {
                     </div>
                     <div className='flex flex-col w-full h-full justify-end items-end gap-8'>
                       <p className='text-white cursor-pointer'>Meu Perfil</p>
-                      <p className='text-white cursor-pointer'>Configurações</p>
+                      <p className='text-white cursor-pointer'  onClick={()=>navigate('/Nave/Settings?nome=Configurações')}>Configurações</p>
                       <p className='text-white cursor-pointer'>Denúncia</p>
                       <p className='text-white cursor-pointer'>FAQ</p>
                     </div>
