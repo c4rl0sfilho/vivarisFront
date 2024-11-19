@@ -1,11 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import HeaderHome from '../components/HeaderHome';
 import { getAllPsico } from '../Ts/allProfessionals';
 
 const Teste = () => {
   // Estado para armazenar a lista de profissionais
-  const [professionals, setProfessionals] = useState([]);
-
+  interface Professional {
+    id: string;
+    nome: string;
+    email: string;
+    cip: string;
+  }
+  
+  const [professionals, setProfessionals] = useState<Professional[]>([]);
+  
   // Função para buscar dados da API
   const fetchData = async () => {
     try {

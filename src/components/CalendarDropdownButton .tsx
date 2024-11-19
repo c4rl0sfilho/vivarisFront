@@ -9,7 +9,7 @@ const CalendarDropdownButton = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   // Referência para verificar clique fora do menu
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement | null>(null); // Tipando o ref
 
   // Função para alternar a visibilidade do menu suspenso
   const toggleCalendar = () => {

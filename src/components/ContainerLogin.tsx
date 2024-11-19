@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import FormInput from './FormInput.tsx';
+import FormInput from './FormInput';
 import GoogleIcon from '../assets/googleIcon.svg';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';

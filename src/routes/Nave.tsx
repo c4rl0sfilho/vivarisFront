@@ -22,7 +22,6 @@ import { useLocation } from 'react-router-dom';
 import imgUser from '../assets/users.svg';
 import imgSlider from '../assets/Slider.svg';
 import imgLove from '../assets/Love.svg';
-import decorate from '../assets/formDecorate.svg';
 
 const Nave = () => {
   const location = useLocation();
@@ -107,11 +106,11 @@ const Nave = () => {
           <div
             onClick={() => {
               navigate('/Nave/MeusChats');
-              handleButtonClick("Meus Chat's");
+              handleButtonClick("Meus Chats");
             }}
-            className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === "Meus Chat's" ? 'bg-[#286b5f]' : ''}`}>
+            className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === "Meus Chats" ? 'bg-[#286b5f]' : ''}`}>
             <img src={Groups} alt="" className="pr-4 h-16 w-16" />
-            <h1 className="text-white text-xl font-medium">Meus Chat's</h1>
+            <h1 className="text-white text-xl font-medium">Meus Chats</h1>
           </div>
           <div
             onClick={() => {

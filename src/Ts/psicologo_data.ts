@@ -22,7 +22,6 @@ export const getPsico = async (idPsico: number) => {
 
     console.log(`${idPsico} + ${token}`);
     
-    
     try {
         const response = await axios.get(endpoint, {
             headers: {
