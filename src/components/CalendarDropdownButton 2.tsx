@@ -7,7 +7,6 @@ const CalendarDropdownButton = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const menuRef = useRef(null);
- 
 
   const toggleCalendar = () => {
     setIsCalendarOpen(prevState => !prevState);
@@ -45,7 +44,7 @@ const CalendarDropdownButton = () => {
       {/* Botão que abre/fecha o calendário */}
       <button
         onClick={toggleCalendar}
-        className="px-4 py-2 w-[30rem] h-[5rem] bg-white text-black text-2xl font-semibold rounded-3xl shadow-lg"
+        className="px-4 py-2 w-[15rem] h-[5rem] bg-white text-black font-semibold rounded-3xl shadow-lg"
         style={{
           boxShadow: "0 8px 6px rgba(82, 182, 164, 0.3), 0 1px 3px rgba(82, 182, 164, 0.1)"
         }}
