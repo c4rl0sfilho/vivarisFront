@@ -15,16 +15,21 @@ interface PsicoData {
     instagram?: string;
 }
 
+
 export const getPsico = async (idPsico: number) => {
+    const token = localStorage.getItem('token')
     const endpoint = `http://localhost:8080/v1/vivaris/profissional/${idPsico}`; 
+
+    console.log(`${idPsico} + ${token}`);
+    
     
     try {
         const response = await axios.get(endpoint, {
             headers: {
                 'Content-Type': 'application/json',
+                'x-access-token': token
             },
         });
-        
         console.log(response);
         
         return response.data;

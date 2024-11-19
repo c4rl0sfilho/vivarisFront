@@ -2,7 +2,6 @@
 .ql-container {
   background: transparent;  /* Fundo suave */
   border-radius: 0 0 1rem 1rem; /* Bordas arredondadas */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Sombra suave para dar profundidade */
   padding: 1rem;
   transition: all 0.3s ease-in-out; /* Transição suave */
   min-height: 28em;

@@ -15,6 +15,8 @@ interface ClientData {
 }
 
 export const registerUser = async (selectedButton: 'Cliente' | 'Psicólogo', clientData: ClientData) => {
+
+    const token = localStorage.getItem('token')
     
     const endpoint = selectedButton === 'Cliente' 
         ? 'http://localhost:8080/v1/vivaris/cliente' 
@@ -23,6 +25,7 @@ export const registerUser = async (selectedButton: 'Cliente' | 'Psicólogo', cli
     const response = await axios.post(endpoint, clientData, {
         headers: {
             'Content-Type': 'application/json',
+            'x-access-token': token
         },
     });
 

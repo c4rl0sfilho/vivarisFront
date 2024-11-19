@@ -24,11 +24,11 @@ const HeaderHome = () => {
         const fetchData = async () => {
             if (localStorage.key(0) === 'idDoCliente') {
                 const user = await getUser(Number(localStorage.getItem('idDoCliente')));
-                setUserName(await user?.data.nome || '');
+                setUserName(await user?.data.nome || 'cliente erro');
                 setUserType('Cliente')
             } else {
                 const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
-                setUserName(await psicologo?.data.data.nome || 'Error');
+                setUserName(await psicologo?.data.data.nome || 'psico Error');
                 setUserType('Psicólogo')
             }
 

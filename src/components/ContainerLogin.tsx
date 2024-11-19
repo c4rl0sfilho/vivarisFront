@@ -67,7 +67,11 @@ const ContainerLogin = () => {
                     
                     if (response.data && response.data.cliente && response.data.cliente.usuario) {
                         let idDoCliente = response.data.cliente.usuario.id;
+                        let token = response.data.token
                         localStorage.setItem('idDoCliente', idDoCliente);
+                        localStorage.setItem('token', token);
+                        console.log(token);
+                        
 
                         if (idDoCliente) {
                             console.log('ID do Cliente armazenado no localStorage:', idDoCliente);
@@ -77,7 +81,11 @@ const ContainerLogin = () => {
 
                         let url = `http://localhost:8080/v1/vivaris/usuario/preferencias/${idDoCliente}`;
 
-                        const preferenciasResponse = await axios.get(url);
+                        const preferenciasResponse = await axios.get(url, {
+                            headers:{
+                                'x-access-token':token
+                            }
+                        });
                         console.log(preferenciasResponse);
                         
 
@@ -96,6 +104,8 @@ const ContainerLogin = () => {
                     if (response.data.data.id) {
                         let idDoPsicologo = response.data.data.id
                         localStorage.setItem('idDoPsicologo', idDoPsicologo);
+                        let token = response.data.token
+                        localStorage.setItem('token', token);
                         console.log('ID do Psicólogo armazenado no localStorage:', idDoPsicologo);
                         navigate('/Home');
                     } else {

@@ -20,10 +20,19 @@ const usePreferences = (): UsePreferences => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
+    const token = localStorage.getItem('token')
+
     useEffect(() => {
         const fetchPreferences = async () => {
             try {
-                const response = await axios.get<{ data: Preference[] }>('http://localhost:8080/v1/vivaris/preferencias');
+                const response = await axios.get<{ data: Preference[] }>
+                ('http://localhost:8080/v1/vivaris/preferencias',
+                    {
+                        headers:{
+                            'x-access-token': token
+                        }
+                    }
+                );
                 
                 // Acessando o array de preferências na propriedade 'data'
                 setPreferences(response.data.data);

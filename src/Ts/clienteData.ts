@@ -12,6 +12,8 @@ interface UserData {
     instagram?: string;
 }
 
+const token = localStorage.getItem('token')
+
 export const getUser = async (idUser: number) => {
     const endpoint = `http://localhost:8080/v1/vivaris/usuario/${idUser}`; 
     
@@ -19,6 +21,7 @@ export const getUser = async (idUser: number) => {
         const response = await axios.get(endpoint, {
             headers: {
                 'Content-Type': 'application/json',
+                'x-access-token': token
             },
         });
         

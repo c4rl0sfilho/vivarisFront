@@ -10,8 +10,6 @@ import { useMediaQuery } from '@mui/material';
 function login() {
 
   const isMobile = useMediaQuery(`(max-width: 768px)`)
-
-  console.log('isMobile:', isMobile)
   
   return (
     <div className="w-full h-full flex bg-[#52B693] flex-row fixed">
@@ -27,7 +25,7 @@ function login() {
             <div className='flex'>
               <img src={vivarisLogo} alt="" />
             </div>
-            <h1 className='text-[#ffffff] text-8xl font-semibold pl-[90px] mt-[144px]'>Seja<br />Bem Vindo!</h1>
+            <h1 className='text-[#ffffff] text-8xl font-semibold pl-[90px] mt-[144px]'>Seja<br />Bem-Vindo!</h1>
             <img src={twoBoys} alt="" className=' ml-[12rem] mt-[5rem] w-full h-full' />
           </div>
           <div className='flex flex-col p-8 w-1/2 justify-center items-center'>

@@ -34,6 +34,7 @@ interface MyAvailabilityProps {
 
 const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) => {
     const [data, setData] = useState<{ id: number; dia: string; horarios: Horario[] }[]>([]);
+    const token = localStorage.getItem('token')
 
     const fetchData = async () => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
@@ -43,6 +44,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
             const response = await axios.get(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-access-token': token
                 },
             });
 
@@ -97,12 +99,11 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
             await axios.delete(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
+                    'x-access-token': token
                 },
                 data: body,
             });
 
-            console.log("cvfdvvfvvd");
-            
             window.location.reload()
 
             fetchData();

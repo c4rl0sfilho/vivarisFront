@@ -23,6 +23,8 @@ import MyConsults from './components/MyConsults.tsx'
 import MeusChats from './components/MeusChats.tsx'
 import GraficoHumor from './components/GraficoHumor.tsx'
 import Settings from './components/Settings.tsx'
+import PsicoProfile from './routes/PsicoProfile.tsx'
+import UserProfile from './routes/UserProfile.tsx'
 
 const router = createBrowserRouter([
   {
@@ -48,6 +50,14 @@ const router = createBrowserRouter([
       {
         path: "/Availability",
         element: <Availability />
+      },
+      {
+        path: "/PProfile",
+        element: <PsicoProfile />
+      },
+      {
+        path: "/CProfile",
+        element: <UserProfile />
       },
       {
         path: "/ProList",
