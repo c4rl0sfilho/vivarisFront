@@ -27,8 +27,10 @@ const HeaderHome = () => {
     
             if (clienteId) {
                 const user = await getUser(Number(clienteId));
-  
-                setUserName(user?.data?.nome || 'cliente erro');
+                
+                setUserName(user?.data?.nome || 'Cliente');
+                console.log(user);
+                
                 setUserType('Cliente');
             } else if (psicologoId) {
                 const psicologo = await getPsico(Number(psicologoId));
@@ -85,7 +87,7 @@ const HeaderHome = () => {
                 <div className='flex items-center mb-4 md:mb-0'>
                     <img src={vivarisIcon} alt="vivaris icon" className='w-[40px] md:w-auto mr-4' />
                     <div className='flex flex-col'>
-                        <h1 className='text-white text-xl bg-pink-500 md:text-2xl font-semibold'>
+                        <h1 className='text-white text-xl md:text-2xl font-semibold'>
                             {greetingMessage}<br /> {userName}
                         </h1>
                     </div>
