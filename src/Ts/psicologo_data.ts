@@ -18,11 +18,7 @@ interface PsicoData {
 
 export const getPsico = async (idPsico: number) => {
     const token = localStorage.getItem('token')
-    const endpoint = `http://localhost:8080/v1/vivaris/profissional/${idPsico}`; 
-
-    console.log(`${idPsico} + ${token}`);
-    
-    
+    const endpoint = `http://localhost:8080/v1/vivaris/profissional/${idPsico}`;  
     try {
         const response = await axios.get(endpoint, {
             headers: {

@@ -83,7 +83,7 @@ const ContainerLogin = () => {
 
                         const preferenciasResponse = await axios.get(url, {
                             headers:{
-                                'x-access-token':token
+                                'x-access-token': await token
                             }
                         });
                         console.log(preferenciasResponse);
