@@ -1,4 +1,4 @@
-import React from 'react';
+
 import HeaderHome from '../components/HeaderHome';
 import ContainerHomePsico from '../components/ContainerHomePsico';
 import ContainerHomeUser from '../components/ContainerHomeUser';

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import  { useState, useEffect, useRef } from 'react';
 import vivarisIcon from '../assets/vivarisIcon.svg';
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineBellAlert } from "react-icons/hi2";
@@ -22,16 +22,25 @@ const HeaderHome = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            if (localStorage.key(0) === 'idDoCliente') {
-                const user = await getUser(Number(localStorage.getItem('idDoCliente')));
-                setUserName(await user?.data.nome || 'cliente erro');
-                setUserType('Cliente')
+            const clienteId = localStorage.getItem('idDoCliente');
+            const psicologoId = localStorage.getItem('idDoPsicologo');
+    
+            if (clienteId) {
+                const user = await getUser(Number(clienteId));
+                
+                setUserName(user?.data?.nome || 'Cliente');
+                console.log(user);
+                
+                setUserType('Cliente');
+            } else if (psicologoId) {
+                const psicologo = await getPsico(Number(psicologoId));
+           
+                setUserName(psicologo?.data?.nome || 'psico erro');
+                setUserType('Psicólogo');
             } else {
-                const psicologo = await getPsico(Number(localStorage.getItem('idDoPsicologo')));
-                setUserName(await psicologo?.data.data.nome || 'psico Error');
-                setUserType('Psicólogo')
+                console.warn('Nenhum ID encontrado no localStorage.');
             }
-
+    
             const currentHour = new Date().getHours();
             if (currentHour < 12) {
                 setGreetingMessage('Bom dia,');
@@ -41,7 +50,7 @@ const HeaderHome = () => {
                 setGreetingMessage('Boa noite,');
             }
         };
-
+    
         fetchData();
     }, []);
 

@@ -1,15 +1,11 @@
-import React, { useEffect } from 'react'
 import imgBook from '../assets/book.svg';
 import imgBatePapo from '../assets/batepapo.svg';
 import imgBlog from '../assets/blog.svg';
-import imgGroupConversation from '../assets/groupConversation.svg';
-import { FaPlus } from "react-icons/fa6";
 import imgBell from '../assets/bell.svg';
 import imgChatBot from '../assets/chatBotIcon.svg'
 import imgHumorBalance from '../assets/humorBalanceIcon.svg'
 import imgConsultas from '../assets/consultasIcon.svg'
 import imgMeditate from '../assets/meditate.svg'
-import imgRadioWaves from '../assets/radioWaves.svg';
 import { TiEdit } from "react-icons/ti";
 import { useNavigate, useLocation } from 'react-router-dom';
 import emoji from '../assets/emoji.svg'
@@ -29,7 +25,7 @@ register();
 
 const data = [
     { id: '1', image: imgBell, nome: 'Lembrete', route: 'home' },
-    { id: '2', image: imgBatePapo, nome: "Meus Chat's", route: 'Nave/batePapo' },
+    { id: '2', image: imgBatePapo, nome: "Meus Chats", route: 'Nave/batePapo' },
     { id: '3', image: imgBook, nome: 'Diário', route: 'Nave/diario' },
     { id: '4', image: imgBlog, nome: 'Blog', route: 'Nave/blog' },
 ];
@@ -118,10 +114,10 @@ const ContainerHomeUser = () => {
                                     <img src={imgBook} alt="Meus Chats" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Diário</p>
                                 </div>
-                                <div onClick={()=>navigate(`/Nave/MeusChats?nome=Meus Chat's`)} 
+                                <div onClick={()=>navigate(`/Nave/MeusChats?nome=Meus Chats`)} 
                                 className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
                                     <img src={imgBatePapo} alt="Meus Chats" className='w-10 sm:w-16' />
-                                    <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Meus Chat’s</p>
+                                    <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Meus Chats</p>
                                 </div>
                             </div>
                             <div className="flex w-[100%] h-1/2  justify-center items-center gap-8">
