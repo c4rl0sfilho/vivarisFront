@@ -1,16 +1,20 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { BsStar, BsStarFill } from "react-icons/bs";
-import { getPsico } from "../Ts/psicologo_data"; // Supondo que essa função retorne os dados do psicólogo
+import { BsStar } from "react-icons/bs";
+import { getPsico } from "../Ts/psicologo_data";
 import HeaderHome from "../components/HeaderHome";
-import calcularIdade from '../util/CalcularIdade';
-import { MdOutlineEmail } from "react-icons/md";
-import { FaInstagram } from "react-icons/fa";
+import calcularIdade from "../util/CalcularIdade";
 import { IoIosArrowBack } from "react-icons/io";
-import MyAvailability from "../components/MyAvailability";
-import CalendarDropdownButton2 from "../components/CalendarDropdownButton 2";
+import CalendarDropdownButton2 from "../components/CalendarDropdownButton2";
+import { removeAcentuacao } from "../util/removeAcentuacao";
+import { FaInstagram } from "react-icons/fa";
+import { MdOutlineEmail } from "react-icons/md";
 
-
+interface Availability {
+  dia_semana: string;
+  horario_inicio: string;
+  horario_fim: string;
+}
 
 interface PsicoData {
   id: number;
@@ -21,52 +25,111 @@ interface PsicoData {
   telefone: string;
   foto_perfil: string | null;
   link_instagram: string | null;
-  id_sexo: number
+  id_sexo: number;
+  price: number;
   descricao?: string;
+  tbl_psicologo_disponibilidade?: {
+    tbl_disponibilidade: Availability;
+  }[];
 }
 
 const PsicoProfile = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
-  const navigate = useNavigate()
-  const [selectedButton, setSelectedButton] = useState<'Online' | 'Presencial'>('Online');
-  const handleButtonClick = (buttonName: 'Online' | 'Presencial') => {
+  const navigate = useNavigate();
+
+  const [selectedButton, setSelectedButton] = useState<"Online" | "Presencial">(
+    "Online"
+  );
+  const [psico, setPsico] = useState<PsicoData | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [filteredTimes, setFilteredTimes] = useState<string[]>([]);
+  const handleButtonClick = (buttonName: "Online" | "Presencial") => {
     setSelectedButton(buttonName);
   };
 
-  const [psico, setPsico] = useState<PsicoData>();
-  const [loading, setLoading] = useState<boolean>(true);
-
   useEffect(() => {
-    const fetchProfissionais = async () => {
+    const fetchPsico = async () => {
       try {
-        const response = await getPsico(id);
-        console.log('Dados recebidos:', response.data.professional);
-
+        const response = await getPsico(Number(id));
         if (response?.data?.professional) {
-          setPsico(response?.data?.professional);
-
-        } else {
-          console.error('Estrutura inesperada dos dados:', response);
+          setPsico(response.data.professional);
         }
       } catch (error) {
-        console.error('Erro ao carregar os profissionais:', error);
+        console.error("Erro ao carregar os dados do psicólogo:", error);
       }
     };
+    fetchPsico();
+  }, [id]);
 
-    fetchProfissionais();
-  }, []);
+  const handleDateChange = (date: string) => {
+    console.log(date);
+    setSelectedDate(date);
 
-  console.log(psico);
-  const valorConsulta: number = 170
+    if (psico?.tbl_psicologo_disponibilidade) {
+      console.log("cheguei");
+      const dayOfWeek = new Date(date).toLocaleDateString("pt-BR", {
+        weekday: "long",
+      });
+      console.log(dayOfWeek.split("-")[0]);
 
+      const availabilities = psico.tbl_psicologo_disponibilidade.filter(
+        (availability) =>
+          availability.tbl_disponibilidade.dia_semana.toLowerCase() ===
+          removeAcentuacao(dayOfWeek.toLowerCase().split("-")[0])
+      );
+
+      const times = availabilities.flatMap((availability) => {
+        const baseDate = new Date(); // Data atual
+        const [hour, minute, second] =
+          availability.tbl_disponibilidade.horario_inicio
+            .split(":")
+            .map(Number);
+        const [endHour, endMinute, endSecond] =
+          availability.tbl_disponibilidade.horario_fim.split(":").map(Number);
+
+        // Cria os objetos Date para horário inicial e final
+        const start = new Date(baseDate.setHours(hour, minute, second || 0));
+        const end = new Date(
+          baseDate.setHours(endHour, endMinute, endSecond || 0)
+        );
+
+        const timeSlots: string[] = [];
+
+        while (start < end) {
+          timeSlots.push(
+            start.toLocaleTimeString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          );
+          start.setMinutes(start.getMinutes() + 30);
+        }
+        return timeSlots;
+      });
+
+      setFilteredTimes(times);
+    }
+  };
+
+  const valorConsulta = psico?.price;
 
   return (
     <div className="bg-[#F1F1F1] flex flex-col w-full h-full items-center">
       <HeaderHome />
       <div className="content w-[50%] h-full flex flex-col p-4 items-center">
         <div className="back w-full flex justify-start items-center">
-          <IoIosArrowBack size={35} color="#0A7A7A" onClick={() => navigate('/ProList')} /> <p className="text-[#0A7A7A] font-bold" onClick={() => navigate('/ProList')} >Voltar</p>
+          <IoIosArrowBack
+            size={35}
+            color="#0A7A7A"
+            onClick={() => navigate("/ProList")}
+          />{" "}
+          <p
+            className="text-[#0A7A7A] font-bold"
+            onClick={() => navigate("/ProList")}
+          >
+            Voltar
+          </p>
         </div>
         {psico ? (
           <>
@@ -96,10 +159,10 @@ const PsicoProfile = () => {
                     {psico.id_sexo === 1
                       ? "Masculino"
                       : psico.id_sexo === 2
-                        ? "Feminino"
-                        : psico.id_sexo === 3
-                          ? "Não-binário"
-                          : "Não especificado"}
+                      ? "Feminino"
+                      : psico.id_sexo === 3
+                      ? "Não-binário"
+                      : "Não especificado"}
                   </p>
                   <p>Idade: {calcularIdade(psico.data_nascimento)} anos</p>
                 </div>
@@ -139,7 +202,13 @@ const PsicoProfile = () => {
           </div>
           <h1 className="text-2xl pt-6">Sobre Mim</h1>
           <div className="description w-full h-auto">
-            <p className="pt-2">Olá! Sou psicóloga (UFES), com mestrado e especialização clínica (Portugal/Espanha).Possuo experiência em diversas áreas, entre elas ansiedade, depressão, autoestima e autoconhecimento. Meu objetivo é lhe ajudar a atravessar períodos difíceis da vida e sair deles fortalecido. Agende sua consulta!</p>
+            <p className="pt-2">
+              Olá! Sou psicóloga (UFES), com mestrado e especialização clínica
+              (Portugal/Espanha).Possuo experiência em diversas áreas, entre
+              elas ansiedade, depressão, autoestima e autoconhecimento. Meu
+              objetivo é lhe ajudar a atravessar períodos difíceis da vida e
+              sair deles fortalecido. Agende sua consulta!
+            </p>
           </div>
           <h1 className="text-2xl pt-6">Informações Pessoais</h1>
           <div className="telefone flex w-[50%] h-auto justify-between py-2">
@@ -162,37 +231,59 @@ const PsicoProfile = () => {
           <h1 className="text-2xl pt-6 pb-6">Agende sua Consulta</h1>
           <div className="ClienteOrPsicologo h-auto w-[20rem] flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
             <button
-              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Online' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
-              onClick={() => handleButtonClick('Online')}
+              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${
+                selectedButton === "Online"
+                  ? "bg-[#296856] text-[#ffffff]"
+                  : "text-[#296856]"
+              } transition-all duration-700`}
+              onClick={() => handleButtonClick("Online")}
             >
               Online
             </button>
             <button
-              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Presencial' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
-              onClick={() => handleButtonClick('Presencial')}
+              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${
+                selectedButton === "Presencial"
+                  ? "bg-[#296856] text-[#ffffff]"
+                  : "text-[#296856]"
+              } transition-all duration-700`}
+              onClick={() => handleButtonClick("Presencial")}
             >
               Presencial
             </button>
           </div>
-          <div className="flex w-[40%] justify-between"><p>50 minutos</p> <p>R${valorConsulta}</p></div>
+          <div className="flex w-[40%] justify-between">
+            <p>50 minutos</p> <p>R${valorConsulta}</p>
+          </div>
           <div className="consult border-2 p-8 w-[20rem] h-[20rem] flex flex-col items-center rounded-xl mt-8">
-            <h1 className="font-bold text-[#296856] text-lg">Data da Consulta</h1>
-            <CalendarDropdownButton2 />
+            <h1 className="font-bold text-[#296856] text-lg">
+              Data da Consulta
+            </h1>
+            <CalendarDropdownButton2 onDateChange={handleDateChange} />
             <p className="font-bold text-[#296856] my-4">Horários Diponíveis</p>
             <div className="horarios flex flex-wrap gap-6">
-              <div className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#3e9c18] justify-center items-center cursor-pointer">10:00</div>
-              <div className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#3e9c18] justify-center items-center cursor-pointer">10:00</div>
-              <div className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#3e9c18] justify-center items-center cursor-pointer">10:00</div>
-              <div className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#3e9c18] justify-center items-center cursor-pointer">10:00</div>
-              <div className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#5ead3f] justify-center items-center cursor-pointer">10:00</div>
-              <div className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#3e9c18] justify-center items-center cursor-pointer">10:00</div>
+              {filteredTimes.length > 0 ? (
+                filteredTimes.map((time, index) => (
+                  <div
+                    key={index}
+                    className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#3e9c18] justify-center items-center cursor-pointer"
+                  >
+                    {time}
+                  </div>
+                ))
+              ) : (
+                <p>Sem horários disponíveis</p>
+              )}
             </div>
           </div>
           <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
-            <p>Valor</p><p>50 Minutos</p><p>{valorConsulta}</p>
+            <p>Valor</p>
+            <p>50 Minutos</p>
+            <p>{valorConsulta}</p>
           </div>
           <div className="flex justify-center items-center my-8">
-            <button className="w-[15rem] h-[2rem] text-white bg-[#3E9C81] hover:bg-[#3e9c8163] rounded-md border-2 border-[#245f4e] text-xl">AGENDAR</button>
+            <button className="w-[15rem] h-[2rem] text-white bg-[#3E9C81] hover:bg-[#3e9c8163] rounded-md border-2 border-[#245f4e] text-xl">
+              AGENDAR
+            </button>
           </div>
         </div>
       </div>

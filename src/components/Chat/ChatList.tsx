@@ -2,8 +2,8 @@ import React from "react";
 
 interface Chat {
     id: number;
-    name: string;
-    avatar: string;
+    nome: string;
+    foto_perfil: string;
     messages: { id: number; sender: string; text: string; time: string }[];
 }
 
@@ -29,13 +29,13 @@ const ChatList: React.FC<ChatListProps> = ({ chats, onChatClick }) => {
                         onClick={() => onChatClick(chat.id)}
                     >
                         <img
-                            src={chat.avatar}
-                            alt={`${chat.name} avatar`}
+                            src={chat.foto_perfil}
+                            alt={`${chat.nome} avatar`}
                             className="w-12 h-12 rounded-full"
                         />
                         <div className="flex-grow ml-4">
                             <div className="flex justify-between">
-                                <h2 className="text-lg font-semibold">{chat.name}</h2>
+                                <h2 className="text-lg font-semibold">{chat.nome}</h2>
                                 <p className="text-sm text-gray-500">
                                     {chat.messages[chat.messages.length - 1]?.time}
                                 </p>

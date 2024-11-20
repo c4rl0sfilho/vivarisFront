@@ -21,6 +21,8 @@ interface Psicologo {
     sexo: string;
     telefone: string;
   };
+  descricao: string,
+  price: number,
 }
 
 const ProfessionalCards = () => {

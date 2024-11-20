@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { getRoomId } from "../../Ts/VideoCallRoute";
+import { useSocket } from "../../context/SocketContext";
+import { useNavigate } from "react-router-dom";
 
 interface Chat {
     id: number;
@@ -20,6 +21,9 @@ interface ChatConversationProps {
 
 const ChatConversation: React.FC<ChatConversationProps> = ({ chat, onBack }) => {
     const [newMessage, setNewMessage] = useState("");
+    const [isCalling, setIsCalling] = useState(false);
+    const socket = useSocket();
+    const navigate = useNavigate();
 
     const handleSendMessage = () => {
         if (newMessage.trim()) {
@@ -33,9 +37,29 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ chat, onBack }) => 
         }
     };
 
-    const handleVideoCall = () => {
-       const roomId = getRoomId()
-       window.location.href = `http://localhost:8080/v1/vivaris/video-room/${roomId}}`
+    const handleVideoCall = async () => {
+        if (isCalling) return; // Evitar múltiplas chamadas
+        setIsCalling(true);
+
+        // Emite o evento para iniciar a chamada
+        socket.emit("initiateCall", { to: chat.id });
+
+        // Escuta a resposta do servidor
+        socket.once("callAccepted", ({ roomId }: { roomId: string }) => {
+            alert(`Chamada aceita! Entrando na sala: ${roomId}`);
+            setIsCalling(false);
+            navigate(`/video-call/${roomId}`);
+        });
+
+        socket.once("callDeclined", ({ message }: { message: string }) => {
+            alert(message || "Chamada recusada.");
+            setIsCalling(false);
+        });
+
+        socket.once("callFailed", ({ message }: { message: string }) => {
+            alert(message || "Falha ao iniciar a chamada.");
+            setIsCalling(false);
+        });
     };
 
     return (
@@ -68,7 +92,14 @@ const ChatConversation: React.FC<ChatConversationProps> = ({ chat, onBack }) => 
                 </div>
                 <div className="flex items-center space-x-4">
                     {/* Ícone de Videochamada */}
-                    <button onClick={handleVideoCall} title="Videochamada">
+                    <button
+                        onClick={handleVideoCall}
+                        title="Videochamada"
+                        className={`${
+                            isCalling ? "cursor-not-allowed" : ""
+                        }`}
+                        disabled={isCalling}
+                    >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             fill="none"

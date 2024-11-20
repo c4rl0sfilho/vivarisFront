@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import Calendar from 'react-calendar';
 import '../styles/Calendar.css';
 
-const CalendarDropdownButton = () => {
+const CalendarDropdownButton = ({ onDateChange }: {onDateChange: (date: string) => void }) => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
@@ -27,6 +27,7 @@ const CalendarDropdownButton = () => {
 
   const handleDateChange = (date: any) => {
     setSelectedDate(date);
+    onDateChange(date)
     setIsCalendarOpen(false); 
   };
 
