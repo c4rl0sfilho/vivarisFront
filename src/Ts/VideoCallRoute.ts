@@ -3,7 +3,7 @@ import axios from "axios";
 const token = localStorage.getItem('token')
 
 export async function getRoomId(){
-    const endpoint = `httrp://localhost:8080/v1/vivaris/video-room`
+    const endpoint = `http://localhost:8080/v1/vivaris/video-room`
 
     try {
         const response = await axios.get(endpoint, {
@@ -15,7 +15,7 @@ export async function getRoomId(){
         
         console.log(response);
         
-        return response.data;
+        return response;
     } catch (error) {
         console.error("Erro ao obter dados dos profissionais:", error);
     }

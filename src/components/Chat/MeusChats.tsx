@@ -1,38 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChatList from "./ChatList";
 import ChatConversation from "./ChatConversation";
+import { getAllPsico } from "../../Ts/allProfessionals";
 
 const ChatApp: React.FC = () => {
     const [activeChat, setActiveChat] = useState<number | null>(null);
+    const [chats, setChats] = useState<any[]>([]); // Ajuste o tipo para corresponder aos dados retornados por `getAllPsico`
+    const [loading, setLoading] = useState<boolean>(true);
 
-    const chats = [
-        {
-            id: 1,
-            name: "Maria Silva",
-            avatar: "https://via.placeholder.com/50",
-            messages: [
-                { id: 1, sender: "Maria Silva", text: "Tudo bem?", time: "10:45 AM" },
-                { id: 2, sender: "Você", text: "Sim, e você?", time: "10:46 AM" },
-            ],
-        },
-        {
-            id: 2,
-            name: "João Oliveira",
-            avatar: "https://via.placeholder.com/50",
-            messages: [
-                { id: 1, sender: "João Oliveira", text: "Vamos marcar?", time: "09:15 AM" },
-                { id: 2, sender: "Você", text: "Com certeza!", time: "09:16 AM" },
-            ],
-        },
-        {
-            id: 3,
-            name: "Ana Clara",
-            avatar: "https://via.placeholder.com/50",
-            messages: [
-                { id: 1, sender: "Ana Clara", text: "Ok, combinado!", time: "Ontem" },
-            ],
-        },
-    ];
+    useEffect(() => {
+        const fetchChats = async () => {
+            setLoading(true);
+            try {
+                const data = await getAllPsico();
+                setChats(data.data.data);
+            } catch (error) {
+                console.error("Erro ao buscar chats:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchChats();
+    }, []);
 
     const handleChatClick = (chatId: number) => {
         setActiveChat(chatId);
@@ -41,6 +31,10 @@ const ChatApp: React.FC = () => {
     const handleBack = () => {
         setActiveChat(null);
     };
+
+    if (loading) {
+        return <div>Carregando...</div>;
+    }
 
     return (
         <div className="h-screen">
