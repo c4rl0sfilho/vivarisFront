@@ -96,7 +96,7 @@ const HeaderHome = () => {
                 {/* Campo de busca com ícone e menu suspenso */}
                 <div className='relative flex w-full md:w-[30rem]'>
                     <div
-                        className="flex w-full bg-[#96E3CD] rounded-full items-center"
+                        className="flex w-full bg-[#96E3CD] rounded-lg items-center"
                         onClick={() => {
                             if (location.pathname === '/Home') {
                                 navigate('/ProList');
@@ -108,8 +108,8 @@ const HeaderHome = () => {
                     >
                         <input
                             type="text"
-                            placeholder="Pesquisar"
-                            className="flex-grow px-4 py-2 bg-transparent text-[#296856] placeholder-[#296856] focus:outline-none"
+                            placeholder="Busque por um psicólogo..."
+                            className="flex-grow px-4 py-2 font-semibold bg-transparent text-[#000000] opacity-75 placeholder-[#296856] focus:outline-none"
                         />
                         <FaSearch size={20} className="text-[#296856] mr-4" />
                     </div>

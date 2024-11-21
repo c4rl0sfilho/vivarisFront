@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { BsStar } from "react-icons/bs";
-import { getPsico } from "../Ts/psicologo_data";
+import { getPsico, professionalAvailabilities } from "../Ts/psicologo_data";
 import HeaderHome from "../components/HeaderHome";
 import calcularIdade from "../util/CalcularIdade";
 import { IoIosArrowBack } from "react-icons/io";
@@ -38,7 +38,7 @@ const PsicoProfile = () => {
   const [searchParams] = useSearchParams();
   const id = searchParams.get("id");
   const navigate = useNavigate();
-
+  const [horariosPorDia, setHorariosPorDia] = useState<{ [key: string]: string[] }>({});
   const [selectedButton, setSelectedButton] = useState<"Online" | "Presencial">(
     "Online"
   );
@@ -66,6 +66,50 @@ const PsicoProfile = () => {
     fetchPsico();
   }, [id]);
 
+
+  useEffect(() => {
+    if (selectedDate && psico?.tbl_psicologo_disponibilidade) {
+      const date = new Date(selectedDate);
+      const daysOfWeek = ["domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado"];
+      const selectedDay = removeAcentuacao(daysOfWeek[date.getDay()]);
+
+      const availableTimes = psico.tbl_psicologo_disponibilidade
+        .filter(availability =>
+          removeAcentuacao(availability.tbl_disponibilidade.dia_semana.toLowerCase()) === selectedDay
+        )
+        .flatMap(availability => {
+          const start = availability.tbl_disponibilidade.horario_inicio;
+          const end = availability.tbl_disponibilidade.horario_fim;
+
+          const times = [];
+          let currentTime = new Date(`1970-01-01T${start}:00`);
+          const endTime = new Date(`1970-01-01T${end}:00`);
+
+          while (currentTime < endTime) {
+            times.push(currentTime.toTimeString().slice(0, 5)); // Formata como "HH:mm"
+            currentTime.setMinutes(currentTime.getMinutes() + 60); // Incrementa por 1h ou ajuste como necessário
+          }
+
+          return times;
+        });
+
+      setFilteredTimes(availableTimes);
+    }
+  }, [selectedDate, psico]);
+
+  const fetchAvailability = async (idPsicologo: number | undefined) => {
+    if (!idPsicologo) return;
+
+    try {
+      const response = await professionalAvailabilities(idPsicologo);
+
+      return response.data
+
+    } catch (error) {
+      console.error("Erro ao obter disponibilidade:", error);
+    }
+  };
+
   const sexoMap: { [key: number]: string } = {
     1: "Masculino",
     2: "Feminino",
@@ -74,8 +118,40 @@ const PsicoProfile = () => {
 
   const getAvailability = async (idPsicologo: number | undefined) => {
 
-    const response = await getAvailability(idPsicologo)
 
+  const handleDateChange = async (date: string) => {
+    setSelectedDate(date); // Atualiza a data selecionada
+    console.log("Data selecionada:", date);
+
+
+    // Obtém o dia da semana da data selecionada (0 = Domingo, 1 = Segunda, etc.)
+    const selectedDay = new Date(date).getDay();
+
+    if (psico?.id) {
+      
+      // Aguardar a resposta da API para atualizar os horários
+      const availableTimes = await fetchAvailability(psico.id);
+      console.log("Horários recebidos:", availableTimes.disponibilidades);
+
+      // Organiza os horários por dia da semana
+      const horariosPorDia = availableTimes.dipsonibilidades.reduce((acc: { [key: string]: string[] }, time: string) => {
+        const dayOfWeek = new Date(time).getDay(); // Aqui você vai pegar o dia da semana
+        const dayName = getDayName(dayOfWeek);
+
+        if (!acc[dayName]) acc[dayName] = [];
+        acc[dayName].push(time);  // Agrupa os horários pelo dia da semana
+        return acc;
+      }, {});
+
+      setHorariosPorDia(horariosPorDia); // Armazena os horários agrupados por dia da semana
+    }
+  };
+
+  const getDayName = (dayIndex: number) => {
+    const days = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+    return days[dayIndex];
+  };
+=======
     console.log(response);
 
   }
@@ -94,21 +170,36 @@ const PsicoProfile = () => {
   };
 
 
+
   const cadastrarConsulta = async () => {
+
+    if (!selectedDate || !horaSelecionada || !psico?.id) return;
+
+    const idCliente = localStorage.getItem("idDoCliente");
+    const token = localStorage.getItem("token");
+    const endpoint = `http://localhost:8080/v1/vivaris/consultas`;
+
     const idCliente = localStorage.getItem("idDoCliente");
     if (!idCliente || !selectedDate || !horaSelecionada) {
       console.error("Dados insuficientes para agendar a consulta");
       return;
     }
 
+
     const body = {
-      id_psicologo: psico?.id,
+      id_psicologo: psico.id,
       id_cliente: idCliente,
+
+      data_consulta: `${selectedDate} ${horaSelecionada}`, // Combine a data com o horário selecionado
+    };
+
+
       data_consulta: `${selectedDate}T${horaSelecionada}`, // Combina data e hora
     };
 
     const token = localStorage.getItem("token");
     const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade`;
+
 
     try {
       const response = await axios.post(endpoint, body, {
@@ -117,6 +208,14 @@ const PsicoProfile = () => {
           "x-access-token": token,
         },
       });
+
+
+      console.log("Consulta cadastrada:", response.data);
+    } catch (error) {
+      console.error("Erro ao cadastrar consulta:", error);
+    }
+  };
+
       console.log("Consulta agendada com sucesso:", response.data);
     } catch (error) {
       console.error("Erro ao agendar consulta:", error);
@@ -173,8 +272,19 @@ const PsicoProfile = () => {
                 <div className="name flex flex-col items-start justify-center">
                   <h1 className="font-bold text-xl sm:text-2xl">
                     {psico.nome}
-                  </h1>
+
+                  <p className="text-base sm:text-lg">
+                    {psico.id_sexo === 1
+                      ? "Masculino"
+                      : psico.id_sexo === 2
+                        ? "Feminino"
+                        : psico.id_sexo === 3
+                          ? "Não-binário"
+                          : "Não especificado"}
+                  </p>
+
                   <p>{sexoMap[psico.id_sexo] || "Não especificado"}</p>
+
                   <p>Idade: {calcularIdade(psico.data_nascimento)} anos</p>
                 </div>
               </div>
@@ -231,7 +341,10 @@ const PsicoProfile = () => {
             <p>{psico?.email}</p>
           </div>
           <div className="telefone flex w-[50%] h-auto justify-between py-2">
+
+
             <p>Idade</p>
+
             <p>Idade: {psico?.data_nascimento ? calcularIdade(psico.data_nascimento) : "Não especificada"} anos</p>
           </div>
         </div>
@@ -268,20 +381,31 @@ const PsicoProfile = () => {
               Data da Consulta
             </h1>
             <CalendarDropdownButton2 onDateChange={handleDateChange} />
+
+            <p className="font-bold text-[#296856] my-4">Horários Disponíveis</p>
+
             <p className="font-bold text-[#296856] my-4">Horários Diponíveis</p>
+
             <div className="horarios flex flex-wrap gap-6">
-              {filteredTimes.length > 0 ? (
-                filteredTimes.map((time, index) => (
-                  <div
-                    key={index}
-                    onClick={() => setHoraSelecionada(`${time}`)}
-                    className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#3e9c18] justify-center items-center cursor-pointer"
-                  >
-                    {time}
+              {selectedDate && Object.keys(horariosPorDia).length > 0 ? (
+                Object.entries(horariosPorDia).map(([day, times], index) => (
+                  <div key={index}>
+                    <h3 className="font-semibold">{day}</h3>
+                    <div className="horario-btns flex flex-wrap gap-3">
+                      {times.map((time, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setHoraSelecionada(time)}
+                          className={`horario-btn ${horaSelecionada === time ? "selected" : ""}`}
+                        >
+                          {time}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 ))
               ) : (
-                <p>Sem horários disponíveis</p>
+                <p>Sem horários disponíveis para a data selecionada.</p>
               )}
             </div>
           </div>
