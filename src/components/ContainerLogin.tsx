@@ -3,11 +3,10 @@ import FormInput from './FormInput';
 import GoogleIcon from '../assets/googleIcon.svg';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Swal from 'sweetalert2'
-
+import Swal from 'sweetalert2';
 
 const ContainerLogin = () => {
-    localStorage.clear()
+    localStorage.clear();
     const [selectedButton, setSelectedButton] = useState<'Cliente' | 'Psicólogo'>('Cliente');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -54,7 +53,7 @@ const ContainerLogin = () => {
             });
 
             if (response.status === 200) {
-                Swal.fire({
+                await Swal.fire({
                     title: 'Sucesso!',
                     text: 'Login bem-sucedido!',
                     icon: 'success',
@@ -127,8 +126,19 @@ const ContainerLogin = () => {
         }
     };
 
+    // Lógica para capturar a tecla Enter
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' && !loading) {
+            handleLogin();
+        }
+    };
+
     return (
-        <div className='flex flex-col w-[30rem]'>
+        <div
+            className="flex flex-col w-[30rem]"
+            onKeyDown={handleKeyPress} // Adiciona o evento de teclado
+            tabIndex={0} // Torna o div focável para capturar eventos de teclado
+        >
             <div className="title flex justify-center pb-8">
                 <h1 className='text-7xl font-semibold text-[#13916D]'>Login</h1>
             </div>
