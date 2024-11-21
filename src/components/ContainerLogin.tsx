@@ -3,12 +3,13 @@ import FormInput from './FormInput';
 import GoogleIcon from '../assets/googleIcon.svg';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { FaEyeSlash as EyeIcon, FaEye as OpenedEye } from "react-icons/fa"
 const ContainerLogin = () => {
-    localStorage.clear()
+    localStorage.clear();
     const [selectedButton, setSelectedButton] = useState<'Cliente' | 'Psicólogo'>('Cliente');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false); // Estado para controlar a visibilidade da senha
     const navigate = useNavigate();
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -40,24 +41,13 @@ const ContainerLogin = () => {
             const endpoint = selectedButton === 'Cliente'
                 ? 'http://localhost:8080/v1/vivaris/login/usuario'
                 : 'http://localhost:8080/v1/vivaris/profissional/login';
-                
-
-            console.log('Enviando requisição para:', endpoint);
-            console.log('Com os dados:', { email, senha: password });
-
-
-            console.log(endpoint); 
             const response = await axios.post(endpoint, {
                 email: email,
                 senha: password,
-                
             });
-            
 
-            console.log('Resposta da API:', response.data); // Log para verificar a estrutura da resposta
-
-            // Verifica se o status da resposta é 200
-            if (response.status === 200) {
+             // Verifica se o status da resposta é 200
+             if (response.status === 200) {
                 console.log('Login bem-sucedido:', response);
 
                 if (selectedButton === 'Cliente') {
@@ -131,22 +121,18 @@ const ContainerLogin = () => {
                 <h1 className='text-7xl font-semibold text-[#13916D]'>Login</h1>
             </div>
             <div className="ClienteOrPsicologo flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
-                <div>
-                    <button
-                        className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
-        ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'bg-[#ffffff] text-[#296856]'}`}
-                        onClick={() => handleButtonClick('Cliente')}>
-                        Cliente
-                    </button>
-                </div>
-                <div>
-                    <button
-                        className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
-        ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'bg-[#ffffff] text-[#296856]'}`}
-                        onClick={() => handleButtonClick('Psicólogo')}>
-                        Psicólogo
-                    </button>
-                </div>
+                <button
+                    className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
+                    ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'bg-[#ffffff] text-[#296856]'}`}
+                    onClick={() => handleButtonClick('Cliente')}>
+                    Cliente
+                </button>
+                <button
+                    className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold transition-all duration-700 
+                    ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'bg-[#ffffff] text-[#296856]'}`}
+                    onClick={() => handleButtonClick('Psicólogo')}>
+                    Psicólogo
+                </button>
             </div>
             <div className="inputs">
                 <FormInput
@@ -155,18 +141,30 @@ const ContainerLogin = () => {
                     value={email}
                     onChange={handleEmailChange}
                     label="Email"
-                    placeholder='Email'
+                    placeholder="Email"
                     required
                 />
-                <FormInput
-                    type="password"
-                    name="password"
-                    value={password}
-                    onChange={handlePasswordChange}
-                    label="Senha"
-                    placeholder='Senha'
-                    required
-                />
+                <div className="relative">
+                    <FormInput
+                        type={showPassword ? 'text' : 'password'} 
+                        name="password"
+                        value={password}
+                        onChange={handlePasswordChange}
+                        label="Senha"
+                        placeholder="Senha"
+                        required
+                    />
+                    <div
+                        className="absolute top-3 right-3 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)} 
+                    >
+                        {showPassword ? (
+                            <OpenedEye width={20} height={2} />
+                        ) : (
+                            <EyeIcon width={20} height={20} />
+                        )}
+                    </div>
+                </div>
             </div>
             <div className="buttonLogin flex justify-center py-4">
                 <button
@@ -181,7 +179,9 @@ const ContainerLogin = () => {
             {loading && <p className="text-center font-semibold pb-2">Carregando...</p>}
             <div className="textConta flex justify-around border-b border-b-black">
                 <p>Não tem conta?</p>
-                <p onClick={() => navigate('/Register')} className='cursor-pointer text-[#296856] underline'>Cadastre-se</p>
+                <p onClick={() => navigate('/Register')} className='cursor-pointer text-[#296856] underline'>
+                    Cadastre-se
+                </p>
             </div>
             <div className="google flex justify-center py-2">
                 <img src={GoogleIcon} alt="Google Icon" />

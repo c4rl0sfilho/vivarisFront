@@ -16,8 +16,8 @@ interface PsicoData {
 }
 
 
+const token = localStorage.getItem('token')
 export const getPsico = async (idPsico: number) => {
-    const token = localStorage.getItem('token')
     const endpoint = `http://localhost:8080/v1/vivaris/profissional/${idPsico}`;  
     try {
         const response = await axios.get(endpoint, {
@@ -35,7 +35,6 @@ export const getPsico = async (idPsico: number) => {
 };
 
 export async function professionalAvailabilities(idPsico:number){
-    const token = localStorage.getItem('token')
     const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsico}`;  
     try {
         const response = await axios.get(endpoint, {
@@ -44,9 +43,9 @@ export async function professionalAvailabilities(idPsico:number){
                 'x-access-token': token
             },
         });
-        console.log(response);
+        console.log(response.data);
         
-        return response;
+        return response.data;
     } catch (error) {
         console.error("Erro ao obter dados do psicólogo:", error);
     }

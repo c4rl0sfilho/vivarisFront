@@ -100,7 +100,6 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 return { id, dia, horarios };
             });
 
-            console.log(data);
             setData(formattedData);
         } catch (error) {
             console.error("Erro ao obter dados do usuário:", error);
