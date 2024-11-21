@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { format, addHours, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 interface Disponibilidade {
     id: number;
@@ -36,11 +36,14 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
     const [data, setData] = useState<{ id: number; dia: string; horarios: Horario[] }[]>([]);
     const token = localStorage.getItem('token')
 
+    
+
     const fetchData = async () => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
         const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
-
+        
         try {
+            setData([])
             const response = await axios.get(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,6 +51,8 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 },
             });
 
+            console.log(response);
+            
             const disponibilidades: Disponibilidade[] = response.data.data.disponibilidades;
 
             const formatHour = (timeString: string): string => {
@@ -65,16 +70,18 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 }
             };
 
+
             const groupedData: Record<string, Horario[]> = {};
 
             disponibilidades.forEach(item => {
                 const dia = item.dia_semana;
                 const horario = formatHour(item.horario_inicio);
+                console.log(horario);
+                
 
                 if (!groupedData[dia]) {
                     groupedData[dia] = [];
                 }
-
                 // Verifique se o horário já existe antes de adicionar
                 if (!groupedData[dia].some(h => h.horario === horario)) {
                     groupedData[dia].push({ horario, id: item.id });
@@ -101,15 +108,14 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
     };
 
 
-
     const deleteAvailability = async (dia: string, horario: string) => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
         const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;   
 
         try {
             const body = {
-                dia_semana: dia,
-                horario_inicio: `${horario}:00`, 
+                dia_semana: dia,  
+                horario_inicio: `${horario}:00`,
             };
             console.log(body);
             
@@ -120,7 +126,6 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 },
                 data: body,
             });
-    
             fetchData();
         } catch (error) {
             console.error("Erro ao deletar a disponibilidade:", error);
@@ -130,7 +135,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
 
     useEffect(() => {
         fetchData();
-    }, [reloadAvailability]);
+    }, [reloadAvailability]); 
 
     return (
         <div className="w-full h-auto flex justify-center items-center my-8">
@@ -144,7 +149,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                                     horarios.map(({ horario, id: horarioId }) => (
                                         <div
                                             key={`${id}-${horarioId}`}
-                                            onClick={() => deleteAvailability(dia, horario)}
+                                           onClick={() => deleteAvailability(dia, horario)}
                                             className="flex justify-center w-24 p-2 font-medium border-2 rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-red-600 hover:text-white hover:border-black cursor-pointer transition my-1"
                                         >
                                             {horario}

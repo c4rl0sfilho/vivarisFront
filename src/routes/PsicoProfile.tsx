@@ -9,6 +9,7 @@ import CalendarDropdownButton2 from "../components/CalendarDropdownButton2";
 import { removeAcentuacao } from "../util/removeAcentuacao";
 import { FaInstagram } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
+import axios from "axios";
 
 interface Availability {
   dia_semana: string;
@@ -42,6 +43,7 @@ const PsicoProfile = () => {
     "Online"
   );
   const [psico, setPsico] = useState<PsicoData | null>(null);
+  const [horaSelecionada, setHoraSelecionada] = useState<string>("")
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [filteredTimes, setFilteredTimes] = useState<string[]>([]);
   const handleButtonClick = (buttonName: "Online" | "Presencial") => {
@@ -52,6 +54,8 @@ const PsicoProfile = () => {
     const fetchPsico = async () => {
       try {
         const response = await getPsico(Number(id));
+        console.log(response);
+        
         if (response?.data?.professional) {
           setPsico(response.data.professional);
         }
@@ -71,6 +75,33 @@ const PsicoProfile = () => {
   }
 
   const valorConsulta = psico?.price;
+
+  const cadastrarConsulta = async () => {
+    const idCliente = localStorage.getItem('idDoCliente');
+    const body = {
+      id_psicologo: psico?.id,
+      id_cliente: idCliente,
+      data_consulta: horaSelecionada,
+    };
+    if (selectedDate && horaSelecionada) {
+      const token = localStorage.getItem('token')
+      const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade`;  
+    try {
+        const response = await axios.get(endpoint, {
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': token
+            },
+            data: body
+        });
+        console.log(response);
+        
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao obter dados do psicólogo:", error);
+    }
+    }
+  }
 
   return (
     <div className="bg-[#F1F1F1] flex flex-col w-full h-full items-center">
@@ -212,7 +243,7 @@ const PsicoProfile = () => {
           <div className="flex w-[40%] justify-between">
             <p>50 minutos</p> <p>R${valorConsulta}</p>
           </div>
-          <div className="consult border-2 p-8 w-[20rem] h-[20rem] flex flex-col items-center rounded-xl mt-8">
+          <div className="consult border-2 p-8 w-[30rem] h-[20rem] flex flex-col items-center rounded-xl mt-8">
             <h1 className="font-bold text-[#296856] text-lg">
               Data da Consulta
             </h1>
@@ -223,6 +254,7 @@ const PsicoProfile = () => {
                 filteredTimes.map((time, index) => (
                   <div
                     key={index}
+                    onClick={() => setHoraSelecionada(`${time}`)}
                     className="horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-[#3E9C81] hover:text-white hover:border-[#3e9c18] justify-center items-center cursor-pointer"
                   >
                     {time}
@@ -239,8 +271,9 @@ const PsicoProfile = () => {
             <p>{valorConsulta}</p>
           </div>
           <div className="flex justify-center items-center my-8">
-            <button className="w-[15rem] h-[2rem] text-white bg-[#3E9C81] hover:bg-[#3e9c8163] rounded-md border-2 border-[#245f4e] text-xl">
-              AGENDAR
+            <button className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl" 
+             onClick={() => cadastrarConsulta("Online")}>
+              Agendar
             </button>
           </div>
         </div>
