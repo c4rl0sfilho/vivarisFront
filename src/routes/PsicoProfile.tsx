@@ -66,6 +66,7 @@ const PsicoProfile = () => {
     fetchPsico();
   }, [id]);
 
+
   useEffect(() => {
     if (selectedDate && psico?.tbl_psicologo_disponibilidade) {
       const date = new Date(selectedDate);
@@ -109,9 +110,19 @@ const PsicoProfile = () => {
     }
   };
 
+  const sexoMap: { [key: number]: string } = {
+    1: "Masculino",
+    2: "Feminino",
+    3: "Não-binário",
+  };
+
+  const getAvailability = async (idPsicologo: number | undefined) => {
+
+
   const handleDateChange = async (date: string) => {
     setSelectedDate(date); // Atualiza a data selecionada
     console.log("Data selecionada:", date);
+
 
     // Obtém o dia da semana da data selecionada (0 = Domingo, 1 = Segunda, etc.)
     const selectedDay = new Date(date).getDay();
@@ -140,21 +151,55 @@ const PsicoProfile = () => {
     const days = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
     return days[dayIndex];
   };
+=======
+    console.log(response);
 
-  const valorConsulta = psico?.price;
+  }
+  const fetchAvailability = async (idPsicologo: number | undefined) => {
+    if (!idPsicologo) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`)
+      const horariosDisponiveis = response.data?.horarios || []; // Ajuste para o formato da resposta
+      setFilteredTimes(horariosDisponiveis);
+      console.log("Horários disponíveis:", horariosDisponiveis);
+    } catch (error) {
+      console.error("Erro ao obter disponibilidade:", error);
+    }
+  };
+
+
 
   const cadastrarConsulta = async () => {
+
     if (!selectedDate || !horaSelecionada || !psico?.id) return;
 
     const idCliente = localStorage.getItem("idDoCliente");
     const token = localStorage.getItem("token");
     const endpoint = `http://localhost:8080/v1/vivaris/consultas`;
 
+    const idCliente = localStorage.getItem("idDoCliente");
+    if (!idCliente || !selectedDate || !horaSelecionada) {
+      console.error("Dados insuficientes para agendar a consulta");
+      return;
+    }
+
+
     const body = {
       id_psicologo: psico.id,
       id_cliente: idCliente,
+
       data_consulta: `${selectedDate} ${horaSelecionada}`, // Combine a data com o horário selecionado
     };
+
+
+      data_consulta: `${selectedDate}T${horaSelecionada}`, // Combina data e hora
+    };
+
+    const token = localStorage.getItem("token");
+    const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade`;
+
 
     try {
       const response = await axios.post(endpoint, body, {
@@ -164,11 +209,28 @@ const PsicoProfile = () => {
         },
       });
 
+
       console.log("Consulta cadastrada:", response.data);
     } catch (error) {
       console.error("Erro ao cadastrar consulta:", error);
     }
   };
+
+      console.log("Consulta agendada com sucesso:", response.data);
+    } catch (error) {
+      console.error("Erro ao agendar consulta:", error);
+    }
+  };
+
+  const handleDateChange = async (date: string) => {
+    try {
+      await fetchAvailability(psico?.id);
+      console.log("Disponibilidade carregada para a data:", date);
+    } catch (err) {
+      console.error("Erro ao carregar disponibilidade:", err);
+    }
+  };
+
 
   return (
     <div className="bg-[#F1F1F1] flex flex-col w-full h-full items-center">
@@ -210,7 +272,7 @@ const PsicoProfile = () => {
                 <div className="name flex flex-col items-start justify-center">
                   <h1 className="font-bold text-xl sm:text-2xl">
                     {psico.nome}
-                  </h1>
+
                   <p className="text-base sm:text-lg">
                     {psico.id_sexo === 1
                       ? "Masculino"
@@ -220,6 +282,9 @@ const PsicoProfile = () => {
                           ? "Não-binário"
                           : "Não especificado"}
                   </p>
+
+                  <p>{sexoMap[psico.id_sexo] || "Não especificado"}</p>
+
                   <p>Idade: {calcularIdade(psico.data_nascimento)} anos</p>
                 </div>
               </div>
@@ -276,6 +341,10 @@ const PsicoProfile = () => {
             <p>{psico?.email}</p>
           </div>
           <div className="telefone flex w-[50%] h-auto justify-between py-2">
+
+
+            <p>Idade</p>
+
             <p>Idade: {psico?.data_nascimento ? calcularIdade(psico.data_nascimento) : "Não especificada"} anos</p>
           </div>
         </div>
@@ -305,14 +374,18 @@ const PsicoProfile = () => {
             </button>
           </div>
           <div className="flex w-[40%] justify-between">
-            <p>50 minutos</p> <p>R${valorConsulta}</p>
+            <p>50 minutos</p> <p>R${psico?.price}</p>
           </div>
           <div className="consult border-2 p-8 w-[30rem] h-[20rem] flex flex-col items-center rounded-xl mt-8">
             <h1 className="font-bold text-[#296856] text-lg">
               Data da Consulta
             </h1>
             <CalendarDropdownButton2 onDateChange={handleDateChange} />
+
             <p className="font-bold text-[#296856] my-4">Horários Disponíveis</p>
+
+            <p className="font-bold text-[#296856] my-4">Horários Diponíveis</p>
+
             <div className="horarios flex flex-wrap gap-6">
               {selectedDate && Object.keys(horariosPorDia).length > 0 ? (
                 Object.entries(horariosPorDia).map(([day, times], index) => (
@@ -339,7 +412,7 @@ const PsicoProfile = () => {
           <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
             <p>Valor</p>
             <p>50 Minutos</p>
-            <p>{valorConsulta}</p>
+            <p>{psico?.price}</p>
           </div>
           <div className="flex justify-center items-center my-8">
             <button className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl"

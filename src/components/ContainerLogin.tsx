@@ -3,7 +3,11 @@ import FormInput from './FormInput';
 import GoogleIcon from '../assets/googleIcon.svg';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+
 import { FaEyeSlash as EyeIcon, FaEye as OpenedEye } from "react-icons/fa"
+
+import Swal from 'sweetalert2';
+
 const ContainerLogin = () => {
     localStorage.clear();
     const [selectedButton, setSelectedButton] = useState<'Cliente' | 'Psicólogo'>('Cliente');
@@ -32,8 +36,13 @@ const ContainerLogin = () => {
 
         // Validação básica antes de enviar a requisição
         if (!email || !password) {
-            setError('Preencha todos os campos!');
             setLoading(false);
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Preencha todos os campos!',
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
             return;
         }
 
@@ -41,43 +50,39 @@ const ContainerLogin = () => {
             const endpoint = selectedButton === 'Cliente'
                 ? 'http://localhost:8080/v1/vivaris/login/usuario'
                 : 'http://localhost:8080/v1/vivaris/profissional/login';
+
             const response = await axios.post(endpoint, {
                 email: email,
                 senha: password,
             });
 
+
              // Verifica se o status da resposta é 200
              if (response.status === 200) {
                 console.log('Login bem-sucedido:', response);
 
-                if (selectedButton === 'Cliente') {
-                    // Verifica a estrutura da resposta para o cliente
+            if (response.status === 200) {
+                await Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Login bem-sucedido!',
+                    icon: 'success',
+                    confirmButtonText: 'Continuar',
+                });
 
-                    console.log(response);
-                    
+
+                if (selectedButton === 'Cliente') {
                     if (response.data && response.data.cliente && response.data.cliente.usuario) {
                         let idDoCliente = response.data.cliente.usuario.id;
-                        let token = response.data.token
+                        let token = response.data.token;
                         localStorage.setItem('idDoCliente', idDoCliente);
                         localStorage.setItem('token', token);
-                        console.log(token);
-                        
-
-                        if (idDoCliente) {
-                            console.log('ID do Cliente armazenado no localStorage:', idDoCliente);
-                        } else {
-                            console.log('Nenhum ID de cliente encontrado no localStorage');
-                        }
 
                         let url = `http://localhost:8080/v1/vivaris/usuario/preferencias/${idDoCliente}`;
-
                         const preferenciasResponse = await axios.get(url, {
-                            headers:{
-                                'x-access-token': await token
-                            }
+                            headers: {
+                                'x-access-token': token,
+                            },
                         });
-                        console.log(preferenciasResponse);
-                        
 
                         if (preferenciasResponse.data.data.preferencias.length < 1) {
                             navigate('/Preferences');
@@ -85,38 +90,65 @@ const ContainerLogin = () => {
                             navigate('/Home');
                         }
                     } else {
-                        console.error('Estrutura de resposta inesperada para Cliente', response.data);
-                        setError('Erro inesperado ao processar a resposta do login para Cliente');
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Resposta inesperada do servidor ao fazer login como cliente.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
                     }
-
                 } else {
-                    // Verifica a estrutura da resposta para o psicólogo
                     if (response.data.data.id) {
-                        let idDoPsicologo = response.data.data.id
+                        let idDoPsicologo = response.data.data.id;
+                        let token = response.data.token;
                         localStorage.setItem('idDoPsicologo', idDoPsicologo);
-                        let token = response.data.token
                         localStorage.setItem('token', token);
-                        console.log('ID do Psicólogo armazenado no localStorage:', idDoPsicologo);
                         navigate('/Home');
                     } else {
-                        setError('Erro inesperado ao processar a resposta do login para Psicólogo');
-                    } 
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Resposta inesperada do servidor ao fazer login como psicólogo.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                    }
                 }
-
-                alert('Login bem-sucedido');
             } else {
-                alert('Email ou senha inválidos ou status não autorizado');
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Email ou senha inválidos.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
-
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || 'Erro ao fazer login';
             setError(errorMessage);
+            Swal.fire({
+                title: 'Erro!',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
             console.error('Erro no login:', err.response || err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Lógica para capturar a tecla Enter
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter' && !loading) {
+            handleLogin();
         }
     };
 
     return (
-        <div className='flex flex-col w-[30rem]'>
+        <div
+            className="flex flex-col w-[30rem]"
+            onKeyDown={handleKeyPress} // Adiciona o evento de teclado
+            tabIndex={0} // Torna o div focável para capturar eventos de teclado
+        >
             <div className="title flex justify-center pb-8">
                 <h1 className='text-7xl font-semibold text-[#13916D]'>Login</h1>
             </div>
@@ -175,7 +207,6 @@ const ContainerLogin = () => {
                     {loading ? 'Entrando...' : 'Login'}
                 </button>
             </div>
-            {error && <p className="text-red-500 text-center font-semibold pb-2">{error}</p>}
             {loading && <p className="text-center font-semibold pb-2">Carregando...</p>}
             <div className="textConta flex justify-around border-b border-b-black">
                 <p>Não tem conta?</p>
