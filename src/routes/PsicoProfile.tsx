@@ -66,55 +66,13 @@ const PsicoProfile = () => {
     fetchPsico();
   }, [id]);
 
-  const handleDateChange = (date: string) => {
-    console.log(date);
-    setSelectedDate(date);
+  const getAvailability = async (idPsicologo: string) => {
 
-    if (psico?.tbl_psicologo_disponibilidade) {
-      console.log("cheguei");
-      const dayOfWeek = new Date(date).toLocaleDateString("pt-BR", {
-        weekday: "long",
-      });
-      console.log(dayOfWeek.split("-")[0]);
+    const response = await getAvailability(idPsicologo)
 
-      const availabilities = psico.tbl_psicologo_disponibilidade.filter(
-        (availability) =>
-          availability.tbl_disponibilidade.dia_semana.toLowerCase() ===
-          removeAcentuacao(dayOfWeek.toLowerCase().split("-")[0])
-      );
-
-      const times = availabilities.flatMap((availability) => {
-        const baseDate = new Date(); // Data atual
-        const [hour, minute, second] =
-          availability.tbl_disponibilidade.horario_inicio
-            .split(":")
-            .map(Number);
-        const [endHour, endMinute, endSecond] =
-          availability.tbl_disponibilidade.horario_fim.split(":").map(Number);
-
-        // Cria os objetos Date para horário inicial e final
-        const start = new Date(baseDate.setHours(hour, minute, second || 0));
-        const end = new Date(
-          baseDate.setHours(endHour, endMinute, endSecond || 0)
-        );
-
-        const timeSlots: string[] = [];
-
-        while (start < end) {
-          timeSlots.push(
-            start.toLocaleTimeString("pt-BR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          );
-          start.setMinutes(start.getMinutes() + 30);
-        }
-        return timeSlots;
-      });
-
-      setFilteredTimes(times);
-    }
-  };
+    console.log(response);
+    
+  }
 
   const valorConsulta = psico?.price;
 
@@ -289,7 +247,7 @@ const PsicoProfile = () => {
             <h1 className="font-bold text-[#296856] text-lg">
               Data da Consulta
             </h1>
-            <CalendarDropdownButton2 onDateChange={handleDateChange} />
+            <CalendarDropdownButton2 onDateChange={getAvailability()} />
             <p className="font-bold text-[#296856] my-4">Horários Diponíveis</p>
             <div className="horarios flex flex-wrap gap-6">
               {filteredTimes.length > 0 ? (

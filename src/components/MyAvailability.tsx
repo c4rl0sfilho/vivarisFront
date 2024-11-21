@@ -47,7 +47,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
             const response = await axios.get(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-access-token': token
+                    'x-access-token': token,
                 },
             });
 
@@ -82,11 +82,10 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 if (!groupedData[dia]) {
                     groupedData[dia] = [];
                 }
-
+                // Verifique se o horário já existe antes de adicionar
                 if (!groupedData[dia].some(h => h.horario === horario)) {
                     groupedData[dia].push({ horario, id: item.id });
                 }
-
             });
 
             const formattedData = diasDaSemana.map(({ id, dia }) => {
@@ -101,40 +100,43 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 return { id, dia, horarios };
             });
 
+            console.log(data);
             setData(formattedData);
         } catch (error) {
             console.error("Erro ao obter dados do usuário:", error);
         }
     };
 
-    const deleteAvailability = async (dia: string, horario:string) => {
-        
+
+    const deleteAvailability = async (dia: string, horario: string) => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
-        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
+        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;   
 
         try {
             const body = {
                 dia_semana: dia,  
                 horario_inicio: `${horario}:00`,
             };
-
+            console.log(body);
+            
             await axios.delete(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-access-token': token
+                    'x-access-token': token,
                 },
                 data: body,
             });
-
             fetchData();
         } catch (error) {
             console.error("Erro ao deletar a disponibilidade:", error);
         }
     };
+    
 
     useEffect(() => {
         fetchData();
     }, [reloadAvailability]); 
+
     return (
         <div className="w-full h-auto flex justify-center items-center my-8">
             <div className="w-[50vw] p-4 rounded-lg">
@@ -146,8 +148,8 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                                 {horarios.length > 0 ? (
                                     horarios.map(({ horario, id: horarioId }) => (
                                         <div
-                                            key={`${id}-${horarioId}`} // Garantir que a chave seja única
-                                            onClick={() => deleteAvailability(dia,horario)}
+                                            key={`${id}-${horarioId}`}
+                                           onClick={() => deleteAvailability(dia, horario)}
                                             className="flex justify-center w-24 p-2 font-medium border-2 rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-red-600 hover:text-white hover:border-black cursor-pointer transition my-1"
                                         >
                                             {horario}
