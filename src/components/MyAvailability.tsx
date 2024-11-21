@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { format, addHours, parseISO } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 
 interface Disponibilidade {
     id: number;
@@ -36,11 +36,14 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
     const [data, setData] = useState<{ id: number; dia: string; horarios: Horario[] }[]>([]);
     const token = localStorage.getItem('token')
 
+    
+
     const fetchData = async () => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
         const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
-
+        
         try {
+            setData([])
             const response = await axios.get(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,25 +51,42 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 },
             });
 
+            console.log(response);
+            
             const disponibilidades: Disponibilidade[] = response.data.data.disponibilidades;
 
-            const formatHour = (dateString: string): string => {
-                const date = parseISO(dateString);
-                const localDate = addHours(date, 3);
-                return format(localDate, 'HH:mm');
+            const formatHour = (timeString: string): string => {
+                if (!timeString) {
+                    console.error("Horário inválido recebido:", timeString);
+                    return "00:00";
+                }
+                try {
+                    const date = parseISO(`1970-01-01T${timeString}`);
+                    const localDate = date;
+                    return format(localDate, 'HH:mm');
+                } catch (error) {
+                    console.error("Erro ao formatar horário:", timeString, error);
+                    return "00:00";
+                }
             };
+
 
             const groupedData: Record<string, Horario[]> = {};
 
             disponibilidades.forEach(item => {
                 const dia = item.dia_semana;
                 const horario = formatHour(item.horario_inicio);
+                console.log(horario);
+                
 
                 if (!groupedData[dia]) {
                     groupedData[dia] = [];
                 }
 
-                groupedData[dia].push({ horario, id: item.id });
+                if (!groupedData[dia].some(h => h.horario === horario)) {
+                    groupedData[dia].push({ horario, id: item.id });
+                }
+
             });
 
             const formattedData = diasDaSemana.map(({ id, dia }) => {
@@ -87,13 +107,15 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
         }
     };
 
-    const deleteAvailability = async (dia: string) => {
+    const deleteAvailability = async (dia: string, horario:string) => {
+        
         const idPsicologo = localStorage.getItem('idDoPsicologo');
         const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
 
         try {
             const body = {
-                dia_semana: dia,  // Passando o nome do dia da semana
+                dia_semana: dia,  
+                horario_inicio: `${horario}:00`,
             };
 
             await axios.delete(endPoint, {
@@ -103,8 +125,6 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 },
                 data: body,
             });
-
-            window.location.reload()
 
             fetchData();
         } catch (error) {
@@ -128,7 +148,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                                     horarios.map(({ horario, id: horarioId }) => (
                                         <div
                                             key={`${id}-${horarioId}`} // Garantir que a chave seja única
-                                            onClick={() => deleteAvailability(dia)} // Passando o nome do dia
+                                            onClick={() => deleteAvailability(dia,horario)}
                                             className="flex justify-center w-24 p-2 font-medium border-2 rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-red-600 hover:text-white hover:border-black cursor-pointer transition my-1"
                                         >
                                             {horario}
