@@ -2,9 +2,7 @@ import React from 'react'
 
 const UserProfile = () => {
   return (
-    <div>
-      oi
-    </div>
+    <div className="header w-screen bg-[#52B6A4] h-12"></div>
   )
 }
 
