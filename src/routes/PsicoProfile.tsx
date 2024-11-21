@@ -9,6 +9,7 @@ import CalendarDropdownButton2 from "../components/CalendarDropdownButton2";
 import { removeAcentuacao } from "../util/removeAcentuacao";
 import { FaInstagram } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
+import axios from "axios";
 
 interface Availability {
   dia_semana: string;
@@ -116,6 +117,33 @@ const PsicoProfile = () => {
   };
 
   const valorConsulta = psico?.price;
+
+  const cadastrarConsulta = async () => {
+    const idCliente = localStorage.getItem('idDoCliente');
+    const body = {
+      id_psicologo: psico?.id,
+      id_cliente: idCliente,
+      data_consulta: horaSelecionada,
+    };
+    if (selectedDate && horaSelecionada) {
+      const token = localStorage.getItem('token')
+      const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade`;  
+    try {
+        const response = await axios.get(endpoint, {
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': token
+            },
+            data: body
+        });
+        console.log(response);
+        
+        return response.data;
+    } catch (error) {
+        console.error("Erro ao obter dados do psicólogo:", error);
+    }
+    }
+  }
 
   return (
     <div className="bg-[#F1F1F1] flex flex-col w-full h-full items-center">
@@ -286,7 +314,7 @@ const PsicoProfile = () => {
           </div>
           <div className="flex justify-center items-center my-8">
             <button className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl" 
-             onClick={() => handleButtonClick("Online")}>
+             onClick={() => cadastrarConsulta("Online")}>
               Agendar
             </button>
           </div>

@@ -134,8 +134,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
 
     useEffect(() => {
         fetchData();
-    }, [reloadAvailability]); // A dependência de reloadAvailability vai garantir que os dados sejam recarregados ao ser alterado
-
+    }, [reloadAvailability]); 
     return (
         <div className="w-full h-auto flex justify-center items-center my-8">
             <div className="w-[50vw] p-4 rounded-lg">
