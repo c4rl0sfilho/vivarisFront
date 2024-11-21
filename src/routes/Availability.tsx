@@ -7,7 +7,9 @@ import { HiOutlineBellAlert } from 'react-icons/hi2';
 import vivarisIcon from '../assets/vivarisIcon.svg';
 import { INTERVAL, STORE_CLOSING_TIME, STORE_OPENING_TIME } from '../constants/Config';
 import '../styles/Calendar.css';
+import { IoIosArrowBack } from "react-icons/io";
 import { getPsico } from '../Ts/psicologo_data';
+import { useNavigate } from 'react-router-dom';
 
 import MyAvailability from '../components/MyAvailability';
 
@@ -55,6 +57,7 @@ const newAvailability = async (dates: Date[]) => {
 
 const Availability = () => {
   let professionaId = localStorage.getItem('idDoPsicologo');
+  const navigate = useNavigate();
 
   const [date, setDate] = useState<dateType>({
     justDate: null,
@@ -125,6 +128,8 @@ const Availability = () => {
       await Promise.all(ids.map(id => responseProfessional(id))); // Chama a função para cada ID
 
       setReloadAvailability(prev => !prev); // Alterna o estado para recarregar MyAvailability
+
+      setSelectedTimes([]);
     } catch (error) {
       console.error("Erro ao cadastrar disponibilidade:", error);
     }
@@ -183,6 +188,19 @@ const Availability = () => {
         </div>
       </div>
 
+        <div className="back w-full flex justify-start items-center pl-8 pt-8">
+          <IoIosArrowBack
+            size={35}
+            color="#0A7A7A"
+            onClick={() => navigate("/Home")}
+          />{" "}
+          <p
+            className="text-[#0A7A7A] font-bold"
+            onClick={() => navigate("/Home")}
+          >
+            Voltar
+          </p>
+        </div>
       <div className="h-full w-full pt-20 flex flex-col justify-center items-center">
         <div className="flex flex-col md:flex-row gap-10 w-full md:w-[90%] justify-center items-center">
           <div className="calendar-container">

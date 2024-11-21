@@ -44,16 +44,25 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
             const response = await axios.get(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-access-token': token
+                    'x-access-token': token,
                 },
             });
 
             const disponibilidades: Disponibilidade[] = response.data.data.disponibilidades;
 
-            const formatHour = (dateString: string): string => {
-                const date = parseISO(dateString);
-                const localDate = addHours(date, 3);
-                return format(localDate, 'HH:mm');
+            const formatHour = (timeString: string): string => {
+                if (!timeString) {
+                    console.error("Horário inválido recebido:", timeString);
+                    return "00:00";
+                }
+                try {
+                    const date = parseISO(`1970-01-01T${timeString}`);
+                    const localDate = date;
+                    return format(localDate, 'HH:mm');
+                } catch (error) {
+                    console.error("Erro ao formatar horário:", timeString, error);
+                    return "00:00";
+                }
             };
 
             const groupedData: Record<string, Horario[]> = {};
@@ -66,7 +75,10 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                     groupedData[dia] = [];
                 }
 
-                groupedData[dia].push({ horario, id: item.id });
+                // Verifique se o horário já existe antes de adicionar
+                if (!groupedData[dia].some(h => h.horario === horario)) {
+                    groupedData[dia].push({ horario, id: item.id });
+                }
             });
 
             const formattedData = diasDaSemana.map(({ id, dia }) => {
@@ -81,40 +93,44 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 return { id, dia, horarios };
             });
 
+            console.log(data);
             setData(formattedData);
         } catch (error) {
             console.error("Erro ao obter dados do usuário:", error);
         }
     };
 
-    const deleteAvailability = async (dia: string) => {
+
+
+    const deleteAvailability = async (dia: string, horario: string) => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
-        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
+        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;   
 
         try {
             const body = {
-                dia_semana: dia,  // Passando o nome do dia da semana
+                dia_semana: dia,
+                horario_inicio: `${horario}:00`, 
             };
-
+            console.log(body);
+            
             await axios.delete(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-access-token': token
+                    'x-access-token': token,
                 },
                 data: body,
             });
-
-            window.location.reload()
-
+    
             fetchData();
         } catch (error) {
             console.error("Erro ao deletar a disponibilidade:", error);
         }
     };
+    
 
     useEffect(() => {
         fetchData();
-    }, [reloadAvailability]); // A dependência de reloadAvailability vai garantir que os dados sejam recarregados ao ser alterado
+    }, [reloadAvailability]);
 
     return (
         <div className="w-full h-auto flex justify-center items-center my-8">
@@ -127,8 +143,8 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                                 {horarios.length > 0 ? (
                                     horarios.map(({ horario, id: horarioId }) => (
                                         <div
-                                            key={`${id}-${horarioId}`} // Garantir que a chave seja única
-                                            onClick={() => deleteAvailability(dia)} // Passando o nome do dia
+                                            key={`${id}-${horarioId}`}
+                                            onClick={() => deleteAvailability(dia, horario)}
                                             className="flex justify-center w-24 p-2 font-medium border-2 rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-red-600 hover:text-white hover:border-black cursor-pointer transition my-1"
                                         >
                                             {horario}
