@@ -3,6 +3,8 @@ import FormInput from './FormInput';
 import GoogleIcon from '../assets/googleIcon.svg';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2'
+
 
 const ContainerLogin = () => {
     localStorage.clear()
@@ -31,8 +33,13 @@ const ContainerLogin = () => {
 
         // Validação básica antes de enviar a requisição
         if (!email || !password) {
-            setError('Preencha todos os campos!');
             setLoading(false);
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Preencha todos os campos!',
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
             return;
         }
 
@@ -40,54 +47,33 @@ const ContainerLogin = () => {
             const endpoint = selectedButton === 'Cliente'
                 ? 'http://localhost:8080/v1/vivaris/login/usuario'
                 : 'http://localhost:8080/v1/vivaris/profissional/login';
-                
 
-            console.log('Enviando requisição para:', endpoint);
-            console.log('Com os dados:', { email, senha: password });
-
-
-            console.log(endpoint); 
             const response = await axios.post(endpoint, {
                 email: email,
                 senha: password,
-                
             });
-            
 
-            console.log('Resposta da API:', response.data); // Log para verificar a estrutura da resposta
-
-            // Verifica se o status da resposta é 200
             if (response.status === 200) {
-                console.log('Login bem-sucedido:', response);
+                Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Login bem-sucedido!',
+                    icon: 'success',
+                    confirmButtonText: 'Continuar',
+                });
 
                 if (selectedButton === 'Cliente') {
-                    // Verifica a estrutura da resposta para o cliente
-
-                    console.log(response);
-                    
                     if (response.data && response.data.cliente && response.data.cliente.usuario) {
                         let idDoCliente = response.data.cliente.usuario.id;
-                        let token = response.data.token
+                        let token = response.data.token;
                         localStorage.setItem('idDoCliente', idDoCliente);
                         localStorage.setItem('token', token);
-                        console.log(token);
-                        
-
-                        if (idDoCliente) {
-                            console.log('ID do Cliente armazenado no localStorage:', idDoCliente);
-                        } else {
-                            console.log('Nenhum ID de cliente encontrado no localStorage');
-                        }
 
                         let url = `http://localhost:8080/v1/vivaris/usuario/preferencias/${idDoCliente}`;
-
                         const preferenciasResponse = await axios.get(url, {
-                            headers:{
-                                'x-access-token': await token
-                            }
+                            headers: {
+                                'x-access-token': token,
+                            },
                         });
-                        console.log(preferenciasResponse);
-                        
 
                         if (preferenciasResponse.data.data.preferencias.length < 1) {
                             navigate('/Preferences');
@@ -95,33 +81,49 @@ const ContainerLogin = () => {
                             navigate('/Home');
                         }
                     } else {
-                        console.error('Estrutura de resposta inesperada para Cliente', response.data);
-                        setError('Erro inesperado ao processar a resposta do login para Cliente');
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Resposta inesperada do servidor ao fazer login como cliente.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
                     }
-
                 } else {
-                    // Verifica a estrutura da resposta para o psicólogo
                     if (response.data.data.id) {
-                        let idDoPsicologo = response.data.data.id
+                        let idDoPsicologo = response.data.data.id;
+                        let token = response.data.token;
                         localStorage.setItem('idDoPsicologo', idDoPsicologo);
-                        let token = response.data.token
                         localStorage.setItem('token', token);
-                        console.log('ID do Psicólogo armazenado no localStorage:', idDoPsicologo);
                         navigate('/Home');
                     } else {
-                        setError('Erro inesperado ao processar a resposta do login para Psicólogo');
-                    } 
+                        Swal.fire({
+                            title: 'Erro!',
+                            text: 'Resposta inesperada do servidor ao fazer login como psicólogo.',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                        });
+                    }
                 }
-
-                alert('Login bem-sucedido');
             } else {
-                alert('Email ou senha inválidos ou status não autorizado');
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Email ou senha inválidos.',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
             }
-
         } catch (err: any) {
             const errorMessage = err.response?.data?.message || 'Erro ao fazer login';
             setError(errorMessage);
+            Swal.fire({
+                title: 'Erro!',
+                text: errorMessage,
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
             console.error('Erro no login:', err.response || err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -177,7 +179,6 @@ const ContainerLogin = () => {
                     {loading ? 'Entrando...' : 'Login'}
                 </button>
             </div>
-            {error && <p className="text-red-500 text-center font-semibold pb-2">{error}</p>}
             {loading && <p className="text-center font-semibold pb-2">Carregando...</p>}
             <div className="textConta flex justify-around border-b border-b-black">
                 <p>Não tem conta?</p>

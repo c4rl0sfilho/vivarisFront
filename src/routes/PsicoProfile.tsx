@@ -55,7 +55,7 @@ const PsicoProfile = () => {
       try {
         const response = await getPsico(Number(id));
         console.log(response);
-        
+
         if (response?.data?.professional) {
           setPsico(response.data.professional);
         }
@@ -66,42 +66,72 @@ const PsicoProfile = () => {
     fetchPsico();
   }, [id]);
 
-  const getAvailability = async (idPsicologo: string) => {
+  const sexoMap: { [key: number]: string } = {
+    1: "Masculino",
+    2: "Feminino",
+    3: "Não-binário",
+  };
+
+  const getAvailability = async (idPsicologo: number | undefined) => {
 
     const response = await getAvailability(idPsicologo)
 
     console.log(response);
-    
-  }
 
-  const valorConsulta = psico?.price;
+  }
+  const fetchAvailability = async (idPsicologo: number | undefined) => {
+    if (!idPsicologo) return;
+
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(`http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`)
+      const horariosDisponiveis = response.data?.horarios || []; // Ajuste para o formato da resposta
+      setFilteredTimes(horariosDisponiveis);
+      console.log("Horários disponíveis:", horariosDisponiveis);
+    } catch (error) {
+      console.error("Erro ao obter disponibilidade:", error);
+    }
+  };
+
 
   const cadastrarConsulta = async () => {
-    const idCliente = localStorage.getItem('idDoCliente');
+    const idCliente = localStorage.getItem("idDoCliente");
+    if (!idCliente || !selectedDate || !horaSelecionada) {
+      console.error("Dados insuficientes para agendar a consulta");
+      return;
+    }
+
     const body = {
       id_psicologo: psico?.id,
       id_cliente: idCliente,
-      data_consulta: horaSelecionada,
+      data_consulta: `${selectedDate}T${horaSelecionada}`, // Combina data e hora
     };
-    if (selectedDate && horaSelecionada) {
-      const token = localStorage.getItem('token')
-      const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade`;  
+
+    const token = localStorage.getItem("token");
+    const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade`;
+
     try {
-        const response = await axios.get(endpoint, {
-            headers: {
-                'Content-Type': 'application/json',
-                'x-access-token': token
-            },
-            data: body
-        });
-        console.log(response);
-        
-        return response.data;
+      const response = await axios.post(endpoint, body, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": token,
+        },
+      });
+      console.log("Consulta agendada com sucesso:", response.data);
     } catch (error) {
-        console.error("Erro ao obter dados do psicólogo:", error);
+      console.error("Erro ao agendar consulta:", error);
     }
+  };
+
+  const handleDateChange = async (date: string) => {
+    try {
+      await fetchAvailability(psico?.id);
+      console.log("Disponibilidade carregada para a data:", date);
+    } catch (err) {
+      console.error("Erro ao carregar disponibilidade:", err);
     }
-  }
+  };
+
 
   return (
     <div className="bg-[#F1F1F1] flex flex-col w-full h-full items-center">
@@ -144,15 +174,7 @@ const PsicoProfile = () => {
                   <h1 className="font-bold text-xl sm:text-2xl">
                     {psico.nome}
                   </h1>
-                  <p className="text-base sm:text-lg">
-                    {psico.id_sexo === 1
-                      ? "Masculino"
-                      : psico.id_sexo === 2
-                      ? "Feminino"
-                      : psico.id_sexo === 3
-                      ? "Não-binário"
-                      : "Não especificado"}
-                  </p>
+                  <p>{sexoMap[psico.id_sexo] || "Não especificado"}</p>
                   <p>Idade: {calcularIdade(psico.data_nascimento)} anos</p>
                 </div>
               </div>
@@ -210,7 +232,7 @@ const PsicoProfile = () => {
           </div>
           <div className="telefone flex w-[50%] h-auto justify-between py-2">
             <p>Idade</p>
-            <p>{calcularIdade(psico?.data_nascimento)} anos</p>
+            <p>Idade: {psico?.data_nascimento ? calcularIdade(psico.data_nascimento) : "Não especificada"} anos</p>
           </div>
         </div>
         <div className="avaliacoes w-[80%] h-[30rem] bg-[#ffffff] rounded-xl flex flex-col p-4 mt-12">
@@ -220,34 +242,32 @@ const PsicoProfile = () => {
           <h1 className="text-2xl pt-6 pb-6">Agende sua Consulta</h1>
           <div className="ClienteOrPsicologo h-auto w-[20rem] flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
             <button
-              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${
-                selectedButton === "Online"
-                  ? "bg-[#296856] text-[#ffffff]"
-                  : "text-[#296856]"
-              } transition-all duration-700`}
+              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === "Online"
+                ? "bg-[#296856] text-[#ffffff]"
+                : "text-[#296856]"
+                } transition-all duration-700`}
               onClick={() => handleButtonClick("Online")}
             >
               Online
             </button>
             <button
-              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${
-                selectedButton === "Presencial"
-                  ? "bg-[#296856] text-[#ffffff]"
-                  : "text-[#296856]"
-              } transition-all duration-700`}
+              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === "Presencial"
+                ? "bg-[#296856] text-[#ffffff]"
+                : "text-[#296856]"
+                } transition-all duration-700`}
               onClick={() => handleButtonClick("Presencial")}
             >
               Presencial
             </button>
           </div>
           <div className="flex w-[40%] justify-between">
-            <p>50 minutos</p> <p>R${valorConsulta}</p>
+            <p>50 minutos</p> <p>R${psico?.price}</p>
           </div>
           <div className="consult border-2 p-8 w-[30rem] h-[20rem] flex flex-col items-center rounded-xl mt-8">
             <h1 className="font-bold text-[#296856] text-lg">
               Data da Consulta
             </h1>
-            <CalendarDropdownButton2 onDateChange={getAvailability()} />
+            <CalendarDropdownButton2 onDateChange={handleDateChange} />
             <p className="font-bold text-[#296856] my-4">Horários Diponíveis</p>
             <div className="horarios flex flex-wrap gap-6">
               {filteredTimes.length > 0 ? (
@@ -268,11 +288,11 @@ const PsicoProfile = () => {
           <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
             <p>Valor</p>
             <p>50 Minutos</p>
-            <p>{valorConsulta}</p>
+            <p>{psico?.price}</p>
           </div>
           <div className="flex justify-center items-center my-8">
-            <button className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl" 
-             onClick={() => cadastrarConsulta("Online")}>
+            <button className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl"
+              onClick={() => cadastrarConsulta()}>
               Agendar
             </button>
           </div>

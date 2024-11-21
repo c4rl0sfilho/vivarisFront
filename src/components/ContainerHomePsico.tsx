@@ -44,9 +44,9 @@ function DayOfWeek() {
 
   const data = [
     { id: '1', image: imgBell, nome: 'Lembrete' },
-    { id: '2', image: imgBatePapo, nome: 'Teste' },
-    { id: '3', image: imgBook, nome: 'Lacceace' },
-    { id: '4', image: imgBlog, nome: 'AAAAAAAAAAAAAA' },
+    { id: '2', image: imgBatePapo, nome: 'Meus Chats' },
+    { id: '3', image: imgBook, nome: 'Prontuários' },
+    { id: '4', image: imgBlog, nome: 'Blog' },
   ];
 
   const navigate = useNavigate();
