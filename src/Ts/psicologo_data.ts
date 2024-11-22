@@ -26,7 +26,7 @@ export const getPsico = async (idPsico: number) => {
                 'x-access-token': token
             },
         });
-        console.log(response);
+        
         
         return response.data;
     } catch (error) {
@@ -43,7 +43,6 @@ export async function professionalAvailabilities(idPsico:number){
                 'x-access-token': token
             },
         });
-        console.log(response.data);
         
         return response.data;
     } catch (error) {
