@@ -185,7 +185,7 @@ const ContainerHomeUser = () => {
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>ChatBot</p>
                                 </div>
                                 <div onClick={() => navigate(`/Nave/MyConsults?nome=Minhas Consultas`)}
-                                    className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+                                    className='buttons rounded-3xl bg-[#CBEBDA] hover:bg-[#3FC19C] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
                                     <img src={imgConsultas} alt="Meus Chats" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Minhas Consultas</p>
                                 </div>
@@ -200,7 +200,7 @@ const ContainerHomeUser = () => {
                             </h1>
                             <div className="w-20 h-20 rounded-full flex justify-center items-center bg-gradient-to-r from-[#2DE3C3] to-[#F4B400] p-[3px]">
                                 <div className='h-full w-full flex justify-center items-center rounded-full bg-[#1C7D62]'>
-                                    <p className='text-lg md:text-xl lg:text-3xl font-medium text-white '>25%</p>
+                                    <p className='text-lg md:text-xl lg:text-3xl font-medium text-white '>0%</p>
                                 </div>
                             </div>
                         </div>
