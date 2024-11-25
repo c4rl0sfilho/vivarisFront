@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import usePreferences from "../Ts/usePreferences";
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const ContainerPreferences: React.FC = () => {
     const { preferences, loading, error } = usePreferences();
     const [selectedPrefIds, setSelectedPrefIds] = useState<number[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
-    
+
     let resgateId = localStorage.getItem('idDoCliente');
     const id_usuario = resgateId ? Number(resgateId) : null;
 
@@ -42,9 +43,14 @@ const ContainerPreferences: React.FC = () => {
             throw error; 
         }
     };
+
     const handleSubmit = async () => {
         if (!id_usuario) {
-            alert('ID de usuário não encontrado.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'ID de usuário não encontrado.',
+            });
             return;
         }
 
@@ -54,17 +60,34 @@ const ContainerPreferences: React.FC = () => {
                 console.log(`Enviando: id_cliente: ${id_usuario}, preferencias: ${prefId}`);
                 await postPreference(id_usuario, prefId);
             }
-            alert('Preferências enviadas com sucesso!');
-            navigate('/Home');
+            Swal.fire({
+                icon: 'success',
+                title: 'Sucesso',
+                text: 'Preferências enviadas com sucesso!',
+            }).then(() => navigate('/Home'));
         } catch (error) {
-            alert('Erro ao enviar as preferências.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Erro',
+                text: 'Erro ao enviar as preferências.',
+            });
         } finally {
             setIsSubmitting(false);
         }
     };
 
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter') {
+            handleSubmit();
+        }
+    };
+
     return (
-        <div className='flex flex-col items-center py-8 h-full'>
+        <div 
+            className='flex flex-col items-center py-8 h-full' 
+            onKeyPress={handleKeyPress} 
+            tabIndex={0} // Permite capturar eventos de tecla
+        >
             <div className='flex flex-wrap w-full max-w-[800px] justify-center gap-6'>
                 {preferences.map((pref) => (
                     <div
@@ -82,12 +105,15 @@ const ContainerPreferences: React.FC = () => {
             <div className="mt-4 w-full max-w-[800px] flex flex-col items-center">
                 <button 
                     onClick={handleSubmit}
-                    disabled={isSubmitting} // Desabilita o botão se estiver enviando
+                    disabled={isSubmitting}
                     className={`w-[80%] sm:w-[8rem] h-[2rem] rounded ${isSubmitting ? 'bg-gray-400' : 'bg-[#52B6A4]'} text-white font-semibold border-solid`}
                 >
                     {isSubmitting ? 'Enviando...' : 'Iniciar'}
                 </button>
-                <p className='underline text-[#296856] my-4 text-center cursor-pointer' onClick={() => navigate('/Home')}>
+                <p 
+                    className='underline text-[#296856] my-4 text-center cursor-pointer' 
+                    onClick={() => navigate('/Home')}
+                >
                     Pular esta etapa!
                 </p>
             </div>

@@ -34,7 +34,7 @@ const HeaderHome = () => {
                 setUserType('Cliente');
             } else if (psicologoId) {
                 const psicologo = await getPsico(Number(psicologoId));
-           
+                console.log(`psico = ${psicologo?.data}`);
                 setUserName(psicologo?.data?.nome || 'psico erro');
                 setUserType('Psicólogo');
             } else {
@@ -158,6 +158,7 @@ const HeaderHome = () => {
                                         <p className='text-white cursor-pointer' onClick={() => navigate('/Nave/Settings?nome=Configurações')}>Configurações</p>
                                         <p className='text-white cursor-pointer'>Denúncia</p>
                                         <p className='text-white cursor-pointer'>FAQ</p>
+                                        <p className='text-red-600 font-bold cursor-pointer' onClick={() => navigate('/')}>Sair</p>
                                     </div>
                                 </div>
                             </div>

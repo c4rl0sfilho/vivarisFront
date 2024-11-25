@@ -50,8 +50,6 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                     'x-access-token': token,
                 },
             });
-
-            console.log(response);
             
             const disponibilidades: Disponibilidade[] = response.data.data.disponibilidades;
 

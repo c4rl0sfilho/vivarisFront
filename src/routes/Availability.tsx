@@ -10,6 +10,7 @@ import '../styles/Calendar.css';
 import { IoIosArrowBack } from "react-icons/io";
 import { getPsico } from '../Ts/psicologo_data';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2'; // Importando o SweetAlert
 
 import MyAvailability from '../components/MyAvailability';
 
@@ -66,7 +67,7 @@ const Availability = () => {
 
   const [selectedTimes, setSelectedTimes] = useState<Date[]>([]);
   const [userName, setUserName] = useState('');
-  const [reloadAvailability, setReloadAvailability] = useState(false); // Estado único para recarregar a disponibilidade
+  const [reloadAvailability, setReloadAvailability] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -111,7 +112,12 @@ const Availability = () => {
 
   const handleSubmit = async () => {
     if (!date.justDate || selectedTimes.length === 0) {
-      throw new Error("Erro: data ou horário não selecionados");
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Por favor, selecione uma data e horários.',
+      });
+      return;
     }
 
     const combinedDates = selectedTimes.map(selectedTime => {
@@ -130,8 +136,19 @@ const Availability = () => {
       setReloadAvailability(prev => !prev); // Alterna o estado para recarregar MyAvailability
 
       setSelectedTimes([]);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Sucesso',
+        text: 'Disponibilidade cadastrada com sucesso!',
+      });
     } catch (error) {
       console.error("Erro ao cadastrar disponibilidade:", error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Erro',
+        text: 'Erro ao cadastrar a disponibilidade.',
+      });
     }
   };
 
@@ -158,13 +175,18 @@ const Availability = () => {
     }
   };
 
-  // Função para forçar recarregar as disponibilidades
   const handleReload = (shouldReload: boolean) => {
     setReloadAvailability(shouldReload); // Alterna o estado
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
   return (
-    <div>
+    <div onKeyDown={handleKeyPress} tabIndex={0}> {/* Permite capturar o Enter */}
       <div className="header w-full h-auto md:h-[10rem] bg-[#52B6A4] rounded-b-3xl p-4">
         <div className="w-full flex flex-col md:flex-row items-center justify-between p-4 md:px-24">
           <div className="flex items-center mb-4 md:mb-0">
@@ -188,19 +210,20 @@ const Availability = () => {
         </div>
       </div>
 
-        <div className="back w-full flex justify-start items-center pl-8 pt-8">
-          <IoIosArrowBack
-            size={35}
-            color="#0A7A7A"
-            onClick={() => navigate("/Home")}
-          />{" "}
-          <p
-            className="text-[#0A7A7A] font-bold"
-            onClick={() => navigate("/Home")}
-          >
-            Voltar
-          </p>
-        </div>
+      <div className="back w-full flex justify-start items-center pl-8 pt-8">
+        <IoIosArrowBack
+          size={35}
+          color="#0A7A7A"
+          onClick={() => navigate("/Home")}
+        />{" "}
+        <p
+          className="text-[#0A7A7A] font-bold"
+          onClick={() => navigate("/Home")}
+        >
+          Voltar
+        </p>
+      </div>
+
       <div className="h-full w-full pt-20 flex flex-col justify-center items-center">
         <div className="flex flex-col md:flex-row gap-10 w-full md:w-[90%] justify-center items-center">
           <div className="calendar-container">
@@ -208,7 +231,7 @@ const Availability = () => {
               minDate={new Date()}
               className="REACT-CALENDAR p-2"
               view="month"
-              onClickDay={(date) => setDate((prev) => ({ ...prev, justDate: date }))}
+              onClickDay={(date) => setDate((prev) => ({ ...prev, justDate: date }))} 
               tileClassName={({ date }) => 'calendar-tile'}
               value={date.justDate}
             />
@@ -241,6 +264,7 @@ const Availability = () => {
             )}
           </div>
         </div>
+
         <div>
           <button
             className='w-[16rem] h-[3rem] rounded bg-[#296856] text-white font-semibold border-solid mt-6'
@@ -250,9 +274,7 @@ const Availability = () => {
           </button>
         </div>
 
-        {/* Passa a flag reloadAvailability como prop */}
         <MyAvailability reloadAvailability={handleReload} />
-
       </div>
     </div>
   );

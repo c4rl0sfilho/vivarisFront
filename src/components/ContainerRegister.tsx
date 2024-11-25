@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { registerUser } from '../Ts/cliente_psicologo.ts';
+import Swal from 'sweetalert2';
 import FormInput from './FormInput.tsx';
 
 interface FormData {
@@ -57,8 +58,16 @@ const ContainerRegister: React.FC = () => {
     };
 
     const handleSubmit = async () => {
-        if (!validateForm()) return;
-    
+        if (!validateForm()) {
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Preencha corretamente todos os campos!',
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+
         const clientData = {
             nome: formData.name,
             email: formData.email,
@@ -71,147 +80,167 @@ const ContainerRegister: React.FC = () => {
             link_instagram: formData.instagram || '',
             cip: selectedButton === 'Psicólogo' ? formData.cip : undefined,
         };
-        console.log(selectedButton, clientData);
-        
+
         try {
             const user = await registerUser(selectedButton, clientData);
 
-            console.log(user);
-            
             if (user) {
-                alert('Usuário cadastrado com sucesso!');
-                navigate('/');
+                Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Usuário cadastrado com sucesso!',
+                    icon: 'success',
+                    confirmButtonText: 'Continuar',
+                }).then(() => {
+                    navigate('/');
+                });
             } else {
                 throw new Error('Erro ao cadastrar usuário');
             }
         } catch (error) {
+            Swal.fire({
+                title: 'Erro!',
+                text: 'Erro ao cadastrar o usuário. Por favor, tente novamente.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+            });
             console.error('Erro ao cadastrar o usuário:', error);
-            alert('Erro ao cadastrar o usuário. Por favor, tente novamente.');
         }
     };
-    
+
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (event.key === 'Enter') {
+            handleSubmit();
+        }
+    };
+
+    useEffect(() => {
+        const formContainer = document.getElementById('form-container');
+        formContainer?.addEventListener('keydown', handleKeyDown as any);
+
+        return () => {
+            formContainer?.removeEventListener('keydown', handleKeyDown as any);
+        };
+    }, []);
 
     return (
-        <div>
-            <div className='flex flex-col w-[30rem]'>
-                <div className="title flex justify-center pb-8">
-                    <h1 className='text-7xl font-semibold text-[#13916D]'>Cadastre-se</h1>
-                </div>
-                <div className="ClienteOrPsicologo flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
-                    <button
-                        className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
-                        onClick={() => handleButtonClick('Cliente')}
-                    >
-                        Cliente
-                    </button>
-                    <button
-                        className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
-                        onClick={() => handleButtonClick('Psicólogo')}
-                    >
-                        Psicólogo
-                    </button>
-                </div>
+        <div id="form-container" className="flex flex-col w-[30rem]">
+            <div className="title flex justify-center pb-8">
+                <h1 className="text-7xl font-semibold text-[#13916D]">Cadastre-se</h1>
+            </div>
+            <div className="ClienteOrPsicologo flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
+                <button
+                    className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Cliente' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
+                    onClick={() => handleButtonClick('Cliente')}
+                >
+                    Cliente
+                </button>
+                <button
+                    className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === 'Psicólogo' ? 'bg-[#296856] text-[#ffffff]' : 'text-[#296856]'} transition-all duration-700`}
+                    onClick={() => handleButtonClick('Psicólogo')}
+                >
+                    Psicólogo
+                </button>
+            </div>
+            <div className="inputs">
+                <FormInput
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    label="Nome"
+                    placeholder="Nome"
+                    required
+                />
+                <FormInput
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    label="Email"
+                    placeholder="Email"
+                    required
+                />
+                {errors.email && <span className="error text-red-700">{errors.email}</span>}
+                <FormInput
+                    type="number"
+                    name="cpf"
+                    value={formData.cpf}
+                    onChange={handleChange}
+                    label="CPF"
+                    placeholder="CPF"
+                    required
+                />
+                {errors.cpf && <span className="error text-red-700">{errors.cpf}</span>}
+                <FormInput
+                    type="date"
+                    name="birthdate"
+                    value={formData.birthdate}
+                    onChange={handleChange}
+                    label="Data de Nascimento"
+                    required
+                />
+                <FormInput
+                    type="number"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    label="Telefone"
+                    placeholder="Telefone"
+                    required
+                />
+                {errors.phone && <span className="error text-red-700">{errors.phone}</span>}
+                <select name="gender" className="mt-1 p-2 block w-full border border-black rounded-md" value={formData.gender} onChange={handleChange}>
+                    <option value="">Sexo</option>
+                    <option value="1">Masculino</option>
+                    <option value="2">Feminino</option>
+                    <option value="3">Não Binário</option>
+                </select>
+                {errors.gender && <span className="error text-red-700">{errors.gender}</span>}
+                <FormInput
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    label="Senha"
+                    placeholder="Senha"
+                    required
+                />
+                {errors.password && <span className="error text-red-700">{errors.password}</span>}
+                <FormInput
+                    type="password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    label="Confirmar Senha"
+                    placeholder="Confirmar Senha"
+                    required
+                />
+                {errors.confirmPassword && <span className="error text-red-700">{errors.confirmPassword}</span>}
+            </div>
+            {selectedButton === 'Psicólogo' && (
                 <div className="inputs">
                     <FormInput
                         type="text"
-                        name="name"
-                        value={formData.name}
+                        name="cip"
+                        value={formData.cip || ''}
                         onChange={handleChange}
-                        label="Nome"
-                        placeholder='Nome'
-                        required
+                        label="CIP"
+                        placeholder="CIP"
                     />
-                    <FormInput
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        label="Email"
-                        placeholder='Email'
-                        required
-                    />
-                    {errors.email && <span className="error text-red-700">{errors.email}</span>}
-                    <FormInput
-                        type="number"
-                        name="cpf"
-                        value={formData.cpf}
-                        onChange={handleChange}
-                        label="CPF"
-                        placeholder='CPF'
-                        required
-                    />
-                    {errors.cpf && <span className="error text-red-700">{errors.cpf}</span>}
-                    <FormInput
-                        type="date"
-                        name="birthdate"
-                        value={formData.birthdate}
-                        onChange={handleChange}
-                        label="Data de Nascimento"
-                        required
-                    />
-                    <FormInput
-                        type="number"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        label="Telefone"
-                        placeholder='Telefone'
-                        required
-                    />
-                    {errors.phone && <span className="error text-red-700">{errors.phone}</span>}
-                    <select name="gender" className='mt-1 p-2 block w-full border border-black rounded-md' value={formData.gender} onChange={handleChange}>
-                        <option value="">Sexo</option>
-                        <option value="1">Masculino</option>
-                        <option value="2">Feminino</option>
-                        <option value="3">Não Binário</option>
-                    </select>
-                    {errors.gender && <span className="error text-red-700">{errors.gender}</span>}
-                    <FormInput
-                        type="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        label="Senha"
-                        placeholder='Senha'
-                        required
-                    />
-                    {errors.password && <span className="error text-red-700">{errors.password}</span>}
-                    <FormInput
-                        type="password"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        label="Confirmar Senha"
-                        placeholder='Confirmar Senha'
-                        required
-                    />
-                    {errors.confirmPassword && <span className="error text-red-700">{errors.confirmPassword}</span>}
                 </div>
-                {selectedButton === 'Psicólogo' && (
-                    <div className="inputs">
-                        <FormInput
-                            type="text"
-                            name="cip"
-                            value={formData.cip || ''}
-                            onChange={handleChange}
-                            label="CIP"
-                            placeholder='CIP'
-                        />
-                    </div>
-                )}
-                <div className="buttonLogin flex justify-center py-4">
-                    <button
-                        id='cadastrar'
-                        onClick={handleSubmit}
-                        className='w-[10rem] h-[2rem] rounded bg-[#296856] text-white font-semibold border-solid hover:bg-[#13916D]'
-                    >
-                        Cadastrar
-                    </button>
-                </div>
-                <div className="textConta flex justify-around">
-                    <p>Já tem conta?</p>
-                    <p onClick={() => navigate('/')} className='cursor-pointer text-[#296856]'>Login</p>
-                </div>
+            )}
+            <div className="buttonLogin flex justify-center py-4">
+                <button
+                    id="cadastrar"
+                    onClick={handleSubmit}
+                    className="w-[10rem] h-[2rem] rounded bg-[#296856] text-white font-semibold border-solid hover:bg-[#13916D]"
+                >
+                    Cadastrar
+                </button>
+            </div>
+            <div className="textConta flex justify-around">
+                <p>Já tem conta?</p>
+                <p onClick={() => navigate('/')} className="cursor-pointer text-[#296856]">Login</p>
             </div>
         </div>
     );

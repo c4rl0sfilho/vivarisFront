@@ -42,6 +42,9 @@ function DayOfWeek() {
     setShowAll(!showAll);
   };
 
+  const [currentIndex, setCurrentIndex] = useState(0); // Estado para armazenar o índice do slide atual
+
+
   const data = [
     { id: '1', image: imgBell, nome: 'Lembrete' },
     { id: '2', image: imgBatePapo, nome: 'Meus Chats' },
@@ -55,19 +58,19 @@ function DayOfWeek() {
     <div className='w-full h-auto flex flex-col lg:flex-row gap-8 px-6'>
       {/* Botões no lado esquerdo */}
       <div className='w-full lg:w-60 flex flex-col justify-center items-center gap-8'>
-        <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+        <div className='buttons rounded-3xl hover:bg-[#3FC19C] bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
           <img src={imgBook} alt="Prontuários" className='w-10 sm:w-16' />
           <p className='text-[#296856] font-bold text-xs sm:text-base'>Prontuários</p>
         </div>
-        <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+        <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 hover:bg-[#3FC19C] w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
           <img src={imgBatePapo} alt="Meus Chats" className='w-10 sm:w-16' />
           <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Meus Chat’s</p>
         </div>
-        <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+        <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 hover:bg-[#3FC19C] w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
           <img src={imgBlog} alt="Blog" className='w-10 sm:w-16' />
           <p className='text-[#296856] font-bold text-xs sm:text-base text-center'>Blog</p>
         </div>
-        <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+        <div className='buttons rounded-3xl bg-[#CBEBDA] hover:bg-[#3FC19C] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
           <img src={imgGroupConversation} alt="Criar Grupo" className='w-10 sm:w-16' />
           <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>
             Criar<br />Grupo
@@ -101,16 +104,23 @@ function DayOfWeek() {
         </div>
         <div className='h-64 sm:h-[20%] w-full justify-center flex p-4 gap-4'>
           <div
-            className='slider w-[40%] h-full bg-[#CBEBDA] rounded-lg' 
+            className='slider w-[40%] h-full bg-[#CBEBDA] rounded-lg hover:bg-[#3FC19C] cursor-pointer' 
           >
             <Swiper
               slidesPerView={1} 
-              pagination={false} 
+              pagination={{
+
+                clickable: true, // Permite que o usuário clique nas bolinhas para navegar
+                renderBullet: (index, className) => (
+                    // Customiza a aparência das bolinhas de acordo com o índice
+                    `<span class="${className} ${index === currentIndex ? 'bg-[#F5F5DC] border-[2px] border-[#F5F5DC]' : 'bg-transparent border-[2px] border-[#F5F5DC]'}"></span>`
+                )
+            }}
               className="mySwiper" 
               effect="fade" 
               fadeEffect={{ crossFade: true }} 
               autoplay={{
-                delay: 3000, 
+                delay: 1000, 
                 disableOnInteraction: false, 
               }}
             >
@@ -124,10 +134,10 @@ function DayOfWeek() {
               ))}
             </Swiper>
           </div>
-          <div className='buttonAddAvaliability w-[7%] h-full bg-white rounded-full p-4 flex justify-center items-center border-4 border-[#52B6A4] cursor-pointer' style={{ boxShadow: '0 4px 15px #52B6A4' }} onClick={() => navigate('/Availability')}>
+          <div className='buttonAddAvaliability w-[7%] h-full bg-white rounded-full p-4 flex justify-center items-center border-4 border-[#52B6A4] hover:bg-[#a4c0b8] cursor-pointer' style={{ boxShadow: '0 4px 15px #52B6A4' }} onClick={() => navigate('/Availability')}>
             <FaPlus size={40} color='#52B6A4' />
           </div>
-          <div className='buttonAddLiveEvent w-[45%] h-full bg-[#CBEBDA] rounded-lg flex items-center justify-evenly cursor-pointer'>
+          <div className='buttonAddLiveEvent w-[45%] h-full bg-[#CBEBDA] hover:bg-[#3FC19C] rounded-lg flex items-center justify-evenly cursor-pointer'>
             <img src={imgRadioWaves} alt="Ondas de Rádio" />
             <h1 className='text-[#296856] text-2xl font-bold'>Eventos em Live</h1>
             <div className='h-16 w-16 flex rounded-full bg-gradient-to-r from-[#205AD0] to-[#30C2DB] p-[3px] justify-center items-center'>
