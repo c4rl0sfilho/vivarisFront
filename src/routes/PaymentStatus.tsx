@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import PaymentSuccess from '../components/PaymentSuccess';
+import PaymentFailure from '../components/PaymentFailure';
 
 const PaymentStatus: React.FC = () => {
     const queryParams = new URLSearchParams(location.search);
@@ -13,19 +15,15 @@ const PaymentStatus: React.FC = () => {
     }, [success]);
 
     return (
-        <div className='h-screen w-screen'>
+        <div className='h-screen w-screen bg-[#13916D] flex justify-center items-center'>
             {statusPayment === null ? (
-                <p>Verificando o status do pagamento...</p>
+                <div className="bg-[#f1f1f1] p-12">
+                    <p>Verificando o status do pagamento...</p>
+                </div>
             ) : statusPayment ? (
-                <div>
-                    <h2>Pagamento Confirmado</h2>
-                    <p>Obrigado! Seu pagamento foi processado com sucesso.</p>
-                </div>
+                <PaymentSuccess/>
             ) : (
-                <div>
-                    <h2>Pagamento Negado</h2>
-                    <p>Infelizmente, o pagamento não foi concluído. Tente novamente.</p>
-                </div>
+                <PaymentFailure/>
             )}
         </div>
     );

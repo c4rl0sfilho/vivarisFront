@@ -96,7 +96,7 @@ const ContainerPreferences: React.FC = () => {
                         style={{
                             backgroundColor: selectedPrefIds.includes(pref.id) ? pref.cor : '#D9D9D9',
                         }}
-                        className="flex justify-center items-center cursor-pointer text-white drop-shadow-2xl w-[90%] sm:w-[20rem] h-[6rem] text-3xl rounded-2xl"
+                        className="flex justify-center items-center cursor-pointer text-center text-white drop-shadow-2xl w-[90%] sm:w-[20rem] h-[6rem] text-3xl rounded-2xl"
                     >
                         <p style={{ textShadow: '1px 1px 2px gray' }}>{pref.nome}</p>
                     </div>
