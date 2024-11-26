@@ -83,7 +83,7 @@ function DayOfWeek() {
         <div className='h-[50vh] lg:h-[75%] w-full bg-gradient-to-r from-[#26D6A3] to-[#099C73] rounded-ss-3xl rounded-ee-3xl p-4'>
           <div className="header flex justify-between">
             <h1 className='text-[#296856] text-2xl sm:text-3xl font-bold'>{dayOfWeek}</h1>
-            <h2 className='text-white text-xl sm:text-2xl font-bold'>Consultas Hoje</h2>
+            <h2 className='text-white text-xl sm:text-2xl font-bold'>Consultas - Hoje</h2>
           </div>
           <div className="content p-4 flex flex-wrap gap-16">
             {cards.slice(0, showAll ? cards.length : 6).map((card, index) => (
@@ -111,7 +111,7 @@ function DayOfWeek() {
               pagination={{
 
                 clickable: true, // Permite que o usuário clique nas bolinhas para navegar
-                renderBullet: (index, className) => (
+                renderBullet: (index: number, className: any) => (
                     // Customiza a aparência das bolinhas de acordo com o índice
                     `<span class="${className} ${index === currentIndex ? 'bg-[#F5F5DC] border-[2px] border-[#F5F5DC]' : 'bg-transparent border-[2px] border-[#F5F5DC]'}"></span>`
                 )
