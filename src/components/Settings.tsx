@@ -2,81 +2,87 @@ import React from 'react'
 
 const Settings = () => {
   return (
-    <div className="h-auto w-full flex overflow-hidden ">
-      <div className='h-1/2 w-48 mt-12 flex flex-col justify-between gap-10'>
-        <div className="text-xl cursor-pointer hover:font-bold">Geral</div>
-        <div className="text-xl cursor-pointer hover:font-bold">Editar Perfil</div>
-        <div className="text-xl cursor-pointer hover:font-bold">Privacidade e Segurança</div>
-        <div className="text-xl cursor-pointer hover:font-bold">Sistema</div>
-        <div className="text-xl cursor-pointer hover:font-bold text-[#FF0000]">Sair</div>
-      </div>
+/* Conteúdo Meu Perfil */
+<section className="w-full h-full flex pt-16 ">
 
-      <div className="w-full h-auto flex flex-col">
-        <h1 className='text-4xl font-semibold mb-8'>Meu perfil</h1>
+{/* Navegação da esquerda */}
+<ul className="flex flex-col gap-4 p-6 ">
+    <li className="hover:font-medium cursor-pointer">Geral</li>
+    <li className="hover:font-medium cursor-pointer">Editar Perfil</li>
+    <li className="hover:font-medium cursor-pointer w-36">Privacidade e segurança</li>
+    <li className="hover:font-medium cursor-pointer">Meus cartões</li>
+    <li className="hover:font-medium cursor-pointer">Sistema</li>
 
-        <div className="w-full h-2/5 flex items-center border-2 rounded-lg border-[#D4D4D4]">
-          <div className="w-28 h-28 rounded-full ml-10">
-            <img src="../../img/avatar.png" className='w-full h-full' alt="" />
-          </div>
+    <li className="text-red-600 hover:font-medium cursor-pointer mt-6">Sair</li>
+</ul>
 
-          <div className='flex flex-col w-64 h-24 ml-12 flex flex-col justify-center'>
-            <p className='text-3xl text-[#393737]'>Vitor Kolle</p>
-            <p className='text-lg text-[#6F6F6F]'>vitor@kolle.com</p>
-          </div>
+{/* Infos Meu perfil */}
+<div className="flex flex-col gap-4 w-full pr-12 ">
+
+    <h1 className="text-3xl font-bold">Meu perfil</h1>
+
+    {/* Foto, nome e email */}
+    <div className="w-full flex items-center gap-4 border-[3px] rounded-xl border-gray-200 p-4">
+
+        <span className="rounded-full w-28 h-28 bg-red-200"></span>
+
+        <div>
+            <h2 className="text-2xl">Joana Conde</h2>
+            <p>joaninhaConde@gmail.com</p>
         </div>
 
-        <div className="w-full h-auto bg-transparent mt-6 border-2 rounded-lg border-[#D4D4D4]">
-
-          <div className="flex flex-col m-2">
-            <h1 className='font-semibold text-xl text-[#3E9C81] font-semibold'>CPF:</h1>
-            <input type="number" maxLength={11} className='border-none outline-none text-align-center bg-transparent text-[#393737] text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none' />
-            <hr className='border-[#D4D4D4] mb-5' />
-          </div>
-
-          <div className="flex flex-col m-2">
-            <h1 className='font-semibold text-xl text-[#3E9C81] font-semibold'>Data de Nascimento:</h1>
-            <input type="date" className='border-none outline-none text-align-center bg-transparent text-[#393737] text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none' />
-            <hr className='border-[#D4D4D4] mb-5' />
-          </div>
-
-          <div className="flex flex-col m-2">
-            <h1 className='font-semibold text-xl text-[#3E9C81] font-semibold'>Sexo:</h1>
-            <select className='border-none outline-none text-align-center bg-transparent text-[#393737] text-lg [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none'>
-              <option value="" data-default disabled selected></option>
-              <option value="Masculino">Masculino</option>
-              <option value="Feminino">Feminino</option>
-              <option value="Não-Binário">Não Binário</option>
-            </select>
-            <hr className='border-[#D4D4D4]' />
-          </div>
-
-          <div className="flex flex-col m-2 mt-5">
-            <h1 className='text-xl text-[#3E9C81] font-semibold'>Redes Sociais</h1>
-
-            <div className="flex items-center mt-2">
-              <div className="w-10 h-10">
-                <img src="../../img/instagram.png" className='w-full h-full rounded-full' alt="" />
-              </div>
-
-              <input placeholder="Insira o link" type="text" className='h-6 w-64 border-none outline-none text-align-center ml-2 text-[#393737] rounded-md text-md' />
-            </div>
-
-            <div className="flex items-center mt-6">
-              <div className="w-10 h-10">
-                <img src="../../img/email.png" className='w-full h-full rounded-full' alt="" />
-              </div>
-
-              <input placeholder="Insira o link" type="text" className='h-6 w-64 border-none outline-none text-align-center ml-2 text-[#393737] rounded-md text-md' />
-            </div>
-          </div>
-
-          <div className='w-full h-20 flex justify-center'>
-            <button className='w-5/6 h-10 bg-[#52B6A4] text-white text-lg rounded-2xl mt-5 hover:bg-[#097969] transition-colors'>Editar Informações</button>
-          </div>
-
-        </div>
-      </div>
     </div>
+
+
+    {/* Cpf, nascimento, sexo, redes e botao*/}
+    <div className="w-full flex flex-col gap-12 border-[3px] rounded-xl border-gray-200 py-4 px-8">
+
+
+        {/* Cpf, nascimento, sexo */}
+        <section>
+            <div>
+                <p className="text-green-500 font-semibold">CPF:</p>
+                <p className="border-b-2 mb-2">123-456-789</p>
+            </div>
+
+            <div>
+                <p className="text-green-500 font-semibold">Data nascimento:</p>
+                <p className="border-b-2 mb-2">12/12/12</p>
+            </div>
+
+            <div>
+                <p className="text-green-500 font-semibold">Sexo:</p>
+                <p className="border-b-2 mb-2">Feminio</p>
+            </div>
+        </section>
+
+
+        {/* redes e botao */}
+        <section className="flex flex-col gap-8">
+            <div className="flex flex-col gap-2">
+                <h2 className="font-semibold text-xl text-green-500">Redes sociais</h2>
+
+                {/* insta */}
+                <div className="flex gap-2 items-center">
+                    <span className="rounded-full w-10 h-10 bg-red-200"></span>
+                    <input className="w-1/2 bg-slate-100 px-2 py-[2px] rounded-xl" type="text" placeholder="Texto top" />
+                </div>
+
+                {/* email */}
+                <div className="flex gap-2 items-center">
+                    <span className="rounded-full w-10 h-10 bg-red-200"></span>
+                    <input className="w-1/2 bg-slate-100 px-2 py-[2px] rounded-xl" type="text" placeholder="Texto top" />
+                </div>
+            </div>
+
+           <button className="bg-green-500 text-white text-xl rounded-2xl py-[3px] mb-10">Editar informações</button>
+
+
+        </section>
+
+    </div>
+</div>
+</section>
   )
 }
 
