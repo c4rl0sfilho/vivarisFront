@@ -9,6 +9,8 @@ import imgUser from '../assets/users.svg';
 import imgSlider from '../assets/Slider.svg';
 import imgLove from '../assets/Love.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Swal from "sweetalert2";
+
 
 const HeaderHome = () => {
     const [userName, setUserName] = useState("");
@@ -61,6 +63,22 @@ const HeaderHome = () => {
     const toggleSearchMenu = () => {
         setIsSearchMenuOpen(prev => !prev);
     };
+
+    const handleLogout = () => {
+        Swal.fire({
+          title: 'Você tem certeza?',
+          text: 'Você deseja sair da sua conta?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sim, sair!',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate('/'); 
+          }
+        });
+      };
 
     // Fechar menus ao clicar fora
     useEffect(() => {
@@ -158,7 +176,7 @@ const HeaderHome = () => {
                                         <p className='text-white cursor-pointer' onClick={() => navigate('/Nave/Settings?nome=Configurações')}>Configurações</p>
                                         <p className='text-white cursor-pointer'>Denúncia</p>
                                         <p className='text-white cursor-pointer'>FAQ</p>
-                                        <p className='text-red-600 font-bold cursor-pointer' onClick={() => navigate('/')}>Sair</p>
+                                        <p className='text-red-600 font-bold cursor-pointer' onClick={handleLogout}>Sair</p>
                                     </div>
                                 </div>
                             </div>

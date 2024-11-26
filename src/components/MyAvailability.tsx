@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { format, parseISO } from 'date-fns';
+import Swal from 'sweetalert2';
 
 interface Disponibilidade {
     id: number;
@@ -34,23 +35,21 @@ interface MyAvailabilityProps {
 
 const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) => {
     const [data, setData] = useState<{ id: number; dia: string; horarios: Horario[] }[]>([]);
-    const token = localStorage.getItem('token')
-
-    
+    const token = localStorage.getItem('token');
 
     const fetchData = async () => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
         const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
         
         try {
-            setData([])
+            setData([]);
             const response = await axios.get(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
                     'x-access-token': token,
                 },
             });
-            
+
             const disponibilidades: Disponibilidade[] = response.data.data.disponibilidades;
 
             const formatHour = (timeString: string): string => {
@@ -68,14 +67,12 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 }
             };
 
-
             const groupedData: Record<string, Horario[]> = {};
 
             disponibilidades.forEach(item => {
                 const dia = item.dia_semana;
                 const horario = formatHour(item.horario_inicio);
                 console.log(horario);
-                
 
                 if (!groupedData[dia]) {
                     groupedData[dia] = [];
@@ -104,18 +101,18 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
         }
     };
 
-
+    // Função para deletar a disponibilidade
     const deleteAvailability = async (dia: string, horario: string) => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
-        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;   
+        const token = localStorage.getItem('token'); // Certifique-se de obter o token corretamente
+        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
 
         try {
             const body = {
                 dia_semana: dia,  
                 horario_inicio: `${horario}:00`,
             };
-            console.log(body);
-            
+
             await axios.delete(endPoint, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -123,16 +120,33 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                 },
                 data: body,
             });
-            fetchData();
+            fetchData();  // Atualiza a lista após a exclusão
         } catch (error) {
             console.error("Erro ao deletar a disponibilidade:", error);
+            Swal.fire('Erro', 'Houve um erro ao tentar deletar a disponibilidade.', 'error');
         }
     };
-    
+
+    // Função que lida com o clique para deletar
+    const handleDeleteClick = (dia: string, horario: string) => {
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: `Tem certeza que deseja deletar a disponibilidade para ${dia} às ${horario}?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, deletar!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteAvailability(dia, horario);  // Chama a função para deletar
+            }
+        });
+    };
 
     useEffect(() => {
         fetchData();
-    }, [reloadAvailability]); 
+    }, [reloadAvailability]);
 
     return (
         <div className="w-full h-auto flex justify-center items-center my-8">
@@ -146,7 +160,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
                                     horarios.map(({ horario, id: horarioId }) => (
                                         <div
                                             key={`${id}-${horarioId}`}
-                                           onClick={() => deleteAvailability(dia, horario)}
+                                            onClick={() => handleDeleteClick(dia, horario)}  // Passa os parâmetros corretamente
                                             className="flex justify-center w-24 p-2 font-medium border-2 rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:bg-red-600 hover:text-white hover:border-black cursor-pointer transition my-1"
                                         >
                                             {horario}
