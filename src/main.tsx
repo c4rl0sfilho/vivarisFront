@@ -25,7 +25,7 @@ import GraficoHumor from './components/GraficoHumor'
 import Settings from './components/Settings'
 import PsicoProfile from './routes/PsicoProfile'
 import UserProfile from './routes/UserProfile'
-import PaymentConfrimed from './routes/PaymentConfirmed'
+import PaymentStatus from './routes/PaymentStatus'
 
 const router = createBrowserRouter([
   {
@@ -65,8 +65,8 @@ const router = createBrowserRouter([
         element: <ProList />
       },
       {
-        path: "/PaymentConfirmed",
-        element: <PaymentConfrimed/>
+        path: "/PaymentStatus",
+        element: <PaymentStatus/>
       },
       {
         path: "/Nave",

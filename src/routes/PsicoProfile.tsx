@@ -299,7 +299,7 @@ const PsicoProfile = () => {
           <div className="flex w-[40%] justify-between">
             <p>50 minutos</p> <p>R${psico?.price}</p>
           </div>
-          <div className="consult border-2 p-8 w-[30rem] h-[20rem] flex flex-col items-center rounded-xl mt-8">
+          <div className="consult border-2 p-8 w-[30rem] h-auto flex flex-col items-center rounded-xl mt-8">
             <h1 className="font-bold text-[#296856] text-lg">
               Data da Consulta
             </h1>
