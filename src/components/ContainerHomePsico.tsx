@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal } from 'react';
 import imgBook from '../assets/book.svg';
 import imgBatePapo from '../assets/batepapo.svg';
 import imgBlog from '../assets/blog.svg';
@@ -15,28 +15,47 @@ import 'swiper/css';
 import 'swiper/css/scrollbar';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
-import 'swiper/css/effect-fade'; // Importação do CSS para efeito de fade
-import 'swiper/css/autoplay'; // Importação do CSS para autoplay
+import 'swiper/css/effect-fade';
+import 'swiper/css/autoplay';
+import { getProfessionalAppointments } from '../Ts/psicologo_data';
 register();
 
-function DayOfWeek() {
-  const [dayOfWeek, setDayOfWeek] = useState<string>('');
+const ContainerHomePsico = () => {
   const [showAll, setShowAll] = useState<boolean>(false); // Estado para controlar exibição de todos os cards
+  const [dayOfWeek, setDayOfWeek] = useState<string>('');
+  const [consultas, setConsultas] = useState<any>()
+  const idPsico = Number(localStorage.getItem("idDoPsicologo"))
+
+  const calculateDayOfWeek = (dateString: string): string => {
+    const date = new Date(dateString);
+    const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    return daysOfWeek[date.getDay()];
+  };
 
   useEffect(() => {
-    const updateDayOfWeek = () => {
-      const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-      const today = new Date();
-      setDayOfWeek(daysOfWeek[today.getDay()]);
+    const fetchAppointments = async () => {
+      const appointments = await getProfessionalAppointments(idPsico);
+      // Exemplo de função para buscar dados
+      if (appointments && appointments.data.data.length > 0) {
+        const hoje = new Date().toISOString().split('T')[0]
+
+        appointments.data.data.forEach((consulta: { data_consulta: string; }) => {
+          let dataConsulta = consulta.data_consulta.split('T')[0]
+
+          if (dataConsulta === hoje) {
+            const day = calculateDayOfWeek(consulta.data_consulta);
+
+            setDayOfWeek(day);
+            setConsultas(appointments.data.data)
+            console.log(consultas);
+
+          }
+        });
+      }
     };
 
-    updateDayOfWeek(); // Atualiza imediatamente ao montar o componente
-    const intervalId = setInterval(updateDayOfWeek, 60000); // Atualiza a cada minuto
-
-    return () => clearInterval(intervalId); // Limpeza ao desmontar o componente
-  }, []);
-
-  const cards = new Array(10).fill({ nome: 'kollybaby', horario: '12:00' }); // Exemplo de array de cards
+    fetchAppointments();
+  }, [idPsico])
 
   const handleToggleShow = () => {
     setShowAll(!showAll);
@@ -86,15 +105,30 @@ function DayOfWeek() {
             <h2 className='text-white text-xl sm:text-2xl font-bold'>Consultas - Hoje</h2>
           </div>
           <div className="content p-4 flex flex-wrap gap-16">
-            {cards.slice(0, showAll ? cards.length : 6).map((card, index) => (
-              <div key={index} className="containerConsultas border-2 border-white h-40 w-40 flex flex-col justify-center items-center gap-3 rounded-ss-3xl rounded-ee-3xl">
-                <div className="img bg-black w-14 h-14 rounded-full">
-                  <img src="" alt="" />
+            {consultas &&
+              consultas.map((consulta: {
+                id: Key | null | undefined;
+                tbl_clientes: {
+                  nome: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
+                };
+                data_consulta: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | null | undefined;
+              }) => (
+                <div
+                  key={consulta.id}
+                  className="containerConsultas border-2 border-white h-40 w-40 flex flex-col justify-center items-center gap-3 rounded-ss-3xl rounded-ee-3xl"
+                >
+                  <div className="img bg-black w-14 h-14 rounded-full">
+                    <img src="" alt="" />
+                  </div>
+                  <div className="nome">{consulta.tbl_clientes.nome}</div>
+                  <div className="horario">
+                    {typeof consulta.data_consulta === 'string'
+                      ? consulta.data_consulta.split('T')[1].slice(0, 5) // Extrai "HH:MM"
+                      : 'Horário inválido'}
+                  </div>
                 </div>
-                <div className="nome">{card.nome}</div>
-                <div className="horario">{card.horario}</div>
-              </div>
-            ))}
+              ))
+            }
           </div>
           <div className="footer p-16 flex justify-center">
             <button onClick={handleToggleShow} className='bg-white text-[#296856] font-bold py-2 px-4 rounded'>
@@ -104,24 +138,24 @@ function DayOfWeek() {
         </div>
         <div className='h-64 sm:h-[20%] w-full justify-center flex p-4 gap-4'>
           <div
-            className='slider w-[40%] h-full bg-[#CBEBDA] rounded-lg hover:bg-[#3FC19C] cursor-pointer' 
+            className='slider w-[40%] h-full bg-[#CBEBDA] rounded-lg hover:bg-[#3FC19C] cursor-pointer'
           >
             <Swiper
-              slidesPerView={1} 
+              slidesPerView={1}
               pagination={{
 
                 clickable: true, // Permite que o usuário clique nas bolinhas para navegar
                 renderBullet: (index: number, className: any) => (
-                    // Customiza a aparência das bolinhas de acordo com o índice
-                    `<span class="${className} ${index === currentIndex ? 'bg-[#F5F5DC] border-[2px] border-[#F5F5DC]' : 'bg-transparent border-[2px] border-[#F5F5DC]'}"></span>`
+                  // Customiza a aparência das bolinhas de acordo com o índice
+                  `<span class="${className} ${index === currentIndex ? 'bg-[#F5F5DC] border-[2px] border-[#F5F5DC]' : 'bg-transparent border-[2px] border-[#F5F5DC]'}"></span>`
                 )
-            }}
-              className="mySwiper" 
-              effect="fade" 
-              fadeEffect={{ crossFade: true }} 
+              }}
+              className="mySwiper"
+              effect="fade"
+              fadeEffect={{ crossFade: true }}
               autoplay={{
-                delay: 1000, 
-                disableOnInteraction: false, 
+                delay: 1000,
+                disableOnInteraction: false,
               }}
             >
               {data.map((item) => (
@@ -148,8 +182,8 @@ function DayOfWeek() {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
-export default DayOfWeek;
+export default ContainerHomePsico;

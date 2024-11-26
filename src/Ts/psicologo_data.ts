@@ -27,8 +27,7 @@ export const getPsico = async (idPsico: number) => {
             },
         });
         
-        
-        return response.data;
+        return response;
     } catch (error) {
         console.error("Erro ao obter dados do psicólogo:", error);
     }
@@ -47,5 +46,22 @@ export async function professionalAvailabilities(idPsico:number){
         return response.data;
     } catch (error) {
         console.error("Erro ao obter dados do psicólogo:", error);
+    }
+}
+
+export async function getProfessionalAppointments(idPsico:number){
+    const endpoint = `http://localhost:8080/v1/vivaris/consultas/psicologo/${idPsico}`;
+
+    try {
+        const response = await axios.get(endpoint, {
+            headers: {
+                'Content-Type': 'application/json',
+                'x-access-token': token
+            },
+        })
+        
+        return response;
+    } catch (error) {
+        console.error("Erro ir para pagamento:", error);
     }
 }

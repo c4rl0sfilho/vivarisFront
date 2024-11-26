@@ -28,15 +28,17 @@ const HeaderHome = () => {
             if (clienteId) {
                 const user = await getUser(Number(clienteId));
                 
-                setUserName(user?.data?.nome || 'Cliente');
-                console.log(user);
+                setUserName(user.data.nome || 'Cliente');
                 
                 setUserType('Cliente');
+
             } else if (psicologoId) {
+
                 const psicologo = await getPsico(Number(psicologoId));
-                console.log(`psico = ${psicologo?.data}`);
-                setUserName(psicologo?.data?.nome || 'psico erro');
+
+                setUserName(psicologo?.data.data.professional.nome || 'psico erro');
                 setUserType('Psicólogo');
+
             } else {
                 console.warn('Nenhum ID encontrado no localStorage.');
             }
