@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, redirect } from "react-router-dom";
 import { BsStar } from "react-icons/bs";
 import { getPsico } from "../Ts/psicologo_data";
 import HeaderHome from "../components/HeaderHome";
@@ -10,6 +10,7 @@ import { removeAcentuacao } from "../util/removeAcentuacao";
 import { FaInstagram } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import axios from "axios";
+import { postPaySession } from "../Ts/processoPagamento";
 
 interface Availability {
   dia_semana: string;
@@ -110,22 +111,20 @@ const PsicoProfile = () => {
       setFilteredTimes(times);
     };
   }
-
+  
   const cadastrarConsulta = async () => {
     if (!selectedDate || !horaSelecionada || !psico?.id) return;
-
+    
     const idCliente = Number(localStorage.getItem("idDoCliente"));
     const token = localStorage.getItem("token");
     const endpoint = `http://localhost:8080/v1/vivaris/consulta`;
-
+    
     const body = {
       id_psicologo: psico.id,
       id_cliente: idCliente,
-
+      
       data_consulta: `${selectedDate} ${horaSelecionada}`, // Combine a data com o horário selecionado
     };
-
-    console.log(body);
     
     try {
       const response = await axios.post(endpoint, body, {
@@ -134,8 +133,17 @@ const PsicoProfile = () => {
           "x-access-token": token,
         },
       });
+      
+      console.log("Confirmando agendamento...");
 
-      console.log("Confirmando agendamento...", response.data);
+      const idConsulta = response.data.data.consulta.id
+      
+      const paymentLink = await postPaySession(idCliente,idConsulta )
+      
+
+      window.location.href = `${paymentLink.url}`
+
+
     } catch (error) {
       console.error("Erro ao cadastrar consulta:", error);
     }
