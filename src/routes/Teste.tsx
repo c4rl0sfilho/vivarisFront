@@ -1,51 +1,36 @@
-import  { useState, useEffect } from 'react';
-import HeaderHome from '../components/HeaderHome';
-import { getAllPsico } from '../Ts/allProfessionals';
+import React, { useState } from 'react';
+import PaymentSuccess from '../components/PaymentSuccess'; // Importe o componente de sucesso
+
 
 const Teste = () => {
-  // Estado para armazenar a lista de profissionais
-  interface Professional {
-    id: string;
-    nome: string;
-    email: string;
-    cip: string;
-  }
-  
-  const [professionals, setProfessionals] = useState<Professional[]>([]);
-  
-  // Função para buscar dados da API
-  const fetchData = async () => {
-    try {
-      let dados = await getAllPsico();
-      let array = dados.data.data; // Acessa a lista de profissionais corretamente
-      setProfessionals(array); // Armazena a lista no estado
-    } catch (error) {
-      console.error("Erro ao buscar dados dos profissionais:", error);
-    }
+  const [showPaymentSuccess, setShowPaymentSuccess] = useState(false);
+
+  const handlePayment = () => {
+    // Simulando o pagamento bem-sucedido
+    // Quando o pagamento for concluído, mostramos o alerta
+    setShowPaymentSuccess(true);
   };
 
-  // useEffect para buscar os dados quando o componente for montado
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const handleCloseAlert = () => {
+    setShowPaymentSuccess(false);
+    // Pode fazer um redirecionamento ou outra ação aqui
+    console.log("Alerta de sucesso fechado");
+  };
 
   return (
     <div>
-      <HeaderHome />
-      <div>
-        <h2>Lista de Profissionais</h2>
-        {professionals.length > 0 ? (
-          professionals.map((profissional) => (
-            <div key={profissional.id} className='p-3 mb-5 border border-[#ccc]'>
-              <h3>Nome: {profissional.nome}</h3>
-              <p>Email: {profissional.email}</p>
-              <p>CIP: {profissional.cip}</p>
-            </div>
-          ))
-        ) : (
-          <p>Carregando profissionais...</p>
-        )}
-      </div>
+      <button onClick={handlePayment} className="btn btn-primary">
+        Realizar Pagamento
+      </button>
+
+      {/* Exibindo o alerta de pagamento bem-sucedido */}
+      {showPaymentSuccess && (
+        <PaymentSuccess
+          title="Pagamento Bem-Sucedido!"
+          message="Seu pagamento foi concluído com sucesso. Agradecemos!"
+          onClose={handleCloseAlert}
+        />
+      )}
     </div>
   );
 };
