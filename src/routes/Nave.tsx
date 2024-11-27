@@ -173,8 +173,8 @@ const Nave = () => {
             </div>
           </div>
         </div>
-        <div className="content m-8 overflow-auto">
-          <div className="ql-container">
+        <div className="content m-8 overflow-auto shadow-none">
+          <div className="ql-container h-auto w-auto shadow-none">
             <Outlet />
           </div>
         </div>
