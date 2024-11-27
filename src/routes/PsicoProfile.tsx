@@ -28,7 +28,7 @@ interface PsicoData {
   foto_perfil: string | null;
   link_instagram: string | null;
   id_sexo: number;
-  price: number;
+  preco: number;
   descricao?: string;
   tbl_psicologo_disponibilidade?: {
     tbl_disponibilidade: Availability;
@@ -54,9 +54,9 @@ const PsicoProfile = () => {
     const fetchPsico = async () => {
       try {
         const response = await getPsico(Number(id));
-
-        if (response?.data?.professional) {
-          setPsico(response.data.professional);
+        
+        if (response?.data) {
+          setPsico(response.data.data.professional);
         }
       } catch (error) {
         console.error("Erro ao carregar os dados do psicólogo:", error);
@@ -123,8 +123,8 @@ const PsicoProfile = () => {
       id_psicologo: psico.id,
       id_cliente: idCliente,
       
-      data_consulta: `${selectedDate} ${horaSelecionada}`, // Combine a data com o horário selecionado
-    };
+      data_consulta: `${selectedDate} ${horaSelecionada}`, 
+    }; 
     
     try {
       const response = await axios.post(endpoint, body, {
@@ -297,7 +297,7 @@ const PsicoProfile = () => {
             </button>
           </div>
           <div className="flex w-[40%] justify-between">
-            <p>50 minutos</p> <p>R${psico?.price}</p>
+            <p>50 minutos</p> <p>R${psico?.preco}</p>
           </div>
           <div className="consult border-2 p-8 w-[30rem] h-auto flex flex-col items-center rounded-xl mt-8">
             <h1 className="font-bold text-[#296856] text-lg">
@@ -335,9 +335,9 @@ const PsicoProfile = () => {
             </div>
           </div>
           <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
-            <p>Valor</p>
+            <p>Duração</p>
             <p>50 Minutos</p>
-            <p>{psico?.price}</p>
+            <p>{psico?.preco}</p>
           </div>
           <div className="flex justify-center items-center my-8">
             <button
