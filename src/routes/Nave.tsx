@@ -22,6 +22,7 @@ import { useLocation } from 'react-router-dom';
 import imgUser from '../assets/users.svg';
 import imgSlider from '../assets/Slider.svg';
 import imgLove from '../assets/Love.svg';
+import Swal from 'sweetalert2';
 
 const Nave = () => {
   const location = useLocation();
@@ -54,6 +55,23 @@ const Nave = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleLogout = () => {
+    Swal.fire({
+      title: 'Você tem certeza?',
+      text: 'Você deseja sair da sua conta?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sim, sair!',
+      cancelButtonText: 'Cancelar',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate('/'); 
+      }
+    });
+  };
+
 
   return (
     <div className="h-screen w-screen flex bg-[#F1F1F1] static">
@@ -145,30 +163,34 @@ const Nave = () => {
             <div className="relative" ref={settingsMenuRef}>
               <FaGear size={30} className="text-white cursor-pointer" onClick={toggleSettingsMenu} />
               {isSettingsMenuOpen && (
-                <div className="absolute right-0 bg-[#3FC19C] rounded-lg shadow-lg mt-2 w-48 p-2">
-                  <div className="settings w-full h-[30rem] flex flex-col">
+                <div className="absolute right-0 bg-[#3FC19C] rounded-lg shadow-lg mt-2 w-48 pb-8 p-2">
+                <div className="settings w-full h-[30rem] flex flex-col">
                     <div className='gap-4 w-auto h-auto items-end flex flex-col'>
-                      <div className="myGroups py-4 flex cursor-pointer">
-                        <p className='text-white'>Meus Grupos</p>
-                        <img src={imgUser} alt="" />
-                      </div>
-                      <div className="likedPosts py-4 flex cursor-pointer">
-                        <p className='text-white'>Posts Curtidos</p>
-                        <img src={imgLove} alt="" />
-                      </div>
-                      <div className='myPreferences py-4 flex border-b-2 border-white cursor-pointer'>
-                        <p className='text-white'>Minhas Preferências</p>
-                        <img src={imgSlider} alt="" />
-                      </div>
+                        <div className="myGroups py-4 flex  w-full h-full justify-end hover:bg-[#2c866d] cursor-pointer">
+                            <p className='text-white'>Meus Grupos</p>
+                            <img src={imgUser} alt="" />
+                        </div>
+                        <div className="likedPosts py-4 flex w-full h-full justify-end hover:bg-[#2c866d] cursor-pointer">
+                            <p className='text-white'>Posts Curtidos</p>
+                            <img src={imgLove} alt="" />
+                        </div>
+                        <div className='myPreferences py-4 flex w-full h-full justify-end hover:bg-[#2c866d] cursor-pointer'>
+                            <p className='text-white'>Minhas Preferências</p>
+                            <img src={imgSlider} alt="" />
+                        </div>
+                        <div className='myPreferences flex border-b-2  w-full h-1 justify-end border-white'>
+                            
+                        </div>
                     </div>
-                    <div className='flex flex-col w-full h-full justify-end items-end gap-8'>
-                      <p className='text-white cursor-pointer'>Meu Perfil</p>
-                      <p className='text-white cursor-pointer'  onClick={()=>navigate('/Nave/Settings?nome=Configurações')}>Configurações</p>
-                      <p className='text-white cursor-pointer'>Denúncia</p>
-                      <p className='text-white cursor-pointer'>FAQ</p>
+                    <div className='flex flex-col w-full h-full justify-end items-end gap-8 pt-4'>
+                        <p className='text-white cursor-pointer h-full w-full flex items-center justify-end hover:bg-[#2c866d] pe-4'>Meu Perfil</p>
+                        <p className='text-white cursor-pointer h-full w-full flex items-center justify-end hover:bg-[#2c866d] pe-4' onClick={() => navigate('/Nave/Settings?nome=Configurações')}>Configurações</p>
+                        <p className='text-white cursor-pointer h-full w-full flex items-center justify-end hover:bg-[#2c866d] pe-4'>Denúncia</p>
+                        <p className='text-white cursor-pointer h-full w-full flex items-center justify-end hover:bg-[#2c866d] pe-4'>FAQ</p>
+                        <p className='text-red-600 cursor-pointer h-full w-full flex items-center justify-end hover:bg-[#2c866d] pe-4' onClick={handleLogout}>Sair</p>
                     </div>
-                  </div>
                 </div>
+            </div>
               )}
             </div>
           </div>
