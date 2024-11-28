@@ -1,3 +1,4 @@
+
 import imgBook from '../assets/book.svg';
 import imgBatePapo from '../assets/batepapo.svg';
 import imgBlog from '../assets/blog.svg';
@@ -113,7 +114,7 @@ const ContainerHomeUser = () => {
                                         className="ml-2 cursor-pointer"
                                         onMouseEnter={() => setHovered(true)} 
                                         onMouseLeave={() => setHovered(false)} 
-                                        onClick={() => navigate('/Nave/MeusChats?nome=Meus Chats')} // Redireciona ao clicar
+                                        onClick={() => navigate('/Nave/diario')} // Redireciona ao clicar
                                     />
                                     <input
                                         type="text"
