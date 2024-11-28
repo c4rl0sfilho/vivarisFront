@@ -89,7 +89,7 @@ const ContainerHomePsico = () => {
         </div>
         <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 hover:bg-[#3FC19C] w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
           <img src={imgBatePapo} alt="Meus Chats" className='w-10 sm:w-16' />
-          <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Meus Chat’s</p>
+          <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Meus Chats</p>
         </div>
         <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 hover:bg-[#3FC19C] w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
           <img src={imgBlog} alt="Blog" className='w-10 sm:w-16' />

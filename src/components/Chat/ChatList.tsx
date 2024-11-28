@@ -1,4 +1,22 @@
 import React from "react";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyA_G6D2LD_-PKZlP6Cye7jygmLNsnm-dPQ",
+  authDomain: "chat-vivaris.firebaseapp.com",
+  databaseURL: "https://chat-vivaris-default-rtdb.firebaseio.com",
+  projectId: "chat-vivaris",
+  storageBucket: "chat-vivaris.firebasestorage.app",
+  messagingSenderId: "226903093892",
+  appId: "1:226903093892:web:374867fe401ca4b0b188d1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 interface Chat {
     id: number;
@@ -37,11 +55,11 @@ const ChatList: React.FC<ChatListProps> = ({ chats, onChatClick }) => {
                             <div className="flex justify-between">
                                 <h2 className="text-lg font-semibold">{chat.nome}</h2>
                                 <p className="text-sm text-gray-500">
-                                    {chat.messages[chat.messages.length - 1]?.time}
+                                  
                                 </p>
                             </div>
                             <p className="text-sm text-gray-500">
-                                {chat.messages[chat.messages.length - 1]?.text}
+                               
                             </p>
                         </div>
                     </div>

@@ -1,6 +1,24 @@
 import React, { useState } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { useNavigate } from "react-router-dom";
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyA_G6D2LD_-PKZlP6Cye7jygmLNsnm-dPQ",
+  authDomain: "chat-vivaris.firebaseapp.com",
+  databaseURL: "https://chat-vivaris-default-rtdb.firebaseio.com",
+  projectId: "chat-vivaris",
+  storageBucket: "chat-vivaris.firebasestorage.app",
+  messagingSenderId: "226903093892",
+  appId: "1:226903093892:web:374867fe401ca4b0b188d1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 interface Chat {
     id: number;
@@ -18,6 +36,8 @@ interface ChatConversationProps {
     chat: Chat;
     onBack: () => void;
 }
+
+
 
 const ChatConversation: React.FC<ChatConversationProps> = ({ chat, onBack }) => {
     const [newMessage, setNewMessage] = useState("");
