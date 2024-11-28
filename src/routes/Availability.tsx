@@ -185,6 +185,18 @@ const Availability = () => {
     }
   };
 
+  const [valorConsulta, setValorConsulta] = useState<number | ''>(''); // Estado para exibição
+  const [valorTemp, setValorTemp] = useState<number | ''>(''); // Estado temporário para edição
+
+  const handleSave = () => {
+    if (valorTemp && valorTemp >= 30.0) {
+      setValorConsulta(valorTemp); // Atualiza o valor principal
+      alert(`Valor salvo: R$ ${valorTemp.toFixed(2)}`); // Alerta de sucesso
+    } else {
+      alert("Insira um valor válido (mínimo: R$ 30,00).");
+    }
+  };
+
   return (
     <div onKeyDown={handleKeyPress} tabIndex={0}> {/* Permite capturar o Enter */}
       <div className="header w-full h-auto md:h-[10rem] bg-[#52B6A4] rounded-b-3xl p-4">
@@ -231,7 +243,7 @@ const Availability = () => {
               minDate={new Date()}
               className="REACT-CALENDAR p-2"
               view="month"
-              onClickDay={(date) => setDate((prev) => ({ ...prev, justDate: date }))} 
+              onClickDay={(date) => setDate((prev) => ({ ...prev, justDate: date }))}
               tileClassName={({ date }) => 'calendar-tile'}
               value={date.justDate}
             />
@@ -263,6 +275,38 @@ const Availability = () => {
               <p>Selecione uma data para ver as disponibilidades.</p>
             )}
           </div>
+          <div className="h-64 w-64 border-2 border-[#296856] rounded-xl flex flex-col items-center p-2">
+      <h1 className="text-[#296856] font-medium text-lg pb-4">Valor Da Consulta</h1>
+
+      <div className="inputPrice flex items-center mb-4">
+        <label htmlFor="priceInput" className="sr-only">
+          Valor da consulta em reais
+        </label>
+        <p className="pr-1">R$</p>
+        <input
+          type="number"
+          id="priceInput"
+          value={valorTemp}
+          onChange={(e) => setValorTemp(parseFloat(e.target.value) || '')}
+          placeholder="00,00"
+          className="border-none pl-1 focus:outline-none focus:border-b-2 focus:border-[#296856] text-lg"
+          step={0.01}
+        />
+      </div>
+
+      <button
+        className="w-1/2 h-1/6 mt-2 py-2 justify-center bg-[#3E9C81] text-white text-lg font-medium rounded hover:bg-[#3FC19C] transition-all"
+        onClick={handleSave}
+      >
+        Salvar 
+      </button>
+
+      {valorConsulta !== '' && (
+        <p className="mt-4 text-[#296856]">
+        Valor Atual: <strong>R$ {valorConsulta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+      </p>      
+      )}
+    </div>
         </div>
 
         <div>

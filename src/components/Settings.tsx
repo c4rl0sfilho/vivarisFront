@@ -12,10 +12,8 @@ const Settings = () => {
     <li className="hover:font-bold cursor-pointer text-xl duration-100">Geral</li>
     <li className="hover:font-bold cursor-pointer text-xl duration-100">Editar Perfil</li>
     <li className="hover:font-bold cursor-pointer w-36 text-xl duration-100">Privacidade e segurança</li>
-    <li className="hover:font-bold cursor-pointer text-xl duration-100">Meus cartões</li>
     <li className="hover:font-bold cursor-pointer text-xl duration-100">Sistema</li>
-
-    <li className="text-red-600 hover:font-bold cursor-pointer mt-6 text-xl">Sair</li>
+    <li className="text-red-600 hover:font-bold cursor-pointer text-xl">Sair</li>
 </ul>
 
 {/* Infos Meu perfil */}
