@@ -1,25 +1,21 @@
 import React, { useState } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { useNavigate } from "react-router-dom";
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { getDatabase, ref, onValue } from 'firebase/database';
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyA_G6D2LD_-PKZlP6Cye7jygmLNsnm-dPQ",
-  authDomain: "chat-vivaris.firebaseapp.com",
-  databaseURL: "https://chat-vivaris-default-rtdb.firebaseio.com",
-  projectId: "chat-vivaris",
-  storageBucket: "chat-vivaris.firebasestorage.app",
-  messagingSenderId: "226903093892",
-  appId: "1:226903093892:web:374867fe401ca4b0b188d1"
-};
+console.log(import.meta.env.apiKey)
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
+const app = initializeApp({
+  apiKey: import.meta.env.VITE_API_KEY,
+  authDomain: import.meta.env.VITE_AUTH_DOMAIN,
+  databaseURL:import.meta.env.VITE_DATABASE_URL,
+  projectId: import.meta.env.VITE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_APP_ID
+});
+const database = getDatabase(app)
 interface Chat {
     id: number;
     name: string;
