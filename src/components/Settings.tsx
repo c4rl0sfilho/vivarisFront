@@ -18,17 +18,15 @@ const Settings = () => {
     return (
         /* Conteúdo Meu Perfil */
         <section className="w-full h-full flex pt-16 ">
-
-            {/* Navegação da esquerda */}
-            <ul className="flex flex-col gap-6 p-6 ">
-                <li className="hover:font-bold cursor-pointer text-xl duration-100">Geral</li>
-                <li className="hover:font-bold cursor-pointer text-xl duration-100">Editar Perfil</li>
-                <li className="hover:font-bold cursor-pointer w-36 text-xl duration-100">Privacidade e segurança</li>
-                <li className="hover:font-bold cursor-pointer text-xl duration-100">Meus cartões</li>
-                <li className="hover:font-bold cursor-pointer text-xl duration-100">Sistema</li>
-
-                <li className="text-red-600 hover:font-bold cursor-pointer mt-6 text-xl">Sair</li>
-            </ul>
+        
+{/* Navegação da esquerda */}
+<ul className="flex flex-col gap-6 p-6 ">
+    <li className="hover:font-bold cursor-pointer text-xl duration-100">Geral</li>
+    <li className="hover:font-bold cursor-pointer text-xl duration-100">Editar Perfil</li>
+    <li className="hover:font-bold cursor-pointer w-36 text-xl duration-100">Privacidade e segurança</li>
+    <li className="hover:font-bold cursor-pointer text-xl duration-100">Sistema</li>
+    <li className="text-red-600 hover:font-bold cursor-pointer text-xl">Sair</li>
+</ul>
 
             {/* Infos Meu perfil */}
             <div className="flex flex-col gap-4 w-full pr-12 ">

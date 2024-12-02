@@ -53,7 +53,7 @@ const ProfessionalCards = () => {
       {profissionais.map((profissional) => (
         <div
           key={profissional.id}
-          className="card w-full md:w-[25rem] lg:w-[28rem] h-auto bg-[#f4f1f1] rounded-xl flex flex-col p-4"
+          className="card w-full md:w-[25rem] lg:w-[28rem] h-auto bg-[#ffffff] rounded-xl flex flex-col p-4"
         >
           {/* Star Rating */}
           <div className="star w-full h-auto flex justify-end">

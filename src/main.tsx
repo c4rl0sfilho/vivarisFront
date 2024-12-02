@@ -26,6 +26,7 @@ import Settings from './components/Settings'
 import PsicoProfile from './routes/PsicoProfile'
 import UserProfile from './routes/UserProfile'
 import PaymentStatus from './routes/PaymentStatus'
+import MeditacaoMessage from './components/MeditacaoMessage'
 
 const router = createBrowserRouter([
   {
