@@ -16,6 +16,7 @@ import disappointedEmoji from '../assets/emojis/disappointed face.svg'
 import cryingEmoji from '../assets/emojis/loudly crying face emoji.svg'
 import { register } from 'swiper/element/bundle';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { postEmotion } from '../Ts/client_emotion';
 import 'swiper/css';
 import 'swiper/css/scrollbar';
 import 'swiper/css/pagination';
@@ -35,11 +36,11 @@ const data = [
 
 
 const emojis = [
-    { id: 1, image: starEyesEmoji, alt: 'starEyesEmoji' },
-    { id: 2, image: smileFaceEmoji, alt: 'smileFaceEmoji' },
-    { id: 3, image: mouthlessFaceEmoji, alt: 'mouthlessFaceEmoji' },
-    { id: 4, image: disappointedEmoji, alt: 'disappointedEmoji' },
-    { id: 5, image: cryingEmoji, alt: 'cryingEmoji' },
+    { id: 1, image: starEyesEmoji, alt: 'starEyesEmoji', nome: "Muito_triste" },
+    { id: 2, image: smileFaceEmoji, alt: 'smileFaceEmoji', nome: "Muito_felix"  },
+    { id: 3, image: mouthlessFaceEmoji, alt: 'mouthlessFaceEmoji', nome: "Neutro"  },
+    { id: 4, image: disappointedEmoji, alt: 'disappointedEmoji', nome: "Triste"  },
+    { id: 5, image: cryingEmoji, alt: 'cryingEmoji', nome: "Muito_triste"  },
 ];
 
 

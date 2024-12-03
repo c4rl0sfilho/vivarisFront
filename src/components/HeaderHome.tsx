@@ -156,7 +156,7 @@ const HeaderHome = () => {
                     <div className="relative" ref={settingsMenuRef}>
                         <FaGear size={30} className="text-white cursor-pointer" onClick={toggleSettingsMenu} />
                         {isSettingsMenuOpen && (
-                            <div className="absolute right-0 bg-[#3FC19C] rounded-lg shadow-lg mt-2 w-48 pb-8 p-2">
+                            <div className="absolute right-0 bg-[#3FC19C] rounded-lg shadow-lg mt-2 w-52 pb-8 p-2">
                                 <div className="settings w-full h-[30rem] flex flex-col">
                                     <div className='gap-4 w-auto h-auto items-end flex flex-col'>
                                         <div className="myGroups py-4 flex  w-full h-full justify-end hover:bg-[#2c866d] cursor-pointer">

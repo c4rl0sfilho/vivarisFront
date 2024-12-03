@@ -142,23 +142,30 @@ const PsicoProfile = () => {
 
 
   const cadastrarConsulta = async () => {
+    // Verifica se as variáveis essenciais estão definidas
     if (!selectedDate || !horaSelecionada || !psico?.id) return;
-
-    const idCliente = Number(localStorage.getItem("idDoCliente"));
+  
+    // Obtém os dados do cliente e o token do localStorage
+    const idCliente = localStorage.getItem("idDoCliente");
     const token = localStorage.getItem("token");
+  
+    // Verifica se o idCliente ou token não estão presentes
+    if (!idCliente || !token) {
+      alert("Token ou ID do cliente não encontrados.");
+      return;
+    }
+  
     const endpoint = `http://localhost:8080/v1/vivaris/consulta`;
-
+  
     const body = {
       id_psicologo: psico.id,
-      id_cliente: idCliente,
-
-
-      data_consulta: `${selectedDate} ${horaSelecionada}`,
-      situacao:'Pendente'
+      id_cliente: Number(idCliente), // Garante que o idCliente seja convertido para número
+      data_consulta: `${selectedDate} ${horaSelecionada}`, // Verifique se o formato da data está correto
+      situacao: 'Pendente',
     };
-
+  
     try {
-      // Mostra alerta de carregamento
+      // Exibe um alerta de carregamento
       Swal.fire({
         title: 'Aguarde...',
         text: 'Você está sendo direcionado para o pagamento.',
@@ -167,18 +174,24 @@ const PsicoProfile = () => {
           Swal.showLoading();
         },
       });
-
+  
+      // Realiza o agendamento da consulta
       const response = await axios.post(endpoint, body, {
         headers: {
           "Content-Type": "application/json",
           "x-access-token": token,
         },
       });
-
+  
       console.log("Confirmando agendamento...");
-
+  
       const idConsulta = response.data.data.consulta.id;
-      // Atualiza o alerta para indicar sucesso
+      console.log(idConsulta);
+  
+      // Chama a função postPaySession para gerar o link de pagamento
+      const paymentLink = await postPaySession(Number(idCliente), idConsulta);
+  
+      // Exibe um alerta de sucesso e redireciona para o pagamento
       Swal.fire({
         title: 'Redirecionando...',
         icon: 'success',
@@ -186,29 +199,27 @@ const PsicoProfile = () => {
         showConfirmButton: false,
       }).then(() => {
         // Redireciona após o alerta
-        window.location.href = `${paymentLink.url}`;
+        window.location.href = paymentLink.url;
       });
-
-
-      const paymentLink = await postPaySession(idCliente, idConsulta);
-      console.log(paymentLink)
-      window.location.href = `${paymentLink.url}`;
-    } catch (error: any) {
-      if(error.status == 409){
-        alert("Consulta já marcada para este horário!")
+  
+    } catch (error) {
+      // Verifica se o erro é causado por um conflito de horário (status 409)
+      if (error.response?.status === 409) {
+        alert("Consulta já marcada para este horário!");
+      } else {
+        console.error("Erro ao cadastrar consulta:", error);
+  
+        // Exibe alerta de erro
+        Swal.fire({
+          title: 'Erro!',
+          text: 'Ocorreu um erro ao tentar agendar a consulta.',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
       }
-      console.error("Erro ao cadastrar consulta:", error);
-
-      // Exibe alerta de erro
-      Swal.fire({
-        title: 'Erro!',
-        text: 'Ocorreu um erro ao tentar agendar a consulta.',
-        icon: 'error',
-        confirmButtonText: 'Ok',
-      });
     }
   };
-
+  
 
   useEffect(() => {
     if (horaSelecionada) {
@@ -389,30 +400,6 @@ const PsicoProfile = () => {
                 <p>Sem horários disponíveis</p>
               )}
             </div>
-            <div className="horarios w-full mt-8">
-              <h2 className="text-2xl mb-4">Horários Disponíveis</h2>
-              {/* Verifique se o estado tem os valores corretos */}
-              <div className="horarios flex flex-wrap gap-6">
-                {filteredTimes.length > 0 ? (
-                  filteredTimes.map((time, index) => (
-                    <div
-                      key={index}
-                      className={`horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:text-white hover:bg-[#3E9C81] hover:border-[#3e9c18] justify-center items-center cursor-pointer"
-                    ${horaSelecionada === time ? 'bg-[#3E9C81] text-white' : 'hover:text-white hover:bg-[#3E9C81] hover:border-[#3e9c18]'}
-                    justify-center items-center cursor-pointer`}
-                      onClick={() => {
-                        setHoraSelecionada(time)
-
-                      }}
-                    >
-                      {time}
-                    </div>
-                  ))
-                ) : (
-                  <p>Sem horários disponíveis</p>
-                )}
-              </div>
-            </div>
           </div>
           <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
             <p>Duração</p>
@@ -427,19 +414,6 @@ const PsicoProfile = () => {
               Agendar
             </button>
           </div>
-        </div>
-        <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
-          <p>Duração</p>
-          <p>50 Minutos</p>
-          <p>{psico?.preco}</p>
-        </div>
-        <div className="flex justify-center items-center my-8">
-          <button
-            className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl"
-            onClick={() => cadastrarConsulta()}
-          >
-            Agendar
-          </button>
         </div>
       </div>
     </div>
