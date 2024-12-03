@@ -23,6 +23,8 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import 'swiper/css/effect-fade';
 import 'swiper/css/autoplay';
+import { format } from 'date-fns';
+import Swal from 'sweetalert2';
 import { SetStateAction, useState } from 'react';
 register();
 
@@ -36,8 +38,8 @@ const data = [
 
 
 const emojis = [
-    { id: 1, image: starEyesEmoji, alt: 'starEyesEmoji', nome: "Muito_triste" },
-    { id: 2, image: smileFaceEmoji, alt: 'smileFaceEmoji', nome: "Muito_felix"  },
+    { id: 1, image: starEyesEmoji, alt: 'starEyesEmoji', nome: "Muito_feliz" },
+    { id: 2, image: smileFaceEmoji, alt: 'smileFaceEmoji', nome: "Feliz"  },
     { id: 3, image: mouthlessFaceEmoji, alt: 'mouthlessFaceEmoji', nome: "Neutro"  },
     { id: 4, image: disappointedEmoji, alt: 'disappointedEmoji', nome: "Triste"  },
     { id: 5, image: cryingEmoji, alt: 'cryingEmoji', nome: "Muito_triste"  },
@@ -47,30 +49,45 @@ const emojis = [
 
 // Função para lidar com a seleção dos emojis
 const ContainerHomeUser = () => {
-    const [selectedEmojis, setSelectedEmojis] = useState<number[]>([]);
-
-    const handleEmojiSelection = (id: number) => {
-        setSelectedEmojis(prevSelected => {
-            // Adiciona ou remove o emoji da lista de selecionados
-            const newSelected = prevSelected.includes(id)
-                ? prevSelected.filter(emojiId => emojiId !== id) // Remove se já estiver selecionado
-                : [...prevSelected, id]; // Adiciona se não estiver selecionado
-
-            console.log('Emojis selecionados:', newSelected); // Console log dos emojis selecionados
-            return newSelected;
-        });
-    };
-
-    const [currentIndex, setCurrentIndex] = useState(0); // Estado para armazenar o índice do slide atual
-
-    const handleSlideChange = (swiper: { activeIndex: SetStateAction<number>; }) => {
-        setCurrentIndex(swiper.activeIndex); // Atualiza o índice ao mudar o slide
-    };
-
+    const [selectedEmoji, setSelectedEmoji] = useState<number | null>(null);
+    const userId = localStorage.getItem('idDoCliente');
+    const today = format(new Date(), 'yyyy-MM-dd');
+    const navigate = useNavigate();
     const [hovered, setHovered] = useState(false);
 
-    const navigate = useNavigate()
+    const handleEmojiSelection = async (id: number) => {
+        const emoji = emojis.find(emoji => emoji.id === id)?.nome;
+        setSelectedEmoji(prevSelected => (prevSelected === id ? null : id));
 
+        if (emoji && userId) {
+            try {
+                const response = await postEmotion(Number(userId), emoji, today);
+                
+                // Se a resposta for válida, exibe o sucesso
+                if (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Emoção cadastrada com sucesso!',
+                        text: `Você selecionou o emoji: ${emoji}`,
+                        confirmButtonColor: '#369277',
+                    });
+                }
+            } catch (error) {
+                // Caso aconteça algum erro no cadastro
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Erro ao cadastrar emoção',
+                    text: 'Tente novamente mais tarde.',
+                    confirmButtonColor: '#FF6F61',
+                });
+            }
+        }
+    };
+
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const handleSlideChange = (swiper: { activeIndex: SetStateAction<number>; }) => {
+        setCurrentIndex(swiper.activeIndex);
+    };
     return (
         <div className='w-full h-[80vh] flex items-center justify-center'>
             <div className='w-[90vw] h-[70vh] flex flex-col'>
@@ -101,8 +118,8 @@ const ContainerHomeUser = () => {
                                             name={`emoji-${id}`}
                                             id={`emoji-${id}`}
                                             className="appearance-none w-6 h-6 rounded-full border-2 border-[#60c2a6] checked:bg-[#07503b] focus:outline-none cursor-pointer"
-                                            checked={selectedEmojis.includes(id)} // Verifica se o emoji está selecionado
-                                            onChange={() => handleEmojiSelection(id)} // Chama a função quando o checkbox for alterado
+                                            checked={selectedEmoji === id}
+                                            onChange={() => handleEmojiSelection(id)} // Alterna a seleção do emoji
                                         />
                                     </div>
                                 ))}
