@@ -160,12 +160,12 @@ const ContainerHomeUser = () => {
                             <div className="flex w-[100%] h-1/2  justify-center items-center gap-8">
                                 <div onClick={() => navigate(`/Nave/Blog?nome=Blog`)}
                                     className='buttons rounded-3xl bg-[#CBEBDA] hover:bg-[#3FC19C] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
-                                    <img src={imgBlog} alt="Meus Chats" className='w-10 sm:w-16' />
+                                    <img src={imgBlog} alt="Blog" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none '>Blog</p>
                                 </div>
                                 <div onClick={() => navigate('/Nave/diario?nome=Diário')}
                                     className='buttons rounded-3xl bg-[#CBEBDA] hover:bg-[#3FC19C] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
-                                    <img src={imgBook} alt="Meus Chats" className='w-10 sm:w-16' />
+                                    <img src={imgBook} alt="Diário" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Diário</p>
                                 </div>
                                 <div onClick={() => navigate(`/Nave/MeusChats?nome=Meus Chats`)}
@@ -177,17 +177,17 @@ const ContainerHomeUser = () => {
                             <div className="flex w-[100%] h-1/2  justify-center items-center gap-8">
                                 <div onClick={() => navigate(`/Nave/GraficoHumor?nome=Gráfico de Humor`)}
                                     className='buttons rounded-3xl bg-[#CBEBDA] hover:bg-[#3FC19C] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
-                                    <img src={imgHumorBalance} alt="Meus Chats" className='w-10 sm:w-16' />
+                                    <img src={imgHumorBalance} alt="Gráfico de Humor" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Gráfico do Humor</p>
                                 </div>
                                 <div onClick={() => navigate(`/Nave/ChatBot?nome=ChatBot`)}
                                     className='buttons rounded-3xl bg-[#CBEBDA] hover:bg-[#3FC19C] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
-                                    <img src={imgChatBot} alt="Meus Chats" className='w-10 sm:w-16' />
+                                    <img src={imgChatBot} alt="Chatbot" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>ChatBot</p>
                                 </div>
                                 <div onClick={() => navigate(`/Nave/MyConsults?nome=Minhas Consultas`)}
                                     className='buttons rounded-3xl bg-[#CBEBDA] hover:bg-[#3FC19C] h-24 w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
-                                    <img src={imgConsultas} alt="Meus Chats" className='w-10 sm:w-16' />
+                                    <img src={imgConsultas} alt="Minhas Consultas" className='w-10 sm:w-16' />
                                     <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Minhas Consultas</p>
                                 </div>
                             </div>

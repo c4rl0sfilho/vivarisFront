@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import ChatList from "./ChatList";
 import ChatConversation from "./ChatConversation";
-import { getAppointmentsByUser } from "../../Ts/allProfessionals";
+import {
+  getAppointmentsByProfessional,
+  getAppointmentsByUser,
+} from "../../Ts/consulta";
 import { initializeApp } from "firebase/app";
-import { getDatabase } from "firebase/database";
+import { getDatabase, ref, set } from "firebase/database";
 const app = initializeApp({
   apiKey: import.meta.env.VITE_API_KEY,
   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
@@ -61,24 +64,107 @@ export interface Appointment {
   tbl_psicologos: Psicologo; // Tipo aninhado para o psicólogo
 }
 
-const idCliente = Number(localStorage.getItem(`idDoCliente`));
+const userType = localStorage.getItem(`userType`);
+
 const ChatApp: React.FC = () => {
   const [activeChat, setActiveChat] = useState<number | null>(null);
-  const [chats, setChats] = useState<any[]>([]); // Ajuste o tipo para corresponder aos dados retornados por `getAllPsico`
+  const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [psicologos, setPsicologos] = useState([]);
   const [lastMessages, setLastMessages] = useState({});
+
+  const createChat = (chatId: string, name: string, avatar: string | null) => {
+    if (userType == "cliente") {
+      const endpoint = `chats/client/${chatId}`;
+
+      const chatRef = ref(database, endpoint);
+      set(chatRef, {
+        name,
+        avatar,
+        messages: {},
+      });
+    } else {
+      const endpoint = `chats/psychologist/${chatId}`;
+
+      const chatRef = ref(database, endpoint);
+      set(chatRef, {
+        name,
+        avatar,
+        messages: {},
+      });
+    }
+  };
 
   useEffect(() => {
     const fetchChats = async () => {
       setLoading(true);
       try {
-        const appointments:Appointment[] = await getAppointmentsByUser(idCliente);
-        //continua aq
-        if (Array.isArray(appointments)) {
-          appointments.forEach((appointment) => {
-            console.log(appointment.id);
-          });
+        if (userType === "cliente") {
+          const idCliente = Number(localStorage.getItem(`idDoCliente`));
+
+          const appointments: any = await getAppointmentsByUser(idCliente);
+
+          if (Array.isArray(appointments.data.data)) {
+            const uniquePsychologists = new Set<number>();
+            const uniqueChats: React.SetStateAction<any[]> = [];
+
+            appointments.data.data.forEach((consulta: Appointment) => {
+              if (!uniquePsychologists.has(consulta.tbl_psicologos.id)) {
+                uniquePsychologists.add(consulta.tbl_psicologos.id);
+                uniqueChats.push(consulta.tbl_psicologos);
+              }
+
+              const clienteId = Number(localStorage.getItem("idDoCliente"))!;
+              const psicologoId = consulta.tbl_psicologos.id;
+
+              const chatId =
+                clienteId < psicologoId
+                  ? `${clienteId}_${psicologoId}`
+                  : `${psicologoId}_${clienteId}`;
+
+              createChat(
+                chatId,
+                consulta.tbl_psicologos.nome,
+                consulta.tbl_psicologos.foto_perfil
+              );
+            });
+
+            setChats(uniqueChats);
+          }
+        } else {
+          const idPsico = Number(localStorage.getItem(`idDoPsicologo`));
+
+          const appointments: any = await getAppointmentsByProfessional(
+            idPsico
+          );
+
+          if (Array.isArray(appointments.data.data)) {
+            const uniqueClient = new Set<number>();
+            const uniqueChats: React.SetStateAction<any[]> = [];
+
+            appointments.data.data.forEach((consulta: Appointment) => {
+              if (!uniqueClient.has(consulta.tbl_clientes.id)) {
+                uniqueClient.add(consulta.tbl_clientes.id);
+                uniqueChats.push(consulta.tbl_clientes);
+              }
+
+              const idPsico = Number(localStorage.getItem(`idDoPsicologo`));
+              const clienteId = consulta.tbl_clientes.id;
+
+              const chatId =
+                idPsico < clienteId
+                  ? `${idPsico}_${clienteId}`
+                  : `${clienteId}_${idPsico}`;
+
+              createChat(
+                chatId,
+                consulta.tbl_clientes.nome,
+                consulta.tbl_clientes.foto_perfil
+              );
+            });
+
+            setChats(uniqueChats);
+          }
         }
       } catch (error) {
         console.error("Erro ao buscar chats:", error);
@@ -91,32 +177,14 @@ const ChatApp: React.FC = () => {
   }, []);
 
   const handleChatClick = (chatId: number) => {
-    const clienteId = "2";
-    localStorage.setItem("psicologoId", JSON.stringify(chatId));
-    setActiveChat(chatId);
+    if (userType === "cliente") {
+      localStorage.setItem("psicologoId", JSON.stringify(chatId));
+      setActiveChat(chatId);
+    } else {
+      localStorage.setItem("clienteId", JSON.stringify(chatId));
+      setActiveChat(chatId);
+    }
   };
-
-  // const fetchLastMessages = (psicologos) => {
-  //     const clienteId = "2"; // Substitua pelo ID do aluno real, se necessário.
-  //     const tempLastMessages = {};
-
-  //     psicologos.forEach((psicologo) => {
-  //       const chatRef = ref(database, `messages/${clienteId}_${psicologo.id}`);
-
-  //       onValue(chatRef, (snapshot) => {
-  //         if (snapshot.exists()) {
-  //           const messages = Object.values(snapshot.val());
-  //           const lastMessage = messages[messages.length - 1]; // Pega a última mensagem
-  //           tempLastMessages[psicologo.id] = lastMessage.text; // Armazena o texto da última mensagem
-  //         } else {
-  //           tempLastMessages[psicologo.id] = "Sem mensagens ainda."; // Mensagem padrão
-  //         }
-
-  //         // Atualiza o estado com as últimas mensagens
-  //         setLastMessages({ ...tempLastMessages });
-  //       });
-  //     });
-  //   };
 
   const handleBack = () => {
     setActiveChat(null);

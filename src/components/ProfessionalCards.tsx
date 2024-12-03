@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BsStar, BsStarFill } from "react-icons/bs";
 import { MdOutlineEmail } from "react-icons/md";
 import { FaInstagram } from "react-icons/fa";
-import { getAllPsico } from '../Ts/allProfessionals';
+import { getAllPsico } from '../Ts/consulta';
 import calcularIdade from '../util/CalcularIdade';
 import { useNavigate } from 'react-router-dom';
 
