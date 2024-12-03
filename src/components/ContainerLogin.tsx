@@ -72,6 +72,8 @@ const ContainerLogin = () => {
           });
 
           if (selectedButton === "Cliente") {
+            localStorage.setItem('userType', 'cliente');
+
             if (
               response.data &&
               response.data.cliente &&
@@ -103,6 +105,8 @@ const ContainerLogin = () => {
               });
             }
           } else {
+            localStorage.setItem('userType', 'psicologo');
+
             if (response.data.data.id) {
               let idDoPsicologo = response.data.data.id;
               let token = response.data.token;

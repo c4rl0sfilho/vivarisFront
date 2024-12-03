@@ -23,6 +23,7 @@ register();
 const ContainerHomePsico = () => {
   const [showAll, setShowAll] = useState<boolean>(false); // Estado para controlar exibição de todos os cards
   const [dayOfWeek, setDayOfWeek] = useState<string>('');
+  const [diaSemana, setDiaSemana] = useState<string>('');
   const [consultas, setConsultas] = useState<any>()
   const idPsico = Number(localStorage.getItem("idDoPsicologo"))
 
@@ -33,6 +34,10 @@ const ContainerHomePsico = () => {
   };
 
   useEffect(() => {
+    const dia = new Date().toISOString().split('T')[0]
+    const weekDay = calculateDayOfWeek(dia)
+    setDiaSemana(weekDay)
+
     const fetchAppointments = async () => {
       const appointments = await getProfessionalAppointments(idPsico);
       // Exemplo de função para buscar dados
@@ -41,6 +46,7 @@ const ContainerHomePsico = () => {
 
         appointments.data.data.forEach((consulta: { data_consulta: string; }) => {
           let dataConsulta = consulta.data_consulta.split('T')[0]
+
 
           if (dataConsulta === hoje) {
             const day = calculateDayOfWeek(consulta.data_consulta);
@@ -81,9 +87,10 @@ const ContainerHomePsico = () => {
           <img src={imgBook} alt="Prontuários" className='w-10 sm:w-16' />
           <p className='text-[#296856] font-bold text-xs sm:text-base'>Prontuários</p>
         </div>
-        <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 hover:bg-[#3FC19C] w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
+        <div onClick={() => navigate(`/Nave/MeusChats?nome=Meus Chats`)}
+         className='buttons rounded-3xl bg-[#CBEBDA] h-24 hover:bg-[#3FC19C] w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
           <img src={imgBatePapo} alt="Meus Chats" className='w-10 sm:w-16' />
-          <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Meus Chat’s</p>
+          <p className='text-[#296856] font-bold text-xs sm:text-base text-center leading-none'>Meus Chats</p>
         </div>
         <div className='buttons rounded-3xl bg-[#CBEBDA] h-24 hover:bg-[#3FC19C] w-24 sm:h-32 sm:w-32 px-3 sm:px-5 py-3 flex flex-col items-center justify-center cursor-pointer'>
           <img src={imgBlog} alt="Blog" className='w-10 sm:w-16' />
@@ -101,11 +108,11 @@ const ContainerHomePsico = () => {
       <div className='w-full lg:w-[80%] h-auto flex flex-col justify-between'>
         <div className='h-[50vh] lg:h-[75%] w-full bg-gradient-to-r from-[#26D6A3] to-[#099C73] rounded-ss-3xl rounded-ee-3xl p-4'>
           <div className="header flex justify-between">
-            <h1 className='text-[#296856] text-2xl sm:text-3xl font-bold'>{dayOfWeek}</h1>
+            <h1 className='text-[#296856] text-2xl sm:text-3xl font-bold'>{diaSemana}</h1>
             <h2 className='text-white text-xl sm:text-2xl font-bold'>Consultas - Hoje</h2>
           </div>
           <div className="content p-4 flex flex-wrap gap-16">
-            {consultas &&
+            {consultas && consultas.length > 0 ? (
               consultas.map((consulta: {
                 id: Key | null | undefined;
                 tbl_clientes: {
@@ -123,13 +130,40 @@ const ContainerHomePsico = () => {
                   <div className="nome">{consulta.tbl_clientes.nome}</div>
                   <div className="horario">
                     {typeof consulta.data_consulta === 'string'
-                      ? consulta.data_consulta.split('T')[1].slice(0, 5) // Extrai "HH:MM"
+                      ? consulta.data_consulta.split('T')[1].slice(0, 5)
                       : 'Horário inválido'}
                   </div>
                 </div>
               ))
-            }
+            ) : (
+              <div className="no-consultas-message flex flex-col items-center justify-center text-gray-500 w-full mt-8 gap-4">
+                <div className="icon bg-blue-100 text-blue-600 p-4 rounded-full flex items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-8 w-8"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 7V3m8 4V3M3 10h18M4 21h16a2 2 0 002-2V10a2 2 0 00-2-2H4a2 2 0 00-2 2v9a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <div className="text-lg text-white font-semibold">
+                  Você ainda não possui consultas hoje.
+                </div>
+                <p className="text-sm text-gray-200">
+                  Aguarde a confirmação de novas consultas.
+                </p>
+              </div>
+            )}
           </div>
+
+
           <div className="footer p-16 flex justify-center">
             <button onClick={handleToggleShow} className='bg-white text-[#296856] font-bold py-2 px-4 rounded'>
               {showAll ? 'Exibir menos' : 'Exibir mais'}

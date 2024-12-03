@@ -12,6 +12,7 @@ import { MdOutlineEmail } from "react-icons/md";
 import axios from "axios";
 import Swal from 'sweetalert2';
 import { postPaySession } from "../Ts/processoPagamento";
+import { fetchUnavailableTimes } from "../Ts/consulta";
 
 interface Availability {
   dia_semana: string;
@@ -47,11 +48,12 @@ const PsicoProfile = () => {
   const [horaSelecionada, setHoraSelecionada] = useState<string>("");
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [filteredTimes, setFilteredTimes] = useState<string[]>([]);
+  const [unavailableTimes, setUnavailableTimes] = useState<string[]>([]);
+
   const handleButtonClick = (buttonName: "Online" | "Presencial") => {
     setSelectedButton(buttonName);
   };
-
-
+  
   useEffect(() => {
     const fetchPsico = async () => {
       try {
@@ -67,13 +69,34 @@ const PsicoProfile = () => {
     fetchPsico();
   }, [id]);
 
+  const isDateValid = (date: Date): boolean => {
+    const today = new Date();
+    const maxDate = new Date();
+    maxDate.setMonth(today.getMonth()+1 ); // 
+    console.log(maxDate)
+    today.setHours(0, 0, 0, 0); // Remove a hora para comparar só a data
+    return date >= today && date <= maxDate;
+  };
 
-  const handleDateChange = (date: string) => {
+  const handleDateChange = async (date: string) => {
     setSelectedDate(date);
 
     const myDate = new Date(date + "T12:00:00");
 
+    if (!isDateValid(myDate)) {
+      alert("Data inválida. Escolha um dia entre hoje e 1 mês no futuro.");
+      return;
+    }
+
     if (psico?.tbl_psicologo_disponibilidade) {
+      const unavailable = await fetchUnavailableTimes(date, psico.id);
+      
+      if (unavailable.length < 1) {
+        console.log('Todos os horários estão disponíveis')
+      }
+      
+      setUnavailableTimes(unavailable);
+
       const dayOfWeek = myDate.toLocaleDateString("pt-BR", {
         weekday: "long",
       });
@@ -99,20 +122,24 @@ const PsicoProfile = () => {
         );
         const timeSlots: string[] = [];
         while (start < end) {
-          timeSlots.push(
-            start.toLocaleTimeString("pt-BR", {
-              hour: "2-digit",
-              minute: "2-digit",
-            })
-          );
+          const time = start.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          if (!unavailableTimes.includes(time)) {
+            timeSlots.push(time);
+          }
+
           start.setMinutes(start.getMinutes() + 50);
         }
         return timeSlots;
       });
 
       setFilteredTimes(times);
-    };
-  }
+    }
+  };
+
+
 
   const cadastrarConsulta = async () => {
     if (!selectedDate || !horaSelecionada || !psico?.id) return;
@@ -124,7 +151,10 @@ const PsicoProfile = () => {
     const body = {
       id_psicologo: psico.id,
       id_cliente: idCliente,
+
+
       data_consulta: `${selectedDate} ${horaSelecionada}`,
+      situacao:'Pendente'
     };
 
     try {
@@ -145,6 +175,8 @@ const PsicoProfile = () => {
         },
       });
 
+      const idConsulta = response.data.data.consulta.id;
+
       console.log("Confirmando agendamento...");
 
       const idConsulta = response.data.data.consulta.id;
@@ -161,7 +193,14 @@ const PsicoProfile = () => {
         window.location.href = `${paymentLink.url}`;
       });
 
-    } catch (error) {
+
+      const paymentLink = await postPaySession(idCliente, idConsulta);
+      console.log(paymentLink)
+      window.location.href = `${paymentLink.url}`;
+    } catch (error: any) {
+      if(error.status == 409){
+        alert("Consulta já marcada para este horário!")
+      }
       console.error("Erro ao cadastrar consulta:", error);
 
       // Exibe alerta de erro
@@ -271,9 +310,7 @@ const PsicoProfile = () => {
           </div>
           <h1 className="text-2xl pt-6">Sobre Mim</h1>
           <div className="description w-full h-auto">
-            <p className="pt-2">
-              {psico?.descricao}
-            </p>
+            <p className="pt-2">{psico?.descricao}</p>
           </div>
           <h1 className="text-2xl pt-6">Informações Pessoais</h1>
           <div className="telefone flex w-[50%] h-auto justify-between py-2">
@@ -333,6 +370,29 @@ const PsicoProfile = () => {
               Horários Disponíveis
             </p>
             {/* Renderizando os horários filtrados */}
+            <div className="horarios flex flex-wrap gap-6">
+              {filteredTimes.length > 0 ? (
+                filteredTimes.map((time, index) => (
+                  <div
+                    key={index}
+                    className={`horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl justify-center items-center hover:bg-[#3E9C81] hover:text-white active:bg-[#3E9C81] focus:bg-[#3E9C81] cursor-pointer ${
+                      unavailableTimes.includes(time)
+                        ? "bg-gray-300 cursor-not-allowed"
+                        : ""
+                    }`}
+                    onClick={() => {
+                      if (!unavailableTimes.includes(time)) {
+                        setHoraSelecionada(time);
+                      }
+                    }}
+                  >
+                    {time}
+                  </div>
+                ))
+              ) : (
+                <p>Sem horários disponíveis</p>
+              )}
+            </div>
             <div className="horarios w-full mt-8">
               <h2 className="text-2xl mb-4">Horários Disponíveis</h2>
               {/* Verifique se o estado tem os valores corretos */}
@@ -371,6 +431,19 @@ const PsicoProfile = () => {
               Agendar
             </button>
           </div>
+        </div>
+        <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
+          <p>Duração</p>
+          <p>50 Minutos</p>
+          <p>{psico?.preco}</p>
+        </div>
+        <div className="flex justify-center items-center my-8">
+          <button
+            className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl"
+            onClick={() => cadastrarConsulta()}
+          >
+            Agendar
+          </button>
         </div>
       </div>
     </div>

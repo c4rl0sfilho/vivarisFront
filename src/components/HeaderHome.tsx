@@ -134,7 +134,6 @@ const HeaderHome = () => {
                         <FaSearch size={20} className="text-[#296856] mr-4" />
                     </div>
 
-
                     {isSearchMenuOpen && (
                         <div className="absolute top-full mt-2 bg-white shadow-lg rounded-lg w-full z-10 p-4">
                             <p className='text-gray-600'>Sugestão de Pesquisa</p>
