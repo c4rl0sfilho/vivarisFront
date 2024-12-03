@@ -14,7 +14,8 @@ export const connectSocket = (url: string): Socket => {
 
 export const getSocket = (): Socket => {
   if (!socket) {
-    throw new Error("Socket não inicializado. Chame connectSocket primeiro.");
+    // Conectando ao servidor Socket.IO
+    socket = io("http://localhost:8080"); // Substitua com o endereço do seu servidor
   }
   return socket;
 };

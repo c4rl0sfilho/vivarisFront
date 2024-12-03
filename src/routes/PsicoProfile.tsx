@@ -53,7 +53,7 @@ const PsicoProfile = () => {
   const handleButtonClick = (buttonName: "Online" | "Presencial") => {
     setSelectedButton(buttonName);
   };
-  
+
   useEffect(() => {
     const fetchPsico = async () => {
       try {
@@ -72,7 +72,7 @@ const PsicoProfile = () => {
   const isDateValid = (date: Date): boolean => {
     const today = new Date();
     const maxDate = new Date();
-    maxDate.setMonth(today.getMonth()+1 ); // 
+    maxDate.setMonth(today.getMonth() + 1); // 
     console.log(maxDate)
     today.setHours(0, 0, 0, 0); // Remove a hora para comparar só a data
     return date >= today && date <= maxDate;
@@ -90,11 +90,11 @@ const PsicoProfile = () => {
 
     if (psico?.tbl_psicologo_disponibilidade) {
       const unavailable = await fetchUnavailableTimes(date, psico.id);
-      
+
       if (unavailable.length < 1) {
         console.log('Todos os horários estão disponíveis')
       }
-      
+
       setUnavailableTimes(unavailable);
 
       const dayOfWeek = myDate.toLocaleDateString("pt-BR", {
@@ -154,7 +154,7 @@ const PsicoProfile = () => {
 
 
       data_consulta: `${selectedDate} ${horaSelecionada}`,
-      situacao:'Pendente'
+      situacao: 'Pendente'
     };
 
     try {
@@ -194,7 +194,7 @@ const PsicoProfile = () => {
       console.log(paymentLink)
       window.location.href = `${paymentLink.url}`;
     } catch (error: any) {
-      if(error.status == 409){
+      if (error.status == 409) {
         alert("Consulta já marcada para este horário!")
       }
       console.error("Erro ao cadastrar consulta:", error);
@@ -333,11 +333,11 @@ const PsicoProfile = () => {
         </div>
         <div className="consulta w-[80%] h-auto bg-[#ffffff] rounded-xl flex flex-col p-4 mt-12">
           <h1 className="text-2xl pt-6 pb-6">Agende sua Consulta</h1>
-          <div className="ClienteOrPsicologo h-auto w-[20rem] flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
+          <div className="ClienteOrPsicologo h-auto w-[20rem] flex border-[#96E3CD] border-2 items-center justify-center place-self-center   rounded-xl mb-4">
             <button
               className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === "Online"
-                  ? "bg-[#296856] text-[#ffffff]"
-                  : "text-[#296856]"
+                ? "bg-[#296856] text-[#ffffff]"
+                : "text-[#296856]"
                 } transition-all duration-700`}
               onClick={() => handleButtonClick("Online")}
             >
@@ -345,18 +345,18 @@ const PsicoProfile = () => {
             </button>
             <button
               className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === "Presencial"
-                  ? "bg-[#296856] text-[#ffffff]"
-                  : "text-[#296856]"
+                ? "bg-[#296856] text-[#ffffff]"
+                : "text-[#296856]"
                 } transition-all duration-700`}
               onClick={() => handleButtonClick("Presencial")}
             >
               Presencial
             </button>
           </div>
-          <div className="flex w-[40%] justify-between">
+          <div className="flex w-[40%]  place-self-center justify-between">
             <p>50 minutos</p> <p>R${psico?.preco}</p>
           </div>
-          <div className="consult border-2 p-8 w-[30rem] h-auto flex flex-col items-center rounded-xl mt-8">
+          <div className="consult border-2 p-8 w-[30rem] h-auto flex flex-col items-center place-self-center rounded-xl mt-8">
             <h1 className="font-bold text-[#296856] text-lg">
               Data da Consulta
             </h1>
@@ -371,14 +371,16 @@ const PsicoProfile = () => {
                 filteredTimes.map((time, index) => (
                   <div
                     key={index}
-                    className={`horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl justify-center items-center hover:bg-[#3E9C81] hover:text-white active:bg-[#3E9C81] focus:bg-[#3E9C81] cursor-pointer ${
-                      unavailableTimes.includes(time)
+                    className={`horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl justify-center items-center cursor-pointer 
+          ${unavailableTimes.includes(time)
                         ? "bg-gray-300 cursor-not-allowed"
-                        : ""
-                    }`}
+                        : horaSelecionada === time
+                          ? "bg-[#296856] text-white"
+                          : "hover:bg-[#3E9C81] hover:text-white"
+                      }`}
                     onClick={() => {
                       if (!unavailableTimes.includes(time)) {
-                        setHoraSelecionada(time);
+                        setHoraSelecionada(time); // Atualiza o horário selecionado
                       }
                     }}
                   >
@@ -389,30 +391,7 @@ const PsicoProfile = () => {
                 <p>Sem horários disponíveis</p>
               )}
             </div>
-            <div className="horarios w-full mt-8">
-              <h2 className="text-2xl mb-4">Horários Disponíveis</h2>
-              {/* Verifique se o estado tem os valores corretos */}
-              <div className="horarios flex flex-wrap gap-6">
-                {filteredTimes.length > 0 ? (
-                  filteredTimes.map((time, index) => (
-                    <div
-                      key={index}
-                      className={`horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:text-white hover:bg-[#3E9C81] hover:border-[#3e9c18] justify-center items-center cursor-pointer"
-                    ${horaSelecionada === time ? 'bg-[#3E9C81] text-white' : 'hover:text-white hover:bg-[#3E9C81] hover:border-[#3e9c18]'}
-                    justify-center items-center cursor-pointer`}
-                      onClick={() => {
-                        setHoraSelecionada(time)
 
-                      }}
-                    >
-                      {time}
-                    </div>
-                  ))
-                ) : (
-                  <p>Sem horários disponíveis</p>
-                )}
-              </div>
-            </div>
           </div>
           <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
             <p>Duração</p>
@@ -427,19 +406,6 @@ const PsicoProfile = () => {
               Agendar
             </button>
           </div>
-        </div>
-        <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
-          <p>Duração</p>
-          <p>50 Minutos</p>
-          <p>{psico?.preco}</p>
-        </div>
-        <div className="flex justify-center items-center my-8">
-          <button
-            className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl"
-            onClick={() => cadastrarConsulta()}
-          >
-            Agendar
-          </button>
         </div>
       </div>
     </div>

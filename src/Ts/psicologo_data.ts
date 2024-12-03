@@ -65,3 +65,7 @@ export async function getProfessionalAppointments(idPsico:number){
         console.error("Erro ir para pagamento:", error);
     }
 }
+
+export async function getProfessionalRates(idPsico:number){
+
+}

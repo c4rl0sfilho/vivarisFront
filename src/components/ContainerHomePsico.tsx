@@ -29,13 +29,17 @@ const ContainerHomePsico = () => {
 
   const calculateDayOfWeek = (dateString: string): string => {
     const date = new Date(dateString);
+    console.log(date);
+    
     const daysOfWeek = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
     return daysOfWeek[date.getDay()];
   };
 
   useEffect(() => {
     const dia = new Date().toISOString().split('T')[0]
+    
     const weekDay = calculateDayOfWeek(dia)
+    
     setDiaSemana(weekDay)
 
     const fetchAppointments = async () => {

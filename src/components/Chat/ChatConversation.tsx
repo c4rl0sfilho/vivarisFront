@@ -3,6 +3,7 @@ import { useSocket } from "../../context/SocketContext";
 import { useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue, push } from "firebase/database";
+import Peer from "peerjs";
 
 const app = initializeApp({
   apiKey: import.meta.env.VITE_API_KEY,
@@ -76,6 +77,40 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
   const navigate = useNavigate();
   const userType = localStorage.getItem("userType");
   let chatKey: string;
+  const [peer, setPeer] = useState<Peer | null>(null);
+
+  useEffect(() => {
+    const newPeer = new Peer();
+    setPeer(newPeer);
+
+    newPeer.on("open", (id) => {
+      console.log("Peer ID:", id); // Aqui você pode enviar o ID para o servidor
+    });
+
+    return () => {
+      if (newPeer) newPeer.destroy();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (peer) {
+      peer.on("call", (call) => {
+        console.log("Chamada recebida", call);
+        // Aceitar a chamada e pegar o stream
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+          .then((stream) => {
+            call.answer(stream);  // Aceitar a chamada e enviar o stream
+            call.on("stream", (remoteStream) => {
+              const videoElement = document.getElementById("remote-video") as HTMLVideoElement;
+              videoElement.srcObject = remoteStream;
+            });
+          })
+          .catch((error) => {
+            console.error("Erro ao acessar a mídia:", error);
+          });
+      });
+    }
+  }, [peer]);
 
   if (userType === "cliente") {
     const clienteId = Number(localStorage.getItem("idDoCliente"));
@@ -156,25 +191,22 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
     setIsCalling(true);
     navigate(`/VideoCall/VideoCallHome`)
 
-    // Emite o evento para iniciar a chamada
-    socket.emit("initiateCall", { to: chat.id });
+   // Emite evento para iniciar chamada e aguarda resposta
+   socket.once("callAccepted", ({ roomId }) => {
+     alert(`Chamada aceita! Entrando na sala: ${roomId}`);
+     setIsCalling(false);
+     navigate(`/video-call/${roomId}`);
+   });
 
-    // Escuta a resposta do servidor
-    socket.once("callAccepted", ({ roomId }: { roomId: string }) => {
-      alert(`Chamada aceita! Entrando na sala: ${roomId}`);
-      setIsCalling(false);
-      navigate(`/video-call/${roomId}`);
-    });
+   socket.once("callDeclined", ({ message }) => {
+     alert(message || "Chamada recusada.");
+     setIsCalling(false);
+   });
 
-    socket.once("callDeclined", ({ message }: { message: string }) => {
-      alert(message || "Chamada recusada.");
-      setIsCalling(false);
-    });
-
-    socket.once("callFailed", ({ message }: { message: string }) => {
-      alert(message || "Falha ao iniciar a chamada.");
-      setIsCalling(false);
-    });
+   socket.once("callFailed", ({ message }) => {
+     alert(message || "Falha ao iniciar a chamada.");
+     setIsCalling(false);
+   });
   };
 
   return (

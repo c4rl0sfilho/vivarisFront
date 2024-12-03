@@ -6,7 +6,7 @@ import {
   getAppointmentsByUser,
 } from "../../Ts/consulta";
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, set } from "firebase/database";
+import { getDatabase, onValue, ref, set } from "firebase/database";
 const app = initializeApp({
   apiKey: import.meta.env.VITE_API_KEY,
   authDomain: import.meta.env.VITE_AUTH_DOMAIN,
@@ -70,8 +70,7 @@ const ChatApp: React.FC = () => {
   const [activeChat, setActiveChat] = useState<number | null>(null);
   const [chats, setChats] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [psicologos, setPsicologos] = useState([]);
-  const [lastMessages, setLastMessages] = useState({});
+ 
 
   const createChat = (chatId: string, name: string, avatar: string | null) => {
     if (userType == "cliente") {
@@ -94,6 +93,7 @@ const ChatApp: React.FC = () => {
       });
     }
   };
+  
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -109,6 +109,7 @@ const ChatApp: React.FC = () => {
             const uniqueChats: React.SetStateAction<any[]> = [];
 
             appointments.data.data.forEach((consulta: Appointment) => {
+
               if (!uniquePsychologists.has(consulta.tbl_psicologos.id)) {
                 uniquePsychologists.add(consulta.tbl_psicologos.id);
                 uniqueChats.push(consulta.tbl_psicologos);
@@ -127,6 +128,7 @@ const ChatApp: React.FC = () => {
                 consulta.tbl_psicologos.nome,
                 consulta.tbl_psicologos.foto_perfil
               );
+
             });
 
             setChats(uniqueChats);
@@ -161,6 +163,7 @@ const ChatApp: React.FC = () => {
                 consulta.tbl_clientes.nome,
                 consulta.tbl_clientes.foto_perfil
               );
+
             });
 
             setChats(uniqueChats);

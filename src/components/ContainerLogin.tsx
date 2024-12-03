@@ -239,9 +239,6 @@ const ContainerLogin = () => {
           Cadastre-se
         </p>
       </div>
-      <div className="google flex justify-center py-2">
-        <img src={GoogleIcon} alt="Google Icon" />
-      </div>
     </div>
   );
 };
