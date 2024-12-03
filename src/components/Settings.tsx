@@ -1,18 +1,11 @@
-import React from 'react'
-import instagram from '../assets/instagram.png'
 import email from '../assets/email.png'
-import axios from 'axios'
+import instagram from '../assets/instagram.png'
 import user from '../assets/user.png'
+import { getUser } from '../Ts/clienteData'
 
 let clientId = localStorage.getItem('idDoCliente')
-let token = localStorage.getItem('token')
+let client = await getUser(Number(clientId))
 
-const client = await axios.get(`http://localhost:8080/v1/vivaris/usuario/${clientId}`, {
-    headers: {
-        'Content-Type': 'application/json',
-        'x-access-token': token
-    }
-})
 
 const Settings = () => {
     return (
@@ -36,11 +29,11 @@ const Settings = () => {
                 {/* Foto, nome e email */}
                 <div className="w-full flex items-center gap-4 border-[3px] rounded-xl border-gray-200 p-4">
 
-                    <img id="img-perfil" className="rounded-full w-28 h-28 object-cover" src={client.data.data.foto_perfil ? client.data.data.foto_perfil : user}></img>
+                    <img id="img-perfil" className="rounded-full w-28 h-28 object-cover" src={client.data.foto_perfil ? client.data.foto_perfil : user}></img>
 
                     <div>
-                        <h2 id="nome" className="text-3xl">{String(client.data.data.nome[0]).toUpperCase() + client.data.data.nome.slice(1)}</h2>
-                        <p className='text-xl text-[#6F6F6F] ml-1'>{client.data.data.email}</p>
+                        <h2 id="nome" className="text-3xl">{String(client.data.nome[0]).toUpperCase() + client.data.nome.slice(1)}</h2>
+                        <p className='text-xl text-[#6F6F6F] ml-1'>{client.data.email}</p>
                     </div>
 
                 </div>
@@ -54,20 +47,20 @@ const Settings = () => {
                     <section>
                         <div>
                             <p className="text-[#3E9C81] font-semibold text-xl">CPF:</p>
-                            <input id='input-cpf' disabled={true} type="number" className='w-full bg-transparent text-lg focus:outline-none' placeholder={client.data.data.cpf} />
+                            <input id='input-cpf' disabled={true} type="number" className='w-full bg-transparent text-lg focus:outline-none' placeholder={client.data.cpf} />
                             <hr className='' />
                         </div>
 
                         <div>
                             <p id="input-dataNascimento" aria-disabled={true} className="text-[#3E9C81] font-semibold text-xl mt-3">Data nascimento:</p>
-                            <input type="date" className='w-full bg-transparent text-lg focus:outline-none' value={new Date(client.data.data.data_nascimento).toISOString().split('T')[0]} />
+                            <input type="date" className='w-full bg-transparent text-lg focus:outline-none' value={new Date(client.data.data_nascimento).toISOString().split('T')[0]} />
                             <hr className='' />
                         </div>
 
                         <div>
                             <p className="text-[#3E9C81] font-semibold text-xl mt-3">Sexo:</p>
                             <select disabled={true} id="select-sexo" className='w-full bg-transparent text-lg focus:outline-none text-lg'>
-                                <option value="" disabled={true} >{client.data.data.tbl_sexo.sexo}</option>
+                                <option value="" disabled={true} >{client.data.sexo}</option>
                                 <option value="Masculino">Masculino</option>
                                 <option value="Feminino">Feminino</option>
                                 <option value="Não-Binário">Não-Binário</option>
@@ -86,13 +79,13 @@ const Settings = () => {
                             {/* insta */}
                             <div className="flex gap-2 items-center">
                                 <img src={instagram} className='w-10 h-10' alt="" />
-                                <input disabled={true} id="input-instagram" className="w-1/2 bg-white px-2 py-[2px] rounded-xl text-lg focus:outline-none" type="text" placeholder={client.data.data.link_instagram ? client.data.data.link_instagram : 'Insira o link aqui'} />
+                                <input disabled={true} id="input-instagram" className="w-1/2 bg-white px-2 py-[2px] rounded-xl text-lg focus:outline-none" type="text" placeholder={client.data.link_instagram ? client.data.link_instagram : 'Insira o link aqui'} />
                             </div>
 
                             {/* email */}
                             <div className="flex gap-2 items-center">
                                 <img src={email} className='w-10 h-10 rounded-xl' alt="" />
-                                <input disabled={true} id="input-email" className="w-1/2 bg-white px-2 py-[2px] rounded-xl text-lg focus:outline-none" type="text" placeholder={client.data.data.email} />
+                                <input disabled={true} id="input-email" className="w-1/2 bg-white px-2 py-[2px] rounded-xl text-lg focus:outline-none" type="text" placeholder={client.data.email} />
                             </div>
                         </div>
 

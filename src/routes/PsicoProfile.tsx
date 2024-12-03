@@ -175,13 +175,9 @@ const PsicoProfile = () => {
         },
       });
 
-      const idConsulta = response.data.data.consulta.id;
-
       console.log("Confirmando agendamento...");
 
       const idConsulta = response.data.data.consulta.id;
-      const paymentLink = await postPaySession(idCliente, idConsulta);
-
       // Atualiza o alerta para indicar sucesso
       Swal.fire({
         title: 'Redirecionando...',
