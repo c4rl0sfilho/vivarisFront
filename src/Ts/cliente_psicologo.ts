@@ -19,8 +19,8 @@ export const registerUser = async (selectedButton: 'Cliente' | 'Psicólogo', cli
     const token = localStorage.getItem('token')
     
     const endpoint = selectedButton === 'Cliente' 
-        ? 'http://localhost:8080/v1/vivaris/cliente' 
-        : 'http://localhost:8080/v1/vivaris/psicologo';
+        ? 'http://localhost:8000/v1/vivaris/cliente' 
+        : 'http://localhost:8000/v1/vivaris/psicologo';
         
     const response = await axios.post(endpoint, clientData, {
         headers: {

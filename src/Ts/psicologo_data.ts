@@ -18,7 +18,7 @@ interface PsicoData {
 
 const token = localStorage.getItem('token')
 export const getPsico = async (idPsico: number) => {
-    const endpoint = `http://localhost:8080/v1/vivaris/profissional/${idPsico}`;  
+    const endpoint = `http://localhost:8000/v1/vivaris/profissional/${idPsico}`;  
     try {
         const response = await axios.get(endpoint, {
             headers: {
@@ -34,7 +34,7 @@ export const getPsico = async (idPsico: number) => {
 };
 
 export async function professionalAvailabilities(idPsico:number){
-    const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsico}`;  
+    const endpoint = `http://localhost:8000/v1/vivaris/disponibilidade/psicologo/${idPsico}`;  
     try {
         const response = await axios.get(endpoint, {
             headers: {
@@ -50,7 +50,7 @@ export async function professionalAvailabilities(idPsico:number){
 }
 
 export async function getProfessionalAppointments(idPsico:number){
-    const endpoint = `http://localhost:8080/v1/vivaris/consultas/psicologo/${idPsico}`;
+    const endpoint = `http://localhost:8000/v1/vivaris/consultas/psicologo/${idPsico}`;
 
     try {
         const response = await axios.get(endpoint, {

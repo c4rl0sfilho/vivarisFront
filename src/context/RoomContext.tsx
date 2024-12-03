@@ -6,7 +6,7 @@ import { v4 as uuidV4 } from "uuid";
 import { peersReducer } from './peerReducer';
 import { addPeerAction, removePeerAction } from './peerActions';
 
-const WS = 'http://127.0.0.1:8080';
+const WS = 'http://127.0.0.1:8000';
 export const RoomContext = createContext<null | any>(null);
 const ws = socketIOClient(WS);
 

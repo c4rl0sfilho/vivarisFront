@@ -15,7 +15,7 @@ export const connectSocket = (url: string): Socket => {
 export const getSocket = (): Socket => {
   if (!socket) {
     // Conectando ao servidor Socket.IO
-    socket = io("http://localhost:8080"); // Substitua com o endereço do seu servidor
+    socket = io("http://localhost:8000"); // Substitua com o endereço do seu servidor
   }
   return socket;
 };

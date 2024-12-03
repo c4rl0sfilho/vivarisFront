@@ -51,8 +51,8 @@ const ContainerLogin = () => {
     try {
       const endpoint =
         selectedButton === "Cliente"
-          ? "http://localhost:8080/v1/vivaris/login/usuario"
-          : "http://localhost:8080/v1/vivaris/profissional/login";
+          ? "http://localhost:8000/v1/vivaris/login/usuario"
+          : "http://localhost:8000/v1/vivaris/profissional/login";
 
       const response = await axios.post(endpoint, {
         email: email,
@@ -84,7 +84,7 @@ const ContainerLogin = () => {
               localStorage.setItem("idDoCliente", idDoCliente);
               localStorage.setItem("token", token);
 
-              let url = `http://localhost:8080/v1/vivaris/usuario/preferencias/${idDoCliente}`;
+              let url = `http://localhost:8000/v1/vivaris/usuario/preferencias/${idDoCliente}`;
               const preferenciasResponse = await axios.get(url, {
                 headers: {
                   "x-access-token": token,

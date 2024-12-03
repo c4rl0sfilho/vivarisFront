@@ -14,11 +14,34 @@ import Swal from 'sweetalert2';
 import { postPaySession } from "../Ts/processoPagamento";
 import { fetchUnavailableTimes } from "../Ts/consulta";
 
+const ratingMap: Record<string, number> = {
+  "Cinco": 5,
+  "Quatro": 4,
+  "Três": 3,
+  "Dois": 2,
+  "Um": 1
+};
+
 interface Availability {
   dia_semana: string;
   horario_inicio: string;
   horario_fim: string;
 }
+
+type Cliente = {
+  id: number;
+  nome: string;
+  email: string;
+  foto_perfil?:string
+};
+
+
+type Avaliacao = {
+  id: number;
+  avaliacao: string;
+  texto: string;
+  tbl_clientes: Cliente;
+};
 
 interface PsicoData {
   id: number;
@@ -35,6 +58,7 @@ interface PsicoData {
   tbl_psicologo_disponibilidade?: {
     tbl_disponibilidade: Availability;
   }[];
+  tbl_avaliacoes?: Avaliacao[] | undefined
 }
 
 const PsicoProfile = () => {
@@ -146,19 +170,16 @@ const PsicoProfile = () => {
 
     const idCliente = Number(localStorage.getItem("idDoCliente"));
     const token = localStorage.getItem("token");
-    const endpoint = `http://localhost:8080/v1/vivaris/consulta`;
+    const endpoint = `http://localhost:8000/v1/vivaris/consulta`;
 
     const body = {
       id_psicologo: psico.id,
       id_cliente: idCliente,
-
-
       data_consulta: `${selectedDate} ${horaSelecionada}`,
-      situacao: 'Pendente'
+      situacao: 'Pendente',
     };
 
     try {
-      // Mostra alerta de carregamento
       Swal.fire({
         title: 'Aguarde...',
         text: 'Você está sendo direcionado para o pagamento.',
@@ -175,31 +196,36 @@ const PsicoProfile = () => {
         },
       });
 
-      console.log("Confirmando agendamento...");
-
       const idConsulta = response.data.data.consulta.id;
-      // Atualiza o alerta para indicar sucesso
+
+      const paymentLink = await postPaySession(idCliente, idConsulta);
+      if (!paymentLink?.url) {
+        console.error("URL de pagamento não encontrada:", paymentLink);
+        Swal.fire({
+          title: 'Erro!',
+          text: 'Não foi possível gerar o link de pagamento.',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
+        return;
+      }
+
+
       Swal.fire({
         title: 'Redirecionando...',
         icon: 'success',
         timer: 2000,
         showConfirmButton: false,
       }).then(() => {
-        // Redireciona após o alerta
         window.location.href = `${paymentLink.url}`;
       });
-
-
-      const paymentLink = await postPaySession(idCliente, idConsulta);
-      console.log(paymentLink)
-      window.location.href = `${paymentLink.url}`;
     } catch (error: any) {
-      if (error.status == 409) {
-        alert("Consulta já marcada para este horário!")
+      if (error.response?.status === 409) {
+        alert("Consulta já marcada para este horário!");
       }
+
       console.error("Erro ao cadastrar consulta:", error);
 
-      // Exibe alerta de erro
       Swal.fire({
         title: 'Erro!',
         text: 'Ocorreu um erro ao tentar agendar a consulta.',
@@ -209,6 +235,8 @@ const PsicoProfile = () => {
     }
   };
 
+
+  console.log(psico);
 
   useEffect(() => {
     if (horaSelecionada) {
@@ -328,9 +356,39 @@ const PsicoProfile = () => {
             </p>
           </div>
         </div>
-        <div className="avaliacoes w-[80%] h-[30rem] bg-[#ffffff] rounded-xl flex flex-col p-4 mt-12">
-          Avaliações
+        <div className="avaliacoes w-[80%] h-[30rem] bg-[#ffffff] rounded-xl flex flex-col p-4 mt-12 overflow-y-auto">
+          <h3 className="text-xl font-semibold mb-4">Avaliações</h3>
+          {psico?.tbl_avaliacoes && psico.tbl_avaliacoes.length > 0 ? (
+            psico.tbl_avaliacoes.map((avaliacao) => (
+              <div
+                key={avaliacao.id}
+                className="comentario p-6 mb-6 border rounded-xl border-gray-200 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
+              >
+                <div className="flex items-center mb-4">
+                  <img
+                    src={avaliacao.tbl_clientes.foto_perfil || '/path/to/default-avatar.png'} // Substitua o valor '/path/to/default-avatar.png' pelo caminho da imagem padrão
+                    alt={avaliacao.tbl_clientes.nome}
+                    className="w-14 h-14 rounded-full object-cover border-2 border-blue-500 mr-4"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-xl text-gray-800">{avaliacao.tbl_clientes.nome}</h4>
+                  </div>
+                </div>
+                <p className="text-yellow-500 text-lg">
+                  {Array(5)
+                    .fill("⭐")
+                    .join("")}
+                </p>
+                <p className="text-gray-700 mt-3 text-lg italic">"{avaliacao.texto}"</p>
+              </div>
+            ))
+          ) : (
+            <p className="text-gray-500 text-center mt-6">Nenhuma avaliação disponível.</p>
+          )}
+
+
         </div>
+
         <div className="consulta w-[80%] h-auto bg-[#ffffff] rounded-xl flex flex-col p-4 mt-12">
           <h1 className="text-2xl pt-6 pb-6">Agende sua Consulta</h1>
           <div className="ClienteOrPsicologo h-auto w-[20rem] flex border-[#96E3CD] border-2 items-center justify-center place-self-center   rounded-xl mb-4">

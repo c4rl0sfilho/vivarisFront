@@ -39,7 +39,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
 
     const fetchData = async () => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
-        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
+        const endPoint = `http://localhost:8000/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
         
         try {
             setData([]);
@@ -105,7 +105,7 @@ const MyAvailability: React.FC<MyAvailabilityProps> = ({ reloadAvailability }) =
     const deleteAvailability = async (dia: string, horario: string) => {
         const idPsicologo = localStorage.getItem('idDoPsicologo');
         const token = localStorage.getItem('token'); // Certifique-se de obter o token corretamente
-        const endPoint = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
+        const endPoint = `http://localhost:8000/v1/vivaris/disponibilidade/psicologo/${idPsicologo}`;
 
         try {
             const body = {
