@@ -27,6 +27,7 @@ import PsicoProfile from './routes/PsicoProfile'
 import UserProfile from './routes/UserProfile'
 import PaymentStatus from './routes/PaymentStatus'
 import { VideoCallHome } from './routes/VideoCall/VideoCallHome'
+import MeditacaoMessage from './components/MeditacaoMessage'
 
 const router = createBrowserRouter([
   {

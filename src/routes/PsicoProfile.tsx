@@ -10,6 +10,7 @@ import { removeAcentuacao } from "../util/removeAcentuacao";
 import { FaInstagram } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import axios from "axios";
+import Swal from 'sweetalert2';
 import { postPaySession } from "../Ts/processoPagamento";
 import { fetchUnavailableTimes } from "../Ts/consulta";
 
@@ -52,7 +53,7 @@ const PsicoProfile = () => {
   const handleButtonClick = (buttonName: "Online" | "Presencial") => {
     setSelectedButton(buttonName);
   };
-
+  
   useEffect(() => {
     const fetchPsico = async () => {
       try {
@@ -138,6 +139,8 @@ const PsicoProfile = () => {
     }
   };
 
+
+
   const cadastrarConsulta = async () => {
     if (!selectedDate || !horaSelecionada || !psico?.id) return;
 
@@ -149,20 +152,47 @@ const PsicoProfile = () => {
       id_psicologo: psico.id,
       id_cliente: idCliente,
 
+
       data_consulta: `${selectedDate} ${horaSelecionada}`,
       situacao:'Pendente'
     };
 
     try {
+      // Mostra alerta de carregamento
+      Swal.fire({
+        title: 'Aguarde...',
+        text: 'Você está sendo direcionado para o pagamento.',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       const response = await axios.post(endpoint, body, {
         headers: {
           "Content-Type": "application/json",
           "x-access-token": token,
         },
       });
+
       const idConsulta = response.data.data.consulta.id;
 
       console.log("Confirmando agendamento...");
+
+      const idConsulta = response.data.data.consulta.id;
+      const paymentLink = await postPaySession(idCliente, idConsulta);
+
+      // Atualiza o alerta para indicar sucesso
+      Swal.fire({
+        title: 'Redirecionando...',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+      }).then(() => {
+        // Redireciona após o alerta
+        window.location.href = `${paymentLink.url}`;
+      });
+
 
       const paymentLink = await postPaySession(idCliente, idConsulta);
       console.log(paymentLink)
@@ -172,8 +202,17 @@ const PsicoProfile = () => {
         alert("Consulta já marcada para este horário!")
       }
       console.error("Erro ao cadastrar consulta:", error);
+
+      // Exibe alerta de erro
+      Swal.fire({
+        title: 'Erro!',
+        text: 'Ocorreu um erro ao tentar agendar a consulta.',
+        icon: 'error',
+        confirmButtonText: 'Ok',
+      });
     }
   };
+
 
   useEffect(() => {
     if (horaSelecionada) {
@@ -227,10 +266,10 @@ const PsicoProfile = () => {
                     {psico.id_sexo === 1
                       ? "Masculino"
                       : psico.id_sexo === 2
-                      ? "Feminino"
-                      : psico.id_sexo === 3
-                      ? "Não-binário"
-                      : "Não especificado"}
+                        ? "Feminino"
+                        : psico.id_sexo === 3
+                          ? "Não-binário"
+                          : "Não especificado"}
                   </p>
 
                   <p>Idade: {calcularIdade(psico.data_nascimento)} anos</p>
@@ -300,21 +339,19 @@ const PsicoProfile = () => {
           <h1 className="text-2xl pt-6 pb-6">Agende sua Consulta</h1>
           <div className="ClienteOrPsicologo h-auto w-[20rem] flex border-[#96E3CD] border-2 items-center justify-center rounded-xl mb-4">
             <button
-              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${
-                selectedButton === "Online"
+              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === "Online"
                   ? "bg-[#296856] text-[#ffffff]"
                   : "text-[#296856]"
-              } transition-all duration-700`}
+                } transition-all duration-700`}
               onClick={() => handleButtonClick("Online")}
             >
               Online
             </button>
             <button
-              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${
-                selectedButton === "Presencial"
+              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === "Presencial"
                   ? "bg-[#296856] text-[#ffffff]"
                   : "text-[#296856]"
-              } transition-all duration-700`}
+                } transition-all duration-700`}
               onClick={() => handleButtonClick("Presencial")}
             >
               Presencial
@@ -356,6 +393,43 @@ const PsicoProfile = () => {
                 <p>Sem horários disponíveis</p>
               )}
             </div>
+            <div className="horarios w-full mt-8">
+              <h2 className="text-2xl mb-4">Horários Disponíveis</h2>
+              {/* Verifique se o estado tem os valores corretos */}
+              <div className="horarios flex flex-wrap gap-6">
+                {filteredTimes.length > 0 ? (
+                  filteredTimes.map((time, index) => (
+                    <div
+                      key={index}
+                      className={`horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl text-[#3E9C81] border-[#3E9C81] hover:text-white hover:bg-[#3E9C81] hover:border-[#3e9c18] justify-center items-center cursor-pointer"
+                    ${horaSelecionada === time ? 'bg-[#3E9C81] text-white' : 'hover:text-white hover:bg-[#3E9C81] hover:border-[#3e9c18]'}
+                    justify-center items-center cursor-pointer`}
+                      onClick={() => {
+                        setHoraSelecionada(time)
+
+                      }}
+                    >
+                      {time}
+                    </div>
+                  ))
+                ) : (
+                  <p>Sem horários disponíveis</p>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
+            <p>Duração</p>
+            <p>50 Minutos</p>
+            <p>{psico?.preco}</p>
+          </div>
+          <div className="flex justify-center items-center my-8">
+            <button
+              className="w-[30rem] h-[2.5rem] text-white bg-[#3E9C81] hover:bg-[#3FC19C] rounded-md border-2 text-xl"
+              onClick={() => cadastrarConsulta()}
+            >
+              Agendar
+            </button>
           </div>
         </div>
         <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
