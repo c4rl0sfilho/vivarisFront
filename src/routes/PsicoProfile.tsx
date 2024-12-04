@@ -163,20 +163,31 @@ const PsicoProfile = () => {
   };
 
   const cadastrarConsulta = async () => {
+    // Verifica se as variáveis essenciais estão definidas
     if (!selectedDate || !horaSelecionada || !psico?.id) return;
-
-    const idCliente = Number(localStorage.getItem("idDoCliente"));
+  
+    // Obtém os dados do cliente e o token do localStorage
+    const idCliente = localStorage.getItem("idDoCliente");
     const token = localStorage.getItem("token");
+  
+    // Verifica se o idCliente ou token não estão presentes
+    if (!idCliente || !token) {
+      alert("Token ou ID do cliente não encontrados.");
+      return;
+    }
+  
     const endpoint = `http://localhost:8080/v1/vivaris/consulta`;
-
+  
     const body = {
       id_psicologo: psico.id,
-      id_cliente: idCliente,
-      data_consulta: `${selectedDate} ${horaSelecionada}`,
-      situacao: "Pendente",
-    };
+      id_cliente: Number(idCliente), // Garante que o idCliente seja convertido para número
+      data_consulta: `${selectedDate} ${horaSelecionada}`, // Verifique se o formato da data está correto
+      situacao: 'Pendente',
 
+    };
+  
     try {
+
       Swal.fire({
         title: "Aguarde...",
         text: "Você está sendo direcionado para o pagamento.",
@@ -185,13 +196,15 @@ const PsicoProfile = () => {
           Swal.showLoading();
         },
       });
-
+  
+      // Realiza o agendamento da consulta
       const response = await axios.post(endpoint, body, {
         headers: {
           "Content-Type": "application/json",
           "x-access-token": token,
         },
       });
+
 
       const idConsulta = response.data.data.consulta.id;
 
@@ -207,12 +220,24 @@ const PsicoProfile = () => {
         return;
       }
 
+
+  
+      console.log("Confirmando agendamento...");
+  
+      const idConsulta = response.data.data.consulta.id;
+      console.log(idConsulta);
+  
+      // Chama a função postPaySession para gerar o link de pagamento
+      const paymentLink = await postPaySession(Number(idCliente), idConsulta);
+  
+
       Swal.fire({
         title: "Redirecionando...",
         icon: "success",
         timer: 2000,
         showConfirmButton: false,
       }).then(() => {
+
         window.location.href = `${paymentLink.url}`;
       });
     } catch (error: any) {
@@ -232,6 +257,30 @@ const PsicoProfile = () => {
   };
 
   console.log(psico);
+
+        // Redireciona após o alerta
+        window.location.href = paymentLink.url;
+      });
+  
+    } catch (error) {
+      // Verifica se o erro é causado por um conflito de horário (status 409)
+      if (error.response?.status === 409) {
+        alert("Consulta já marcada para este horário!");
+      } else {
+        console.error("Erro ao cadastrar consulta:", error);
+  
+        // Exibe alerta de erro
+        Swal.fire({
+          title: 'Erro!',
+          text: 'Ocorreu um erro ao tentar agendar a consulta.',
+          icon: 'error',
+          confirmButtonText: 'Ok',
+        });
+      }
+    }
+  };
+  
+
 
   useEffect(() => {
     if (horaSelecionada) {
