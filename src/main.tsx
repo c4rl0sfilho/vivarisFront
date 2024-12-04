@@ -71,6 +71,7 @@ const router = createBrowserRouter([
         element: <PaymentStatus/>
       },
       {
+
         path: "/Nave",
         element: <Nave />,
         children: [
@@ -119,8 +120,6 @@ const router = createBrowserRouter([
     ]
   }
 ])
-
-
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <RouterProvider router={router} />
