@@ -8,18 +8,20 @@ let client = await getUser(Number(clientId))
 
 
 const Settings = () => {
+    console.log(client);
+
     return (
         /* Conteúdo Meu Perfil */
         <section className="w-full h-full flex pt-16 ">
-        
-{/* Navegação da esquerda */}
-<ul className="flex flex-col gap-6 p-6 ">
-    <li className="hover:font-bold cursor-pointer text-xl duration-100">Geral</li>
-    <li className="hover:font-bold cursor-pointer text-xl duration-100">Editar Perfil</li>
-    <li className="hover:font-bold cursor-pointer w-36 text-xl duration-100">Privacidade e segurança</li>
-    <li className="hover:font-bold cursor-pointer text-xl duration-100">Sistema</li>
-    <li className="text-red-600 hover:font-bold cursor-pointer text-xl">Sair</li>
-</ul>
+
+            {/* Navegação da esquerda */}
+            <ul className="flex flex-col gap-6 p-6 ">
+                <li className="hover:font-bold cursor-pointer text-xl duration-100">Geral</li>
+                <li className="hover:font-bold cursor-pointer text-xl duration-100">Editar Perfil</li>
+                <li className="hover:font-bold cursor-pointer w-36 text-xl duration-100">Privacidade e segurança</li>
+                <li className="hover:font-bold cursor-pointer text-xl duration-100">Sistema</li>
+                <li className="text-red-600 hover:font-bold cursor-pointer text-xl">Sair</li>
+            </ul>
 
             {/* Infos Meu perfil */}
             <div className="flex flex-col gap-4 w-full pr-12 ">
@@ -32,7 +34,13 @@ const Settings = () => {
                     <img id="img-perfil" className="rounded-full w-28 h-28 object-cover" src={client.data.foto_perfil ? client.data.foto_perfil : user}></img>
 
                     <div>
-                        <h2 id="nome" className="text-3xl">{String(client.data.nome[0]).toUpperCase() + client.data.nome.slice(1)}</h2>
+                        <h2 id="nome" className="text-3xl">
+                            {client.data.nome
+                                .split(' ')
+                                .map((word : string) => word[0].toUpperCase() + word.slice(1).toLowerCase()) 
+                                .join(' ')}
+                        </h2>
+
                         <p className='text-xl text-[#6F6F6F] ml-1'>{client.data.email}</p>
                     </div>
 
@@ -109,8 +117,8 @@ function atualizarDados() {
     let inputInstagram = document.getElementById('input-instagram') as HTMLInputElement
     let inputEmail = document.getElementById('input-email') as HTMLInputElement
 
-    function createModal(){
-    document.body.innerHTML=`
+    function createModal() {
+        document.body.innerHTML = `
     <div id="modal" className=" inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
     <div class="bg-black rounded-lg shadow-lg max-w-md w-full p-6">
     <h2 class="text-lg font-bold mb-4">Título da Modal</h2>
