@@ -4,9 +4,12 @@ let socket: Socket | null = null;
 
 export const connectSocket = (url: string): Socket => {
   if (!socket) {
-    socket = io(url, {
-      autoConnect: true, // Evita conexão automática
-      transports: ["polling", "websocket"],
+    socket = io(url);  // A conexão será feita automaticamente
+    socket.on('connect', () => {
+      console.log('Socket conectado com sucesso, ID:', socket?.id);
+    });
+    socket.on('disconnect', () => {
+      console.log('Socket desconectado');
     });
   }
   return socket;
@@ -14,7 +17,8 @@ export const connectSocket = (url: string): Socket => {
 
 export const getSocket = (): Socket => {
   if (!socket) {
-    throw new Error("Socket não inicializado. Chame connectSocket primeiro.");
+    // Conecta automaticamente ao servidor
+    socket = connectSocket("http://localhost:8080");
   }
   return socket;
 };

@@ -75,7 +75,7 @@ const ChatList: React.FC<ChatListProps> = ({ chats, onChatClick }) => {
                 <p className="text-sm text-gray-500"></p>
               </div>
               <p className="text-sm text-gray-500">
-                {lastMessages[chat.id]?.text || "Sem mensagens"}
+                {lastMessages[chat.id]?.text || ""}
               </p>
             </div>
           </div>

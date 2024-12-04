@@ -71,13 +71,13 @@ const Meditacao = () => {
                 className="button w-48 h-28 bg-white rounded-2xl flex justify-center items-center hover:border-2 hover:border-gray-600 cursor-pointer"
                 onClick={() => handleButtonClick("ANSIEDADE")}
               >
-                <p className="text-gray-600 text-3xl">ANSIEDADE</p>
+                <p className="text-gray-600 text-3xl">Recomeço</p>
               </div>
               <div
                 className="button w-48 h-28 bg-white rounded-2xl flex justify-center items-center hover:border-2 hover:border-gray-600 cursor-pointer"
                 onClick={() => handleButtonClick("DEPRESSAO")}
               >
-                <p className="text-gray-600 text-3xl">DEPRESSÃO</p>
+                <p className="text-gray-600 text-3xl">Força</p>
               </div>
             </div>
             <div className="flex h-1/2 w-1/2 gap-8 justify-center items-center">
@@ -85,13 +85,13 @@ const Meditacao = () => {
                 className="button w-48 h-28 bg-white rounded-2xl flex justify-center items-center hover:border-2 hover:border-gray-600 cursor-pointer"
                 onClick={() => handleButtonClick("INSONIA")}
               >
-                <p className="text-gray-600 text-3xl">INSÔNIA</p>
+                <p className="text-gray-600 text-3xl">Insônia</p>
               </div>
               <div
                 className="button w-48 h-28 bg-white rounded-2xl flex justify-center items-center hover:border-2 hover:border-gray-600 cursor-pointer"
                 onClick={() => handleButtonClick("OCIOSIDADE")}
               >
-                <p className="text-gray-600 text-3xl">OCIOSIDADE</p>
+                <p className="text-gray-600 text-3xl">Ociosidade</p>
               </div>
             </div>
           </div>

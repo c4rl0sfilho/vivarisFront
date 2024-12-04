@@ -38,7 +38,7 @@ const newAvailability = async (dates: Date[]) => {
 
     console.log('Dados enviados para o backend:', data);
 
-    return axios.post('http://localhost:8080/v1/vivaris/disponibilidade', data, {
+    return axios.post('http://localhost:8000/v1/vivaris/disponibilidade', data, {
       headers: {
         'Content-Type': 'application/json',
       },
@@ -120,8 +120,12 @@ const Availability = () => {
       return;
     }
 
+    if (!date.justDate) {
+      throw new Error('A propriedade justDate é null ou indefinida');
+    }
+
     const combinedDates = selectedTimes.map(selectedTime => {
-      const combinedDateTime = new Date(date.justDate);
+      const combinedDateTime = new Date(date.justDate ?? '1970-01-01'); // Fallback para uma data padrão
       combinedDateTime.setHours(selectedTime.getHours());
       combinedDateTime.setMinutes(selectedTime.getMinutes());
       combinedDateTime.setSeconds(selectedTime.getSeconds());
@@ -131,7 +135,11 @@ const Availability = () => {
     try {
       const ids = await newAvailability(combinedDates); // Obtém os IDs
 
-      await Promise.all(ids.map(id => responseProfessional(id))); // Chama a função para cada ID
+      if (Array.isArray(ids)) {
+        await Promise.all(ids.map((id: string) => responseProfessional(id)));
+      } else {
+        console.error("O valor de 'ids' não é uma matriz");
+      }
 
       setReloadAvailability(prev => !prev); // Alterna o estado para recarregar MyAvailability
 
@@ -153,7 +161,7 @@ const Availability = () => {
   };
 
   const responseProfessional = async (id: string) => {
-    const url = `http://localhost:8080/v1/vivaris/disponibilidade/psicologo/${professionaId}`;
+    const url = `http://localhost:8000/v1/vivaris/disponibilidade/psicologo/${professionaId}`;
 
     const data = {
       disponibilidade: id,
@@ -276,37 +284,37 @@ const Availability = () => {
             )}
           </div>
           <div className="h-64 w-64 border-2 border-[#296856] rounded-xl flex flex-col items-center p-2">
-      <h1 className="text-[#296856] font-medium text-lg pb-4">Valor Da Consulta</h1>
+            <h1 className="text-[#296856] font-medium text-lg pb-4">Valor Da Consulta</h1>
 
-      <div className="inputPrice flex items-center mb-4">
-        <label htmlFor="priceInput" className="sr-only">
-          Valor da consulta em reais
-        </label>
-        <p className="pr-1">R$</p>
-        <input
-          type="number"
-          id="priceInput"
-          value={valorTemp}
-          onChange={(e) => setValorTemp(parseFloat(e.target.value) || '')}
-          placeholder="00,00"
-          className="border-none pl-1 focus:outline-none focus:border-b-2 focus:border-[#296856] text-lg"
-          step={0.01}
-        />
-      </div>
+            <div className="inputPrice flex items-center mb-4">
+              <label htmlFor="priceInput" className="sr-only">
+                Valor da consulta em reais
+              </label>
+              <p className="pr-1">R$</p>
+              <input
+                type="number"
+                id="priceInput"
+                value={valorTemp}
+                onChange={(e) => setValorTemp(parseFloat(e.target.value) || '')}
+                placeholder="00,00"
+                className="border-none pl-1 focus:outline-none focus:border-b-2 focus:border-[#296856] text-lg"
+                step={0.01}
+              />
+            </div>
 
-      <button
-        className="w-1/2 h-1/6 mt-2 py-2 justify-center bg-[#3E9C81] text-white text-lg font-medium rounded hover:bg-[#3FC19C] transition-all"
-        onClick={handleSave}
-      >
-        Salvar 
-      </button>
+            <button
+              className="w-1/2 h-1/6 mt-2 py-2 justify-center bg-[#3E9C81] text-white text-lg font-medium rounded hover:bg-[#3FC19C] transition-all"
+              onClick={handleSave}
+            >
+              Salvar
+            </button>
 
-      {valorConsulta !== '' && (
-        <p className="mt-4 text-[#296856]">
-        Valor Atual: <strong>R$ {valorConsulta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
-      </p>      
-      )}
-    </div>
+            {valorConsulta !== '' && (
+              <p className="mt-4 text-[#296856]">
+                Valor Atual: <strong>R$ {valorConsulta.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong>
+              </p>
+            )}
+          </div>
         </div>
 
         <div>

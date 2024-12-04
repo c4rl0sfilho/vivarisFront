@@ -11,6 +11,8 @@ interface ConsultaData {
 
 
 export const postPaySession = async (idUser: number, idConsulta: number) => {
+    console.log('ioio');
+    
     const token = localStorage.getItem('token')
     const endpoint = `http://localhost:8080/v1/vivaris/create-checkout-session`;
 
@@ -27,9 +29,11 @@ export const postPaySession = async (idUser: number, idConsulta: number) => {
                 'Content-Type': 'application/json',
                 'x-access-token': token
             },
-        });
+        })
+        
 
         return response.data.result;
+
     } catch (error) {
         console.error("Erro ir para pagamento:", error);
     }

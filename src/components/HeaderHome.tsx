@@ -1,4 +1,4 @@
-import  { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import vivarisIcon from '../assets/vivarisIcon.svg';
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineBellAlert } from "react-icons/hi2";
@@ -15,6 +15,7 @@ import Swal from "sweetalert2";
 const HeaderHome = () => {
     const [userName, setUserName] = useState("");
     const [userType, setUserType] = useState<'Cliente' | 'Psicólogo'>('Cliente')
+    const [user, setUser] = useState<any>()
     const [greetingMessage, setGreetingMessage] = useState("");
     const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
     const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false); // Controle do menu suspenso de busca
@@ -26,25 +27,26 @@ const HeaderHome = () => {
         const fetchData = async () => {
             const clienteId = localStorage.getItem('idDoCliente');
             const psicologoId = localStorage.getItem('idDoPsicologo');
-    
+
             if (clienteId) {
                 const user = await getUser(Number(clienteId));
-                
+
                 setUserName(user.data.nome || 'Cliente');
-                
+
                 setUserType('Cliente');
 
+                setUser(user.data)
             } else if (psicologoId) {
 
                 const psicologo = await getPsico(Number(psicologoId));
 
                 setUserName(psicologo?.data.data.professional.nome || 'psico erro');
                 setUserType('Psicólogo');
-
+                setUser(psicologo?.data.data.professional)
             } else {
                 console.warn('Nenhum ID encontrado no localStorage.');
             }
-    
+
             const currentHour = new Date().getHours();
             if (currentHour < 12) {
                 setGreetingMessage('Bom dia,');
@@ -54,7 +56,7 @@ const HeaderHome = () => {
                 setGreetingMessage('Boa noite,');
             }
         };
-    
+
         fetchData();
     }, []);
 
@@ -68,19 +70,19 @@ const HeaderHome = () => {
 
     const handleLogout = () => {
         Swal.fire({
-          title: 'Você tem certeza?',
-          text: 'Você deseja sair da sua conta?',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Sim, sair!',
-          cancelButtonText: 'Cancelar',
-          reverseButtons: true,
+            title: 'Você tem certeza?',
+            text: 'Você deseja sair da sua conta?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sim, sair!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
         }).then((result) => {
-          if (result.isConfirmed) {
-            navigate('/'); 
-          }
+            if (result.isConfirmed) {
+                navigate('/');
+            }
         });
-      };
+    };
 
     // Fechar menus ao clicar fora
     useEffect(() => {
@@ -147,10 +149,12 @@ const HeaderHome = () => {
                     )}
                 </div>
 
-                {/* Imagem de perfil e ícones */}
                 <div className='flex items-center space-x-4'>
-                    <div className="profile-picture bg-red-600 w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full">
-                        {/* Aqui vai a imagem de perfil do usuário */}
+                    <div className="profile-picture w-[40px] h-[40px] md:w-[50px] md:h-[50px] rounded-full">
+                        {user && user.foto_perfil ? (
+                            <img src={user.foto_perfil} alt="" />
+                        ) : null}
+
                     </div>
                     <HiOutlineBellAlert size={30} className="text-white cursor-pointer" />
                     <div className="relative" ref={settingsMenuRef}>
@@ -172,7 +176,7 @@ const HeaderHome = () => {
                                             <img src={imgSlider} alt="" />
                                         </div>
                                         <div className='myPreferences flex border-b-2  w-full h-1 justify-end border-white'>
-                                            
+
                                         </div>
                                     </div>
                                     <div className='flex flex-col w-full h-full justify-end items-end gap-8 pt-4'>

@@ -29,6 +29,7 @@ import { SetStateAction, useState } from 'react';
 register();
 
 
+
 const data = [
     { id: '1', image: imgBell, nome: 'Lembrete', route: 'home' },
     { id: '2', image: imgBatePapo, nome: "Meus Chats", route: 'Nave/batePapo' },
@@ -49,11 +50,16 @@ const emojis = [
 
 // Função para lidar com a seleção dos emojis
 const ContainerHomeUser = () => {
+
+   
+
+
     const [selectedEmoji, setSelectedEmoji] = useState<number | null>(null);
     const userId = localStorage.getItem('idDoCliente');
     const today = format(new Date(), 'yyyy-MM-dd');
     const navigate = useNavigate();
     const [hovered, setHovered] = useState(false);
+
 
     const handleEmojiSelection = async (id: number) => {
         const emoji = emojis.find(emoji => emoji.id === id)?.nome;
