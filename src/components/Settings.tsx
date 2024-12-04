@@ -8,8 +8,6 @@ let client = await getUser(Number(clientId))
 
 
 const Settings = () => {
-    console.log(client);
-
     return (
         /* Conteúdo Meu Perfil */
         <section className="w-full h-full flex pt-16 ">
@@ -109,22 +107,43 @@ const Settings = () => {
 }
 
 function atualizarDados() {
-    let imgPerfil = document.getElementById('img-perfil') as HTMLImageElement
-    let nome = document.getElementById('nome')
-    let inputCpf = document.getElementById('input-cpf') as HTMLInputElement
-    let inputDataNascimento = document.getElementById('input-dataNascimento') as HTMLInputElement
-    let selectSexo = document.getElementById('select-sexo') as HTMLSelectElement
-    let inputInstagram = document.getElementById('input-instagram') as HTMLInputElement
-    let inputEmail = document.getElementById('input-email') as HTMLInputElement
-
     function createModal() {
         document.body.innerHTML = `
-    <div id="modal" className=" inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-    <div class="bg-black rounded-lg shadow-lg max-w-md w-full p-6">
-    <h2 class="text-lg font-bold mb-4">Título da Modal</h2>
+    <div className="w-screen h-max bg-[#52B693]">
+
+    <div class="rounded-md shadow-lg h-max w-1/2 p-6 flex flex-col items-center justify-center ml-[22vw] mt-[12vh] border-4">
+    <h2 class="text-lg font-bold mb-4">Atualizar Perfil</h2>
     <p class="text-sm text-gray-700 mb-4">
-      Este é o conteúdo da sua janela modal. Adicione aqui o que for necessário.
+      Preencha os campos abaixo para atualizar seus dados.
     </p>
+    <div class="flex flex-col items-start w-full h-full">
+
+    <label class="text-lg text-gray-700">Nome:</label>
+    <input type="text" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+
+    <label class="text-lg text-gray-700">Email:</label>
+    <input type="text" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+
+    <label class="text-lg text-gray-700">Data de Nascimento:</label>
+    <input type="date" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+
+    <label class="text-lg text-gray-700">CPF:</label>
+    <input type="text" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+
+    <label class="text-lg text-gray-700">Foto de Perfil:</label>
+    <input type="file" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+
+    <label class="text-lg text-gray-700">Instagram:</label>
+    <input type="text" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+
+    <label class="text-lg text-gray-700">Sexo:</label>
+    <select class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none">
+    <option value="1">Masculino</option>
+    <option value="2">Feminino</option>
+    <option value="3">Não-Binário</option>
+    </select>
+    </div>
+
     <div class="flex justify-end space-x-4">
       <button id="close-modal" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
         Cancelar
