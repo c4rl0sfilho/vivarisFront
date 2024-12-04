@@ -2,6 +2,7 @@
 import HeaderHome from '../components/HeaderHome';
 import ContainerHomePsico from '../components/ContainerHomePsico';
 import ContainerHomeUser from '../components/ContainerHomeUser';
+import HeaderHomePsico from '../components/HeaderHomePsico';
 
 const Home = () => {
     const getUserType = () => {
@@ -31,7 +32,7 @@ const Home = () => {
             )}
             {userType === 'psychologist' && (
                 <div>
-                    <HeaderHome />
+                    <HeaderHomePsico />
                     <div className='flex justify-center pt-12'>
                         <ContainerHomePsico />
                     </div>
