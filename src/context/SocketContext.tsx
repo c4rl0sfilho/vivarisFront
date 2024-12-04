@@ -1,11 +1,15 @@
-// context/SocketContext.tsx
-import React, { createContext, useContext } from "react";
+// src/context/SocketContext.tsx
+import React, { createContext, useContext, ReactNode } from "react";
 import { Socket } from "socket.io-client";
 import { getSocket } from "../config/socket";
 
 const SocketContext = createContext<Socket | null>(null);
 
-export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+interface SocketProviderProps {
+  children: ReactNode;
+}
+
+export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const socket = getSocket();
   return <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>;
 };

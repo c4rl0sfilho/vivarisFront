@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useSocket } from "../../context/SocketContext";
 import { useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import { getDatabase, ref, onValue, push } from "firebase/database";
 import Peer from "peerjs";
+import IncomingCallModal from "../IncomingCall";
 
 const app = initializeApp({
   apiKey: import.meta.env.VITE_API_KEY,
@@ -31,7 +31,6 @@ interface ChatConversationProps {
   chat: Chat;
   onBack: () => void;
 }
-
 // Recuperar mensagens
 const fetchMessages = (
   chatKey: string,
@@ -41,21 +40,19 @@ const fetchMessages = (
     >
   >
 ) => {
-  console.log(chatKey);
 
   const messagesRef = ref(database, `chats/${chatKey}/messages`);
   onValue(messagesRef, (snapshot) => {
     const data = snapshot.val();
-    console.log(data);
 
     // Confirme que os dados são formatados corretamente
     const formattedMessages: Chat["messages"] = data
       ? Object.values(data).map((message: any) => ({
-          id: message.id,
-          sender: message.senderId,
-          text: message.text,
-          time: message.time,
-        }))
+        id: message.id,
+        sender: message.senderId,
+        text: message.text,
+        time: message.time,
+      }))
       : [];
 
     setMessages(formattedMessages);
@@ -73,12 +70,11 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
   const [oChat, setChat] = useState<unknown[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCalling, setIsCalling] = useState(false);
-  const socket = useSocket();
   const navigate = useNavigate();
   const userType = localStorage.getItem("userType");
   let chatKey: string;
   const [peer, setPeer] = useState<Peer | null>(null);
-  
+
   if (userType === "cliente") {
     const clienteId = Number(localStorage.getItem("idDoCliente"));
 
@@ -89,7 +85,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
         : `${psicologoId}_${clienteId}`;
 
     useEffect(() => {
-      // Buscar mensagens do chat específico
+
       fetchMessages(chatKey, setMessages);
     }, [chat.id]);
   } else {
@@ -103,7 +99,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
         : `${clienteId}_${psicologoId}`;
 
     useEffect(() => {
-      // Buscar mensagens do chat específico
+
       fetchMessages(chatKey, setMessages);
     }, [chat.id]);
   }
@@ -158,21 +154,21 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
     navigate(`/VideoCall/VideoCallHome`);
 
     // Emite evento para iniciar chamada e aguarda resposta
-    socket.once("callAccepted", ({ roomId }) => {
-      alert(`Chamada aceita! Entrando na sala: ${roomId}`);
-      setIsCalling(false);
-      navigate(`/video-call/${roomId}`);
-    });
+    // socket.once("callAccepted", ({ roomId }) => {
+    //   alert(`Chamada aceita! Entrando na sala: ${roomId}`);
+    //   setIsCalling(false);
+    //   navigate(`/video-call/${roomId}`);
+    // });
 
-    socket.once("callDeclined", ({ message }) => {
-      alert(message || "Chamada recusada.");
-      setIsCalling(false);
-    });
+    // socket.once("callDeclined", ({ message }) => {
+    //   alert(message || "Chamada recusada.");
+    //   setIsCalling(false);
+    // });
 
-    socket.once("callFailed", ({ message }) => {
-      alert(message || "Falha ao iniciar a chamada.");
-      setIsCalling(false);
-    });
+    // socket.once("callFailed", ({ message }) => {
+    //   alert(message || "Falha ao iniciar a chamada.");
+    //   setIsCalling(false);
+    // });
   };
 
   return (
@@ -235,16 +231,14 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
           messages.map((message) => (
             <div
               key={message.id}
-              className={`mb-4 flex ${
-                message.sender == userType ? "justify-end" : "justify-start"
-              }`}
+              className={`mb-4 flex ${message.sender == userType ? "justify-end" : "justify-start"
+                }`}
             >
               <div
-                className={`p-3 rounded-lg max-w-xs ${
-                  message.sender === userType // Se for "Você", ficará à direita
-                    ? "bg-gray-400 text-white"
-                    : "bg-green-500 text-white" // Aqui também apliquei a cor verde para todos
-                }`}
+                className={`p-3 rounded-lg max-w-xs ${message.sender === userType // Se for "Você", ficará à direita
+                  ? "bg-gray-400 text-white"
+                  : "bg-green-500 text-white" // Aqui também apliquei a cor verde para todos
+                  }`}
               >
                 <p className="text-sm">{message.text}</p>
                 <span className="text-xs text-gray-500">{message.time}</span>
