@@ -119,25 +119,19 @@ function atualizarDados() {
     <div class="flex flex-col items-start w-full h-full">
 
     <label class="text-lg text-gray-700">Nome:</label>
-    <input type="text" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
-
-    <label class="text-lg text-gray-700">Email:</label>
-    <input type="text" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+    <input type="text" id="input-nome" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
 
     <label class="text-lg text-gray-700">Data de Nascimento:</label>
-    <input type="date" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
-
-    <label class="text-lg text-gray-700">CPF:</label>
-    <input type="text" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+    <input type="date" id="input-dataNascimento" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
 
     <label class="text-lg text-gray-700">Foto de Perfil:</label>
-    <input type="file" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+    <input type="file" id="input-fotoPerfil" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
 
     <label class="text-lg text-gray-700">Instagram:</label>
-    <input type="text" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
+    <input type="text" id="input-instagram" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none"></input>
 
     <label class="text-lg text-gray-700">Sexo:</label>
-    <select class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none">
+    <select id="select-sexo" class="w-full mb-4 p-2 border border-gray-300 rounded-md focus:outline-none">
     <option value="1">Masculino</option>
     <option value="2">Feminino</option>
     <option value="3">Não-Binário</option>
@@ -148,14 +142,57 @@ function atualizarDados() {
       <button id="close-modal" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
         Cancelar
       </button>
-      <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+      <button id="enviar-dados" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
         Enviar
       </button>
     </div>
     </div>
     </div>
     `
+
+    enviarDados()
     }
+
+    const nome = document.getElementById('input-nome') as HTMLInputElement
+    const dataNascimento = document.getElementById('input-dataNascimento') as HTMLInputElement
+    const fotoPerfil = document.getElementById('input-fotoPerfil') as HTMLInputElement
+    const instagram = document.getElementById('input-instagram') as HTMLInputElement
+    const sexo = document.getElementById('select-sexo') as HTMLInputElement
+
+
+    function enviarDados() {
+        console.log(fotoPerfil);
+        
+        let btn = document.getElementById('enviar-dados') as HTMLButtonElement
+        btn.addEventListener('click', () => {
+            fotoPerfil.addEventListener("change", async () => {
+                let fileImg = fotoPerfil.files![0];
+                let foto
+
+                if (fileImg) {
+                   const reader = new FileReader()
+
+                    reader.addEventListener("load", (e) => {
+                        const render = e.target
+                        foto = render!.result
+                        const img = fotoPerfil
+                        img.src = foto as string
+
+                        console.log(img.src);
+                        
+                      })
+                      reader.readAsDataURL(fileImg)
+                    }
+        })
+
+        const data = {
+            name: nome.value,
+            data_nascimento: dataNascimento.value,
+            link_instagram: instagram.value,
+            sexo: sexo.value
+        }
+    }
+)}
 
     function closeModal() {
         const closeModal = document.getElementById('close-modal');
@@ -168,6 +205,7 @@ function atualizarDados() {
             })
         }
     }
+
 
     createModal()
     closeModal()

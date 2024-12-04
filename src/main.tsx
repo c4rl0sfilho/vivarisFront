@@ -28,6 +28,7 @@ import UserProfile from './routes/UserProfile'
 import PaymentStatus from './routes/PaymentStatus'
 import { VideoCallHome } from './routes/VideoCall/VideoCallHome'
 import MeditacaoMessage from './components/MeditacaoMessage'
+import Developing from './routes/Developing'
 
 const router = createBrowserRouter([
   {
@@ -71,7 +72,10 @@ const router = createBrowserRouter([
         element: <PaymentStatus/>
       },
       {
-
+        path: "/Developing",
+        element: <Developing />
+      },
+      {
         path: "/Nave",
         element: <Nave />,
         children: [
