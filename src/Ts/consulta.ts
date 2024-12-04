@@ -19,7 +19,7 @@ interface PsicoData {
 const token = localStorage.getItem("token");
 
 export const getAllPsico = async () => {
-  const endpoint = `http://localhost:8000/v1/vivaris/profissionais`;
+  const endpoint = `http://localhost:8080/v1/vivaris/profissionais`;
 
   try {
     const response = await axios.get(endpoint, {
@@ -36,7 +36,7 @@ export const getAllPsico = async () => {
 };
 
 export async function getAppointmentsByUser(id: number) {
-  const endpoint = `http://localhost:8000/v1/vivaris/consulta/usuario/${id}`;
+  const endpoint = `http://localhost:8080/v1/vivaris/consulta/usuario/${id}`;
 
   try {
     const response = await axios.get(endpoint, {
@@ -54,7 +54,7 @@ export async function getAppointmentsByUser(id: number) {
 }
 
 export async function getAppointmentsByProfessional(idPsico: number) {
-  const endpoint = `http://localhost:8000/v1/vivaris/consultas/psicologo/${idPsico}`;
+  const endpoint = `http://localhost:8080/v1/vivaris/consultas/psicologo/${idPsico}`;
 
   try {
     const response = await axios.get(endpoint, {
@@ -71,7 +71,7 @@ export async function getAppointmentsByProfessional(idPsico: number) {
 }
 
 export async function fetchUnavailableTimes(date: string, psicoId: number) {
-  const endpoint = `http://localhost:8000/v1/vivaris/consultas/horarios`;
+  const endpoint = `http://localhost:8080/v1/vivaris/consultas/horarios`;
   try {
     const response = await axios.get(endpoint, {
       params: { psicologoId: psicoId, data: date },

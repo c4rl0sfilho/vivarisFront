@@ -26,7 +26,7 @@ const usePreferences = (): UsePreferences => {
         const fetchPreferences = async () => {
             try {
                 const response = await axios.get<{ data: Preference[] }>
-                ('http://localhost:8000/v1/vivaris/preferencias',
+                ('http://localhost:8080/v1/vivaris/preferencias',
                     {
                         headers:{
                             'x-access-token': token

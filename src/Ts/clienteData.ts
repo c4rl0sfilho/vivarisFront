@@ -15,7 +15,7 @@ interface UserData {
 const token = localStorage.getItem('token')
 
 export const getUser = async (idUser: number) => {
-    const endpoint = `http://localhost:8000/v1/vivaris/usuario/${idUser}`; 
+    const endpoint = `http://localhost:8080/v1/vivaris/usuario/${idUser}`; 
     
     try {
         const response = await axios.get(endpoint, {

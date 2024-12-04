@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";
@@ -41,8 +41,8 @@ const fetchMessages = (
     >
   >
 ) => {
-    console.log(chatKey);
-    
+  console.log(chatKey);
+
   const messagesRef = ref(database, `chats/${chatKey}/messages`);
   onValue(messagesRef, (snapshot) => {
     const data = snapshot.val();
@@ -78,40 +78,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
   const userType = localStorage.getItem("userType");
   let chatKey: string;
   const [peer, setPeer] = useState<Peer | null>(null);
-
-  useEffect(() => {
-    const newPeer = new Peer();
-    setPeer(newPeer);
-
-    newPeer.on("open", (id) => {
-      console.log("Peer ID:", id); // Aqui você pode enviar o ID para o servidor
-    });
-
-    return () => {
-      if (newPeer) newPeer.destroy();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (peer) {
-      peer.on("call", (call) => {
-        console.log("Chamada recebida", call);
-        // Aceitar a chamada e pegar o stream
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-          .then((stream) => {
-            call.answer(stream);  // Aceitar a chamada e enviar o stream
-            call.on("stream", (remoteStream) => {
-              const videoElement = document.getElementById("remote-video") as HTMLVideoElement;
-              videoElement.srcObject = remoteStream;
-            });
-          })
-          .catch((error) => {
-            console.error("Erro ao acessar a mídia:", error);
-          });
-      });
-    }
-  }, [peer]);
-
+  
   if (userType === "cliente") {
     const clienteId = Number(localStorage.getItem("idDoCliente"));
 
@@ -131,7 +98,7 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
     const clienteId = chat.id;
 
     chatKey =
-    psicologoId < clienteId
+      psicologoId < clienteId
         ? `${psicologoId}_${clienteId}`
         : `${clienteId}_${psicologoId}`;
 
@@ -159,7 +126,6 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
       console.log(chatRef);
       push(chatRef, newMessag)
         .then(() => {
-        
           setNewMessage("");
         })
         .catch((error) => console.error("Erro ao enviar mensagem:", error));
@@ -189,24 +155,24 @@ const ChatConversation: React.FC<ChatConversationProps> = ({
   const handleVideoCall = async () => {
     if (isCalling) return; // Evitar múltiplas chamadas
     setIsCalling(true);
-    navigate(`/VideoCall/VideoCallHome`)
+    navigate(`/VideoCall/VideoCallHome`);
 
-   // Emite evento para iniciar chamada e aguarda resposta
-   socket.once("callAccepted", ({ roomId }) => {
-     alert(`Chamada aceita! Entrando na sala: ${roomId}`);
-     setIsCalling(false);
-     navigate(`/video-call/${roomId}`);
-   });
+    // Emite evento para iniciar chamada e aguarda resposta
+    socket.once("callAccepted", ({ roomId }) => {
+      alert(`Chamada aceita! Entrando na sala: ${roomId}`);
+      setIsCalling(false);
+      navigate(`/video-call/${roomId}`);
+    });
 
-   socket.once("callDeclined", ({ message }) => {
-     alert(message || "Chamada recusada.");
-     setIsCalling(false);
-   });
+    socket.once("callDeclined", ({ message }) => {
+      alert(message || "Chamada recusada.");
+      setIsCalling(false);
+    });
 
-   socket.once("callFailed", ({ message }) => {
-     alert(message || "Falha ao iniciar a chamada.");
-     setIsCalling(false);
-   });
+    socket.once("callFailed", ({ message }) => {
+      alert(message || "Falha ao iniciar a chamada.");
+      setIsCalling(false);
+    });
   };
 
   return (

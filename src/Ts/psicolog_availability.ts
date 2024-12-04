@@ -8,7 +8,7 @@ interface AvailabilityData {
 const token = localStorage.getItem('token')
 
 export const getAvailability = async (idPsico: number) => {
-    const endpoint = `http://localhost:8000/v1/vivaris/disponibilidade/${idPsico}`; 
+    const endpoint = `http://localhost:8080/v1/vivaris/disponibilidade/${idPsico}`; 
     
     try {
         const response = await axios.get(endpoint, {

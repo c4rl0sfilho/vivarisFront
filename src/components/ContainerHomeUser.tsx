@@ -26,6 +26,7 @@ import { SetStateAction, useState } from 'react';
 register();
 
 
+
 const data = [
     { id: '1', image: imgBell, nome: 'Lembrete', route: 'home' },
     { id: '2', image: imgBatePapo, nome: "Meus Chats", route: 'Nave/batePapo' },
@@ -46,6 +47,7 @@ const emojis = [
 
 // Função para lidar com a seleção dos emojis
 const ContainerHomeUser = () => {
+   
     const [selectedEmojis, setSelectedEmojis] = useState<number[]>([]);
 
     const handleEmojiSelection = (id: number) => {

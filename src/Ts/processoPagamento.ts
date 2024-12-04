@@ -14,7 +14,7 @@ export const postPaySession = async (idUser: number, idConsulta: number) => {
     console.log('ioio');
     
     const token = localStorage.getItem('token')
-    const endpoint = `http://localhost:8000/v1/vivaris/create-checkout-session`;
+    const endpoint = `http://localhost:8080/v1/vivaris/create-checkout-session`;
 
     const body = {
         id_consulta: idConsulta,

@@ -10,16 +10,16 @@ import { removeAcentuacao } from "../util/removeAcentuacao";
 import { FaInstagram } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import axios from "axios";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import { postPaySession } from "../Ts/processoPagamento";
 import { fetchUnavailableTimes } from "../Ts/consulta";
 
 const ratingMap: Record<string, number> = {
-  "Cinco": 5,
-  "Quatro": 4,
-  "Três": 3,
-  "Dois": 2,
-  "Um": 1
+  Cinco: 5,
+  Quatro: 4,
+  Três: 3,
+  Dois: 2,
+  Um: 1,
 };
 
 interface Availability {
@@ -32,9 +32,8 @@ type Cliente = {
   id: number;
   nome: string;
   email: string;
-  foto_perfil?:string
+  foto_perfil?: string;
 };
-
 
 type Avaliacao = {
   id: number;
@@ -58,7 +57,7 @@ interface PsicoData {
   tbl_psicologo_disponibilidade?: {
     tbl_disponibilidade: Availability;
   }[];
-  tbl_avaliacoes?: Avaliacao[] | undefined
+  tbl_avaliacoes?: Avaliacao[] | undefined;
 }
 
 const PsicoProfile = () => {
@@ -96,8 +95,8 @@ const PsicoProfile = () => {
   const isDateValid = (date: Date): boolean => {
     const today = new Date();
     const maxDate = new Date();
-    maxDate.setMonth(today.getMonth() + 1); // 
-    console.log(maxDate)
+    maxDate.setMonth(today.getMonth() + 1); //
+    console.log(maxDate);
     today.setHours(0, 0, 0, 0); // Remove a hora para comparar só a data
     return date >= today && date <= maxDate;
   };
@@ -116,7 +115,7 @@ const PsicoProfile = () => {
       const unavailable = await fetchUnavailableTimes(date, psico.id);
 
       if (unavailable.length < 1) {
-        console.log('Todos os horários estão disponíveis')
+        console.log("Todos os horários estão disponíveis");
       }
 
       setUnavailableTimes(unavailable);
@@ -163,26 +162,24 @@ const PsicoProfile = () => {
     }
   };
 
-
-
   const cadastrarConsulta = async () => {
     if (!selectedDate || !horaSelecionada || !psico?.id) return;
 
     const idCliente = Number(localStorage.getItem("idDoCliente"));
     const token = localStorage.getItem("token");
-    const endpoint = `http://localhost:8000/v1/vivaris/consulta`;
+    const endpoint = `http://localhost:8080/v1/vivaris/consulta`;
 
     const body = {
       id_psicologo: psico.id,
       id_cliente: idCliente,
       data_consulta: `${selectedDate} ${horaSelecionada}`,
-      situacao: 'Pendente',
+      situacao: "Pendente",
     };
 
     try {
       Swal.fire({
-        title: 'Aguarde...',
-        text: 'Você está sendo direcionado para o pagamento.',
+        title: "Aguarde...",
+        text: "Você está sendo direcionado para o pagamento.",
         allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading();
@@ -202,18 +199,17 @@ const PsicoProfile = () => {
       if (!paymentLink?.url) {
         console.error("URL de pagamento não encontrada:", paymentLink);
         Swal.fire({
-          title: 'Erro!',
-          text: 'Não foi possível gerar o link de pagamento.',
-          icon: 'error',
-          confirmButtonText: 'Ok',
+          title: "Erro!",
+          text: "Não foi possível gerar o link de pagamento.",
+          icon: "error",
+          confirmButtonText: "Ok",
         });
         return;
       }
 
-
       Swal.fire({
-        title: 'Redirecionando...',
-        icon: 'success',
+        title: "Redirecionando...",
+        icon: "success",
         timer: 2000,
         showConfirmButton: false,
       }).then(() => {
@@ -227,14 +223,13 @@ const PsicoProfile = () => {
       console.error("Erro ao cadastrar consulta:", error);
 
       Swal.fire({
-        title: 'Erro!',
-        text: 'Ocorreu um erro ao tentar agendar a consulta.',
-        icon: 'error',
-        confirmButtonText: 'Ok',
+        title: "Erro!",
+        text: "Ocorreu um erro ao tentar agendar a consulta.",
+        icon: "error",
+        confirmButtonText: "Ok",
       });
     }
   };
-
 
   console.log(psico);
 
@@ -290,10 +285,10 @@ const PsicoProfile = () => {
                     {psico.id_sexo === 1
                       ? "Masculino"
                       : psico.id_sexo === 2
-                        ? "Feminino"
-                        : psico.id_sexo === 3
-                          ? "Não-binário"
-                          : "Não especificado"}
+                      ? "Feminino"
+                      : psico.id_sexo === 3
+                      ? "Não-binário"
+                      : "Não especificado"}
                   </p>
 
                   <p>Idade: {calcularIdade(psico.data_nascimento)} anos</p>
@@ -359,53 +354,92 @@ const PsicoProfile = () => {
         <div className="avaliacoes w-[80%] h-[30rem] bg-[#ffffff] rounded-xl flex flex-col p-4 mt-12 overflow-y-auto">
           <h3 className="text-xl font-semibold mb-4">Avaliações</h3>
           {psico?.tbl_avaliacoes && psico.tbl_avaliacoes.length > 0 ? (
-            psico.tbl_avaliacoes.map((avaliacao) => (
-              <div
-                key={avaliacao.id}
-                className="comentario p-6 mb-6 border rounded-xl border-gray-200 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="flex items-center mb-4">
-                  <img
-                    src={avaliacao.tbl_clientes.foto_perfil || '/path/to/default-avatar.png'} // Substitua o valor '/path/to/default-avatar.png' pelo caminho da imagem padrão
-                    alt={avaliacao.tbl_clientes.nome}
-                    className="w-14 h-14 rounded-full object-cover border-2 border-blue-500 mr-4"
-                  />
-                  <div>
-                    <h4 className="font-semibold text-xl text-gray-800">{avaliacao.tbl_clientes.nome}</h4>
+            psico.tbl_avaliacoes.map((avaliacao) => {
+              // Convertendo a avaliação de string para número
+              const ratingValue = ratingMap[avaliacao.avaliacao] || 0; // Default para 0 se a avaliação não for reconhecida
+
+              const fullStars = Math.floor(ratingValue); // Estrelas preenchidas
+              const emptyStars = 5 - fullStars; // Estrelas vazias
+
+              return (
+                <div
+                  key={avaliacao.id}
+                  className="comentario p-6 mb-6 border rounded-xl border-gray-200 bg-white shadow-lg hover:shadow-xl transition-shadow duration-300"
+                >
+                  <div className="flex items-center mb-4">
+                    <img
+                      src={
+                        avaliacao.tbl_clientes.foto_perfil ||
+                        "/path/to/default-avatar.png"
+                      } 
+                      alt={avaliacao.tbl_clientes.nome}
+                      className="w-14 h-14 rounded-full object-cover border-2 border-blue-500 mr-4"
+                    />
+                    <div>
+                      <h4 className="font-semibold text-xl text-gray-800">
+                        {avaliacao.tbl_clientes.nome}
+                      </h4> 
+                    </div>
                   </div>
+
+                  <div className="flex">
+                    {/* Estrelas preenchidas */}
+                    {Array(fullStars)
+                      .fill("⭐")
+                      .map((star, index) => (
+                        <span
+                          key={`full-star-${index}`}
+                          className="text-yellow-500 text-lg"
+                        >
+                          {star}
+                        </span>
+                      ))}
+
+                    {/* Estrelas vazias */}
+                    {Array(emptyStars)
+                      .fill("⭐")
+                      .map((star, index) => (
+                        <span
+                          key={`empty-star-${index}`}
+                          className="text-gray-300 text-lg"
+                        >
+                          {star}
+                        </span>
+                      ))}
+                  </div>
+
+                  <p className="text-gray-700 mt-3 text-lg italic">
+                    "{avaliacao.texto}"
+                  </p>
                 </div>
-                <p className="text-yellow-500 text-lg">
-                  {Array(5)
-                    .fill("⭐")
-                    .join("")}
-                </p>
-                <p className="text-gray-700 mt-3 text-lg italic">"{avaliacao.texto}"</p>
-              </div>
-            ))
+              );
+            })
           ) : (
-            <p className="text-gray-500 text-center mt-6">Nenhuma avaliação disponível.</p>
+            <p className="text-gray-500 text-center mt-6">
+              Nenhuma avaliação disponível.
+            </p>
           )}
-
-
         </div>
 
         <div className="consulta w-[80%] h-auto bg-[#ffffff] rounded-xl flex flex-col p-4 mt-12">
           <h1 className="text-2xl pt-6 pb-6">Agende sua Consulta</h1>
           <div className="ClienteOrPsicologo h-auto w-[20rem] flex border-[#96E3CD] border-2 items-center justify-center place-self-center   rounded-xl mb-4">
             <button
-              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === "Online"
-                ? "bg-[#296856] text-[#ffffff]"
-                : "text-[#296856]"
-                } transition-all duration-700`}
+              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${
+                selectedButton === "Online"
+                  ? "bg-[#296856] text-[#ffffff]"
+                  : "text-[#296856]"
+              } transition-all duration-700`}
               onClick={() => handleButtonClick("Online")}
             >
               Online
             </button>
             <button
-              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${selectedButton === "Presencial"
-                ? "bg-[#296856] text-[#ffffff]"
-                : "text-[#296856]"
-                } transition-all duration-700`}
+              className={`w-[14.9rem] h-[2rem] rounded-xl font-semibold ${
+                selectedButton === "Presencial"
+                  ? "bg-[#296856] text-[#ffffff]"
+                  : "text-[#296856]"
+              } transition-all duration-700`}
               onClick={() => handleButtonClick("Presencial")}
             >
               Presencial
@@ -430,12 +464,13 @@ const PsicoProfile = () => {
                   <div
                     key={index}
                     className={`horario w-16 h-8 border-2 flex rounded-ss-xl rounded-br-xl justify-center items-center cursor-pointer 
-          ${unavailableTimes.includes(time)
-                        ? "bg-gray-300 cursor-not-allowed"
-                        : horaSelecionada === time
-                          ? "bg-[#296856] text-white"
-                          : "hover:bg-[#3E9C81] hover:text-white"
-                      }`}
+          ${
+            unavailableTimes.includes(time)
+              ? "bg-gray-300 cursor-not-allowed"
+              : horaSelecionada === time
+              ? "bg-[#296856] text-white"
+              : "hover:bg-[#3E9C81] hover:text-white"
+          }`}
                     onClick={() => {
                       if (!unavailableTimes.includes(time)) {
                         setHoraSelecionada(time); // Atualiza o horário selecionado
@@ -449,7 +484,6 @@ const PsicoProfile = () => {
                 <p>Sem horários disponíveis</p>
               )}
             </div>
-
           </div>
           <div className="confirmConsulta h-full w-full border-2 flex justify-evenly rounded-lg p-2 mt-4">
             <p>Duração</p>
