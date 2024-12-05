@@ -137,12 +137,12 @@ const Nave = () => {
             </div>
             <div
               onClick={() => {
-                navigate('/Nave/diario');
-                handleButtonClick("Diário");
+                navigate('/Nave/prontuario');
+                handleButtonClick("Prontuario");
               }}
-              className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Diário' ? 'bg-[#286b5f]' : ''}`}>
+              className={`flex justify-start items-center rounded-xl cursor-pointer h-16 pl-3 ${selectedTitle === 'Prontuario' ? 'bg-[#286b5f]' : ''}`}>
               <img src={Book} alt="" className="pr-4 h-16 w-16" />
-              <h1 className="text-white text-xl font-medium">Diário</h1>
+              <h1 className="text-white text-xl font-medium">Prontuário</h1>
             </div>
             <div
               onClick={() => {

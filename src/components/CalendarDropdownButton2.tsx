@@ -64,7 +64,7 @@ const CalendarDropdownButton2: React.FC<CalendarDropdownButtonProps> = ({ onDate
           ref={menuRef}
           className="absolute mt-2 p-4 bg-white shadow-lg rounded-md z-10"
         >
-          <Calendar onChange={(date) => handleDateChange(date as Date)} value={selectedDate} />
+          <Calendar onChange={(date) => handleDateChange(date as Date)} value={selectedDate} minDate={new Date()} />
         </div>
       )}
     </div>

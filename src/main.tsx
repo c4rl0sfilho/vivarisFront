@@ -27,8 +27,10 @@ import PsicoProfile from './routes/PsicoProfile'
 import UserProfile from './routes/UserProfile'
 import PaymentStatus from './routes/PaymentStatus'
 import { VideoCallHome } from './routes/VideoCall/VideoCallHome'
-import MeditacaoMessage from './components/MeditacaoMessage'
 import Developing from './routes/Developing'
+import ContainerProntuario from './components/ContainerProntuario'
+
+
 
 const router = createBrowserRouter([
   {
@@ -106,6 +108,10 @@ const router = createBrowserRouter([
           {
             path: 'Settings',
             element: <Settings />
+          },
+          {
+            path: 'Prontuario',
+            element: <ContainerProntuario />
           },
         ]
       },
